@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تسوية مديونيات العملاء | تسوية المديونيات البنكية وإعادة الجدولة والآيسكور</title>
+<meta name="description" content="مكتب متخصص في تسوية مديونيات العملاء المتعثرين لدى البنوك وشركات التمويل، تعديل وتحسين الآيسكور (I-Score)، وإدارة النزاعات البنكية أمام المحاكم الاقتصادية.">
+<link rel="icon" type="image/jpeg" href="Logo.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0E2E57;
+    --navy-deep: #091326;
+    --text: #5F6672;
+    --text-soft: #8A93A0;
+    --bg: #FFFFFF;
+    --bg-alt: #F6F8FB;
+    --line: #E6E9EE;
+    --accent: #5E7182;
+    --accent-mid: #A7BACA;
+    --accent-soft: #DAE2E8;
+    --whatsapp: #25D366;
+    --radius: 20px;
+    --radius-lg: 28px;
+    --shadow-sm: 0 2px 10px rgba(9, 19, 38, 0.04);
+    --shadow-md: 0 14px 40px rgba(9, 19, 38, 0.08);
+    --shadow-lg: 0 26px 60px rgba(9, 19, 38, 0.12);
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.8; font-size: 16px;
+    -webkit-font-smoothing: antialiased; overflow-x: hidden;
+  }
+  img { max-width: 100%; display: block; }
+  a { text-decoration: none; color: inherit; }
+  ul { list-style: none; }
+  .container { width: 100%; max-width: 1140px; margin: 0 auto; padding: 0 24px; }
+
+  /* ===== TOP BAR ===== */
+  .topbar { background: var(--navy-deep); color: rgba(255,255,255,.85); font-size: 13px; }
+  .topbar .container { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; padding-top: 8px; padding-bottom: 8px; }
+  .topbar span { display: inline-flex; align-items: center; gap: 6px; margin-inline-end: 18px; }
+  .topbar svg { width: 14px; height: 14px; fill: #A7BACA; }
+  .topbar a { font-weight: 700; color: #fff; }
+  .topbar a:hover { color: #A7BACA; }
+
+  /* ===== HEADER ===== */
+  header { background: var(--bg); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 100; }
+  .nav-wrap { display: flex; justify-content: space-between; align-items: center; gap: 18px; padding-top: 14px; padding-bottom: 14px; }
+  .brand { display: flex; align-items: center; gap: 13px; }
+  .brand-text h1 { font-size: 19px; font-weight: 800; color: var(--navy-deep); line-height: 1.5; font-family: 'Cairo', 'Consolas', 'Courier New', monospace; font-variant-numeric: tabular-nums; }
+  .brand-text p { font-size: 12px; font-weight: 600; color: var(--text-soft); }
+
+  nav ul { display: flex; gap: 4px; align-items: center; }
+  nav ul li a { display: block; padding: 9px 15px; font-weight: 700; font-size: 15px; color: var(--text); border-radius: 12px; transition: color .2s, background-color .2s; }
+  nav ul li a:hover { color: var(--navy); background: var(--bg-alt); }
+  nav ul li a.active { color: var(--navy); background: var(--bg-alt); }
+
+  .nav-cta { display: flex; align-items: center; gap: 10px; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 9px; padding: 13px 26px; border-radius: 14px; font-weight: 800; font-size: 15px; cursor: pointer; border: none; font-family: inherit; transition: transform .2s var(--ease-out), background-color .2s var(--ease-out), border-color .2s var(--ease-out), box-shadow .2s var(--ease-out); white-space: nowrap; }
+  .btn svg { width: 18px; height: 18px; fill: currentColor; }
+  .btn-navy { background: var(--navy); color: #fff; box-shadow: 0 10px 24px rgba(14,46,87,.22); position: relative; overflow: hidden; }
+  .btn-navy::after { content: ""; position: absolute; top: 0; bottom: 0; left: -70%; width: 45%; background: linear-gradient(105deg, transparent, rgba(255,255,255,.28) 50%, transparent); transform: skewX(-18deg); animation: btnShine 5.5s var(--ease-out) infinite; pointer-events: none; }
+  .btn-light { background: #fff; color: var(--navy); border: 1px solid var(--line); }
+  .btn-whatsapp { background: var(--whatsapp); color: #fff; box-shadow: 0 10px 24px rgba(37,211,102,.25); }
+  .btn-white { background: #fff; color: var(--navy); }
+
+  .lang-toggle { display: inline-flex; align-items: center; gap: 7px; background: var(--bg-alt); border: 1.5px solid var(--line); color: var(--navy); font-family: inherit; font-weight: 800; font-size: 14px; padding: 9px 14px; border-radius: 12px; cursor: pointer; transition: border-color .2s, background-color .2s; }
+  .lang-toggle:hover { border-color: var(--navy); background: #fff; }
+  .lang-toggle svg { width: 16px; height: 16px; fill: var(--navy); }
+
+  .menu-toggle { display: none; background: var(--navy); border: none; color: #fff; border-radius: 12px; padding: 9px 12px; cursor: pointer; }
+  .menu-toggle svg { width: 22px; height: 22px; fill: #fff; display: block; }
+
+  /* ===== HERO ===== */
+  .hero { background: var(--bg); padding: 80px 0 0; position: relative; overflow: hidden; }
+  .hero::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(720px circle at var(--mx, 70%) var(--my, 16%), rgba(24,92,176,.10), transparent 62%); }
+  .hero-head { max-width: 820px; position: relative; z-index: 1; }
+  .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; color: var(--navy); font-weight: 800; font-size: 13px; padding: 7px 15px; border-radius: 50px; margin-bottom: 20px; border: 1px solid transparent; background: linear-gradient(var(--accent-soft), var(--accent-soft)) padding-box, linear-gradient(120deg, var(--navy), var(--accent-mid), var(--navy)) border-box; box-shadow: 0 4px 18px rgba(14,46,87,.10); }
+  .hero-eyebrow::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--navy); }
+  .hero h2 { font-size: 44px; font-weight: 900; color: var(--navy-deep); line-height: 1.25; letter-spacing: -0.01em; margin-bottom: 20px; }
+  .hero h2 em { font-style: normal; background: linear-gradient(120deg, var(--navy) 5%, #2f7fc4 52%, var(--navy) 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; }
+  .hero p.lead { font-size: 18px; color: var(--text); max-width: 540px; margin-bottom: 32px; }
+  .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 44px; }
+
+  .hero-photo { margin-top: 64px; }
+  .hero-photo img { width: 100%; height: 520px; object-fit: cover; display: block; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); }
+
+  .hero-trust { display: flex; gap: 22px; flex-wrap: wrap; padding-bottom: 64px; border-bottom: 1px solid var(--line); }
+  .hero-trust .ht { display: flex; align-items: center; gap: 9px; font-size: 14px; font-weight: 700; color: var(--text); }
+  .hero-trust svg { width: 20px; height: 20px; fill: var(--navy); }
+
+  /* ===== SECTION ===== */
+  .section { padding: 96px 0; }
+  .section.alt { background: var(--bg-alt); }
+  .sec-head { text-align: center; max-width: 880px; margin: 0 auto 60px; }
+  .sec-eyebrow { color: var(--navy); font-weight: 800; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+  .sec-head h2 { font-size: 30px; font-weight: 900; color: var(--navy-deep); line-height: 1.25; letter-spacing: -0.01em; text-wrap: balance; margin-bottom: 16px; }
+  .sec-head p { font-size: 17px; color: var(--text); }
+
+  /* ===== STATS STRIP ===== */
+  .stats-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+  .stat-item { border-inline-start: 1px solid var(--line); padding-inline-start: 26px; }
+  .stat-item b { display: block; font-size: 36px; font-weight: 900; color: var(--navy-deep); line-height: 1.3; }
+  .stat-item span { font-size: 14px; color: var(--text-soft); font-weight: 600; }
+
+  /* ===== SERVICES ===== */
+  .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; }
+  .service-card {
+    background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius-lg);
+    overflow: hidden; display: flex; flex-direction: column; position: relative;
+    transition: transform .3s var(--ease-out), box-shadow .3s var(--ease-out), border-color .3s var(--ease-out);
+  }
+  .service-card::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(460px circle at var(--mx, 50%) var(--my, 50%), rgba(23,84,160,.10), transparent 62%); opacity: 0; transition: opacity .3s var(--ease-out); }
+  .service-card::after { content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: var(--radius-lg); padding: 1px; background: linear-gradient(140deg, rgba(20,72,140,0) 12%, rgba(20,72,140,.9) 45%, rgba(20,72,140,0) 88%); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); mask-composite: exclude; opacity: 0; transition: opacity .3s var(--ease-out); }
+  .service-card .s-img { width: 100%; height: 210px; object-fit: cover; }
+  .service-card .s-content { padding: 30px 28px; display: flex; flex-direction: column; flex: 1; }
+  .svc-no { font-size: 12px; font-weight: 800; color: var(--accent); letter-spacing: 1px; margin-bottom: 8px; }
+  .service-card h3 { font-size: 20px; font-weight: 800; color: var(--navy-deep); margin-bottom: 12px; }
+  .service-card p { color: var(--text); font-size: 15px; margin-bottom: 16px; flex: 1; }
+  .service-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+  .tag { background: var(--bg-alt); border: 1px solid var(--line); color: var(--text); font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 50px; }
+  .service-link { display: inline-flex; align-items: center; gap: 8px; color: var(--navy); font-weight: 800; font-size: 14px; }
+  .service-link svg { width: 16px; height: 16px; fill: var(--navy); transition: transform .2s; }
+  [dir="ltr"] .service-link:hover svg { transform: translateX(4px); }
+  [dir="rtl"] .service-link:hover svg { transform: translateX(-4px); }
+
+  .more-services { margin-top: 56px; }
+  .more-services h3 { font-size: 20px; font-weight: 800; color: var(--navy-deep); text-align: center; margin-bottom: 24px; }
+  .more-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .more-item { background: var(--bg); border: 1px solid var(--line); border-radius: 16px; padding: 20px 18px; display: flex; align-items: center; gap: 14px; transition: transform .2s var(--ease-out), border-color .2s var(--ease-out), box-shadow .2s var(--ease-out); }
+  .more-item svg { width: 34px; height: 34px; fill: var(--navy); flex-shrink: 0; }
+  .more-item b { font-size: 14px; font-weight: 800; color: var(--navy-deep); line-height: 1.5; }
+  .view-all { text-align: center; margin-top: 46px; }
+
+  /* ===== ABOUT ===== */
+  .about-grid { display: grid; grid-template-columns: .9fr 1.1fr; gap: 56px; align-items: start; }
+  .about-photo { position: sticky; top: 110px; }
+  .about-photo .photo { width: 100%; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); object-fit: cover; height: 540px; }
+  .about-photo .quote-card { background: var(--navy); color: #fff; border-radius: 20px; padding: 24px 22px; margin-top: 18px; font-size: 14px; line-height: 1.9; position: relative; }
+  .about-photo .quote-card svg { width: 22px; height: 22px; fill: #A7BACA; margin-bottom: 8px; }
+  .about-photo .quote-card b { display: block; color: #A7BACA; font-weight: 700; margin-top: 8px; font-size: 13px; }
+
+  .feature-row { display: flex; gap: 26px; align-items: flex-start; padding: 24px 0; border-top: 1px solid var(--line); }
+  .feature-row:first-child { border-top: none; padding-top: 0; }
+  .feature-row .f-icon { width: 60px; height: 60px; flex-shrink: 0; border-radius: 16px; background: var(--navy); display: flex; align-items: center; justify-content: center; }
+  .feature-row .f-icon svg { width: 30px; height: 30px; fill: #A7BACA; }
+  .feature-row h3 { font-size: 19px; font-weight: 800; color: var(--navy-deep); margin-bottom: 6px; }
+  .feature-row p { color: var(--text); font-size: 15px; }
+
+  /* ===== CTA BAND ===== */
+  .band { background: linear-gradient(140deg, #0A2342, #0E2E57); border-radius: var(--radius-lg); padding: 58px 56px; color: #fff; display: flex; justify-content: space-between; align-items: center; gap: 30px; flex-wrap: wrap; position: relative; overflow: hidden; }
+  .band::after { content: ""; position: absolute; inset: 0; background-image: radial-gradient(rgba(255,255,255,.05) 1px, transparent 1px); background-size: 26px 26px; pointer-events: none; }
+  .band > * { position: relative; z-index: 1; }
+  .band h2 { font-size: 30px; font-weight: 900; line-height: 1.4; margin-bottom: 10px; }
+  .band p { color: rgba(255,255,255,.82); font-size: 16px; }
+
+  /* ===== I-SCORE ===== */
+  .iscore { background: linear-gradient(140deg, #0A2342 0%, #0E2E57 55%, #123a6b 100%); color: #fff; border-radius: var(--radius-lg); position: relative; overflow: hidden; padding: 60px 54px; display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; }
+  .iscore::after { content: ""; position: absolute; bottom: -140px; left: -100px; width: 380px; height: 380px; border-radius: 50%; background: rgba(167,186,202,.10); }
+  .iscore::before { content: ""; position: absolute; inset: 0; background-image: radial-gradient(rgba(255,255,255,.045) 1px, transparent 1px); background-size: 26px 26px; pointer-events: none; }
+  .iscore > *:not(.iscore-tool) { position: relative; z-index: 1; }
+  .iscore-list li { display: flex; gap: 12px; align-items: flex-start; padding: 8px 0; }
+  .iscore-list li svg { width: 22px; height: 22px; fill: #A7BACA; flex-shrink: 0; margin-top: 4px; }
+  .iscore-list li b { font-weight: 700; font-size: 15px; display: block; color: #fff; }
+  .iscore-list li small { font-weight: 400; color: rgba(255,255,255,.65); font-size: 13px; }
+  .iscore .btn-light { background: #fff; color: var(--navy); border-color: transparent; }
+
+  .iscore-tool { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.16); border-radius: 22px; padding: 32px; position: relative; z-index: 1; }
+  .iscore-tool h3 { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 8px; }
+  .iscore-tool p { font-size: 14px; color: rgba(255,255,255,.78); margin-bottom: 20px; }
+  .iscore-tool .t-label { font-size: 12px; color: #A7BACA; font-weight: 600; margin-bottom: 6px; }
+  .bw-track { height: 12px; background: rgba(255,255,255,.14); border-radius: 50px; overflow: hidden; margin-bottom: 18px; }
+  .bw-fill { height: 100%; width: 45%; background: linear-gradient(90deg, #A7BACA, #DAE2E8); border-radius: 50px; }
+  .checks li { display: flex; gap: 10px; align-items: center; padding: 6px 0; font-size: 13px; color: rgba(255,255,255,.85); font-weight: 600; }
+  .checks svg { width: 18px; height: 18px; fill: #A7BACA; }
+  .iscore-tool .btn { width: 100%; margin-top: 8px; }
+
+  /* ===== CALCULATOR ===== */
+  .calc-wrap { max-width: 860px; margin: 0 auto; background: var(--bg); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); border: 1px solid var(--line); overflow: hidden; }
+  .calc-head { padding: 36px 40px 0; text-align: center; }
+  .calc-head h3 { font-size: 26px; font-weight: 900; color: var(--navy-deep); margin-bottom: 8px; }
+  .calc-head p { color: var(--text-soft); font-size: 14px; }
+  .calc-body { padding: 28px 40px 38px; }
+  .calc-tabs { display: flex; gap: 10px; margin-bottom: 24px; }
+  .calc-tab { padding: 10px 22px; border-radius: 50px; border: 1px solid var(--line); background: var(--bg); font-family: inherit; font-weight: 800; font-size: 14px; color: var(--text); cursor: pointer; transition: background-color .2s, color .2s, border-color .2s; }
+  .calc-tab.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 22px; margin-bottom: 26px; }
+  .field label { display: block; font-weight: 700; font-size: 13px; color: var(--navy-deep); margin-bottom: 8px; }
+  .field label small { color: var(--text-soft); font-weight: 400; }
+  .field input, .field select { width: 100%; padding: 13px 16px; border: 1.5px solid var(--line); border-radius: 14px; font-family: inherit; font-size: 15px; font-weight: 700; color: var(--navy-deep); transition: border-color .2s, background-color .2s, box-shadow .2s; outline: none; background: var(--bg-alt); }
+  .field input:focus, .field select:focus { border-color: var(--navy); background: #fff; box-shadow: 0 0 0 4px rgba(14,46,87,.06); }
+  .field .prefix { position: relative; }
+  .field .prefix input { padding-inline-start: 62px; }
+  .field .prefix span { position: absolute; inset-inline-start: 12px; top: 50%; transform: translateY(-50%); background: var(--navy); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 8px; }
+  .calc-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+  .calc-result { display: none; margin-top: 26px; background: var(--bg-alt); border-radius: 18px; padding: 24px 28px; border: 1px solid var(--line); }
+  .calc-result.show { display: block; animation: fadeUp .4s var(--ease-out); }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  .res-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px dashed var(--line); font-size: 15px; }
+  .res-row:last-child { border: none; }
+  .res-row .k { color: var(--text); font-weight: 600; }
+  .res-row .v { font-weight: 800; color: var(--navy-deep); text-align: end; }
+  .res-row.highlight .v { color: var(--navy); font-size: 18px; }
+  .res-note { margin-top: 10px; font-size: 12px; color: var(--text-soft); text-align: center; }
+  .calc-result .cta { margin-top: 18px; text-align: center; }
+
+  /* ===== CONTACT ===== */
+  .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+  .contact-info h3 { font-size: 26px; font-weight: 900; color: var(--navy-deep); margin-bottom: 8px; }
+  .contact-info > p { color: var(--text); margin-bottom: 26px; }
+  .info-item { display: flex; gap: 18px; align-items: flex-start; padding: 20px 0; border-bottom: 1px solid var(--line); }
+  .info-item:first-of-type { border-top: 1px solid var(--line); }
+  .info-item .i-icon { width: 52px; height: 52px; flex-shrink: 0; background: var(--bg-alt); border: 1px solid var(--line); border-radius: 14px; display: flex; align-items: center; justify-content: center; }
+  .info-item .i-icon svg { width: 26px; height: 26px; fill: var(--navy); }
+  .info-item h4 { font-size: 14px; font-weight: 800; color: var(--navy-deep); margin-bottom: 2px; }
+  .info-item a, .info-item .va { font-size: 16px; color: var(--text); font-weight: 700; }
+  .info-item a:hover { color: var(--navy); }
+
+  .contact-form { background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); padding: 36px; }
+  .contact-form h3 { font-size: 21px; font-weight: 900; color: var(--navy-deep); margin-bottom: 6px; }
+  .contact-form > p { color: var(--text-soft); font-size: 14px; margin-bottom: 22px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .f-field { margin-bottom: 14px; }
+  .f-field input, .f-field textarea, .f-field select { width: 100%; padding: 13px 16px; border: 1.5px solid var(--line); border-radius: 14px; font-family: inherit; font-size: 15px; color: var(--navy-deep); background: var(--bg-alt); outline: none; transition: border-color .2s, background-color .2s, box-shadow .2s; }
+  .f-field input:focus, .f-field textarea:focus, .f-field select:focus { border-color: var(--navy); background: #fff; box-shadow: 0 0 0 4px rgba(14,46,87,.06); }
+  .f-field textarea { resize: vertical; min-height: 100px; }
+  .privacy-note { display: flex; gap: 10px; align-items: flex-start; font-size: 12px; color: var(--text-soft); margin-top: 14px; }
+  .privacy-note svg { width: 18px; height: 18px; fill: var(--navy); flex-shrink: 0; margin-top: 3px; }
+
+  /* ===== FOOTER ===== */
+  footer { border-top: 1px solid var(--line); background: var(--bg); padding-top: 64px; }
+  .footer-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1.2fr; gap: 44px; padding-bottom: 48px; }
+  .footer-brand h3 { color: var(--navy-deep); font-size: 18px; font-weight: 800; margin-bottom: 10px; }
+  .footer-brand p { font-size: 14px; color: var(--text-soft); }
+  .footer-col h4 { color: var(--navy-deep); font-size: 15px; font-weight: 800; margin-bottom: 18px; }
+  .footer-col ul li { padding: 6px 0; }
+  .footer-col ul li a { font-size: 14px; color: var(--text); transition: color .2s; }
+  .footer-col ul li a:hover { color: var(--navy); }
+  .footer-contact li { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: var(--text); }
+  .footer-contact li svg { width: 18px; height: 18px; fill: var(--navy); flex-shrink: 0; margin-top: 5px; }
+  .footer-bottom { border-top: 1px solid var(--line); padding: 20px 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; font-size: 13px; color: var(--text-soft); }
+  .footer-bottom a { color: var(--navy); font-weight: 700; }
+
+  /* ===== FLOATING ===== */
+  .wa-float { position: fixed; bottom: 24px; left: 24px; width: 58px; height: 58px; background: var(--whatsapp); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 12px 34px rgba(37,211,102,.4); z-index: 200; transition: transform .25s var(--ease-out), box-shadow .25s var(--ease-out); }
+  .wa-float svg { width: 30px; height: 30px; fill: #fff; }
+  .scroll-top { position: fixed; bottom: 24px; right: 24px; width: 48px; height: 48px; background: var(--navy); border: none; border-radius: 14px; color: #fff; cursor: pointer; display: none; align-items: center; justify-content: center; box-shadow: 0 10px 26px rgba(14,46,87,.35); z-index: 200; }
+  .scroll-top.show { display: flex; }
+  .scroll-top svg { width: 22px; height: 22px; fill: #fff; transform: rotate(180deg); }
+
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity .45s var(--ease-out), transform .45s var(--ease-out); }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ===== MOTION (gated hovers, press feedback, reduced motion) ===== */
+  @keyframes btnShine { 0%, 58% { left: -70%; } 88%, 100% { left: 130%; } }
+  @media (hover: hover) and (pointer: fine) {
+    .btn-navy:hover { background: #12365f; transform: translateY(-2px); box-shadow: 0 14px 30px rgba(14,46,87,.28); }
+    .btn-light:hover { border-color: var(--navy); transform: translateY(-2px); }
+    .btn-whatsapp:hover { background: #1fb457; transform: translateY(-2px); }
+    .btn-white:hover { transform: translateY(-2px); box-shadow: 0 14px 34px rgba(0,0,0,.15); }
+    .iscore .btn-light:hover { transform: translateY(-2px); box-shadow: 0 12px 26px rgba(0,0,0,.18); }
+    .service-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); border-color: transparent; }
+    .service-card:hover::before, .service-card:hover::after { opacity: 1; }
+    .more-item:hover { border-color: var(--navy); transform: translateY(-3px); box-shadow: var(--shadow-sm); }
+    .wa-float:hover { transform: scale(1.08); }
+  }
+  .btn:active { transform: scale(0.97); }
+  .lang-toggle:active { transform: scale(0.96); }
+  .calc-tab:active { transform: scale(0.96); }
+  .wa-float:active { transform: scale(0.92); }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+    .btn-navy::after { display: none; }
+    .reveal { opacity: 1; transform: none; }
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 1080px) {
+    .iscore, .contact-grid, .about-grid { grid-template-columns: 1fr; gap: 44px; }
+    .about-photo { position: static; }
+    .about-photo .photo { height: 420px; }
+    .menu-toggle { display: block; }
+    nav { position: absolute; top: 100%; right: 0; left: 0; background: var(--bg); box-shadow: 0 20px 40px rgba(9,19,38,.10); display: none; padding: 14px 24px 20px; border-bottom: 1px solid var(--line); }
+    nav.open { display: block; }
+    nav ul { flex-direction: column; gap: 4px; align-items: stretch; }
+    nav ul li a { text-align: center; }
+    .nav-cta .btn-navy { display: none; }
+    .hero h2 { font-size: 40px; }
+    .sec-head h2 { font-size: 27px; }
+    .stats-strip { grid-template-columns: repeat(2, 1fr); gap: 26px; }
+    .stat-item:nth-child(3) { border-inline-start: none; }
+    .section { padding: 72px 0; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    .more-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 640px) {
+    .container { padding: 0 18px; }
+    .brand-text p { display: none; }
+    .brand-text h1 { font-size: 15px; }
+    .hero { padding-top: 48px; }
+    .hero h2 { font-size: 30px; }
+    .hero p.lead { font-size: 16px; }
+    .hero-photo img { height: 280px; }
+    .hero-photo { margin-top: 44px; }
+    .services-grid, .calc-grid, .form-grid, .footer-grid { grid-template-columns: 1fr; }
+    .more-grid { grid-template-columns: 1fr; }
+    .sec-head h2 { font-size: 28px; }
+    .iscore, .band { padding: 36px 24px; }
+    .band h2 { font-size: 25px; }
+    .calc-body { padding: 22px 20px 28px; }
+    .calc-head { padding: 26px 20px 0; }
+    .contact-form { padding: 26px 20px; }
+    .feature-row { flex-direction: column; gap: 16px; }
+    .hero-actions .btn { flex: 1 1 100%; }
+    .topbar .container > div:last-child span { margin-inline-end: 0; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- ===== TOP BAR ===== -->
+  <div class="topbar">
+    <div class="container">
+      <div>
+        <span>
+          <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+          <span data-i18n="top.address">17 شارع مجلس الشعب – ميدان لاظوغلى – وسط البلد – القاهرة</span>
+        </span>
+      </div>
+      <div>
+        <span>
+          <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+          <a dir="ltr" href="tel:+201112825856">01112825856</a>
+        </span>
+        <span>
+          <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg>
+          <a dir="ltr" href="mailto:Embaby2021@gmail.com">Embaby2021@gmail.com</a>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== HEADER ===== -->
+  <header>
+    <div class="container nav-wrap">
+      <div class="brand">
+        <div class="brand-text">
+          <h1 id="brandTitle" aria-label="مكتب تسوية مديونيات العملاء">مكتب تسوية مديونيات العملاء</h1>
+          <p data-i18n="brand.sub">تسوية المديونيات البنكية لدى البنوك وشركات التمويل</p>
+        </div>
+      </div>
+      <button class="menu-toggle" aria-label="القائمة" onclick="toggleMenu()">
+        <svg viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+      </button>
+      <nav id="main-nav">
+        <ul>
+          <li><a href="#home" class="active" data-i18n="nav.home">الرئيسية</a></li>
+          <li><a href="#services" data-i18n="nav.services">خدماتنا</a></li>
+          <li><a href="#about" data-i18n="nav.about">من نحن</a></li>
+          <li><a href="#iscore" data-i18n="nav.iscore">الآيسكور</a></li>
+          <li><a href="#calculator" data-i18n="nav.calc">الحاسبة</a></li>
+          <li><a href="#contact" data-i18n="nav.contact">اتصل بنا</a></li>
+        </ul>
+      </nav>
+      <div class="nav-cta">
+        <button class="lang-toggle" onclick="toggleLang()" aria-label="تغيير اللغة">
+          <svg viewBox="0 0 24 24"><path d="M12.87 15.07l-2.54-2.51.03-.03c1.54-1.71 2.54-3.9 2.54-6.03V6h2V4H9V2H7v2H4v2h8.17A6.98 6.98 0 0 1 9 10.5c-.42-.5-.8-1.02-1.15-1.56L5.77 10c.47.67.99 1.3 1.55 1.87l-4.55 4.55 1.41 1.41 4.52-4.52 1.15 1.15a9.1 9.1 0 0 0 2.02 1.61l.56-2.14c-.33-.1-.66-.23-.98-.37zM17 14l-4 4h2v4h4v-4h2l-4-4z"/></svg>
+          <span id="langLabel">English</span>
+        </button>
+        <a href="https://wa.me/201112825856?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D8%8C%20%D8%A3%D8%B1%D8%BA%D8%A8%20%D9%81%D9%8A%20%D8%B7%D9%84%D8%A8%20%D8%A7%D8%B3%D8%AA%D8%B4%D8%A7%D8%B1%D8%A9%20%D9%84%D8%AA%D8%B3%D9%88%D9%8A%D8%A9%20%D9%85%D8%AF%D9%8A%D9%88%D9%86%D9%8A%D8%A7%D8%AA%D9%8A" target="_blank" rel="noopener" class="btn btn-navy" data-i18n="header.cta">استشارة مجانية</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero" id="home">
+    <div class="container">
+      <div class="hero-head">
+        <div class="hero-eyebrow" data-i18n="hero.eyebrow">تسوية المديونيات | الآيسكور | المحاكم الاقتصادية</div>
+        <h2>
+          <span data-i18n="hero.t1">مديونيتك البنكية،</span>
+          <em data-i18n="hero.t2">تُسوى بشكل مثالي.</em>
+        </h2>
+        <p class="lead" data-i18n="hero.lead">نساعدك في تسوية مديونياتك البنكية وإعادة الجدولة لدى البنوك وشركات التمويل، مع تعديل وتحسين الآيسكور (I-Score) وإدارة النزاعات البنكية أمام المحاكم الاقتصادية.</p>
+        <div class="hero-actions">
+          <a href="#calculator" class="btn btn-navy">
+            <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM7 7h2v2H7V7zm0 4h2v2H7v-2zm0 4h2v2H7v-2zm10 2h-6v-2h6v2zm0-4h-6v-2h6v2zm0-4h-6V7h6v2z"/></svg>
+            <span data-i18n="hero.ctaCalc">احسب الوفر المتوقع</span>
+          </a>
+          <a href="#services" class="btn btn-light" data-i18n="hero.ctaServices">تعرّف على خدماتنا</a>
+        </div>
+        <div class="hero-trust">
+          <div class="ht"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5L12 1zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg><span data-i18n="hero.trust1">استشارات سرية وآمنة</span></div>
+          <div class="ht"><svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg><span data-i18n="hero.trust2">فريق متخصص</span></div>
+          <div class="ht"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-8 8z"/></svg><span data-i18n="hero.trust3">حلول مخصصة وقانونية</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-photo">
+      <img src="1.png" alt="تسوية مديونيات بنكية" loading="eager">
+    </div>
+  </section>
+
+  <!-- ===== STATS STRIP ===== -->
+  <section class="section" style="padding-top:56px; padding-bottom:0;">
+    <div class="container">
+      <div class="stats-strip">
+        <div class="stat-item"><b data-i18n="strip1.t">تسوية</b><span data-i18n="strip1.s">المديونيات وإعادة الجدولة</span></div>
+        <div class="stat-item"><b>I-Score</b><span data-i18n="strip2.s">تعديل وتحسين المؤشر الائتماني</span></div>
+        <div class="stat-item"><b data-i18n="strip3.t">فوائد</b><span data-i18n="strip3.s">إسقاط فوائد التأخير والغرامات</span></div>
+        <div class="stat-item"><b data-i18n="strip4.t">قانوني</b><span data-i18n="strip4.s">تمثيل أمام المحاكم الاقتصادية</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SERVICES ===== -->
+  <section class="section alt" id="services">
+    <div class="container">
+      <div class="sec-head">
+        <div class="sec-eyebrow" data-i18n="services.badge">خدماتنا</div>
+        <h2 data-i18n="services.title">باقة متكاملة من الخدمات المصرفية والتمويلية البنكية</h2>
+        <p data-i18n="services.sub">خبرة واسعة في القوانين الاقتصادية المصرفية، ونتعامل مباشرة مع المحاكم الاقتصادية والجهات التمويلية وخبراء المحكمة لحماية حقوق عملائنا.</p>
+      </div>
+
+      <div class="services-grid">
+        <div class="service-card reveal">
+          <img src="2.png" alt="" class="s-img" loading="lazy">
+          <div class="s-content">
+            <div class="svc-no">01</div>
+            <h3 data-i18n="svc1.t">تسوية المديونيات وإعادة الجدولة</h3>
+            <p data-i18n="svc1.d">التفاوض مع البنوك وشركات التمويل لإعادة جدولة مديونياتك المتعثرة، تخفيض وإسقاط فوائد التأخير، والوصول لأفضل الصيغ القانونية والمصرفية.</p>
+            <div class="service-tags">
+              <span class="tag" data-i18n="svc1.tag1">إعادة جدولة</span>
+              <span class="tag" data-i18n="svc1.tag2">إسقاط فوائد</span>
+              <span class="tag" data-i18n="svc1.tag3">دفعة واحدة أو أقساط</span>
+            </div>
+            <a href="#contact" class="service-link"><span data-i18n="svc1.link">اطلب الخدمة</span> <svg viewBox="0 0 24 24"><path d="M8.59 16.59 13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg></a>
+          </div>
+        </div>
+
+        <div class="service-card reveal">
+          <img src="3.png" alt="" class="s-img" loading="lazy">
+          <div class="s-content">
+            <div class="svc-no">02</div>
+            <h3 data-i18n="svc2.t">تعديل وتحسين الآيسكور (I-Score)</h3>
+            <p data-i18n="svc2.d">فحص تقرير الآيسكور وتحليل الجدارة الائتمانية، رفع اسمك من القوائم السلبية، وتعديل درجتك الائتمانية بخطوات رسمية وقانونية.</p>
+            <div class="service-tags">
+              <span class="tag" data-i18n="svc2.tag1">تحليل التقرير</span>
+              <span class="tag" data-i18n="svc2.tag2">رفع التعثر</span>
+              <span class="tag" data-i18n="svc2.tag3">تحسين الدرجة</span>
+            </div>
+            <a href="#iscore" class="service-link"><span data-i18n="svc2.link">افحص مؤشرك الائتماني</span> <svg viewBox="0 0 24 24"><path d="M8.59 16.59 13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg></a>
+          </div>
+        </div>
+
+        <div class="service-card reveal">
+          <img src="4.png" alt="" class="s-img" loading="lazy">
+          <div class="s-content">
+            <div class="svc-no">03</div>
+            <h3 data-i18n="svc3.t">حماية حقوق العملاء والقضايا المرفوعة</h3>
+            <p data-i18n="svc3.d">في ظل التوسع المصرفي قد يقع العملاء ضحية إجراءات غير منصفة أو تعسفية، نقدم الدعم القانوني للدفاع عن حقوقك أمام القضاء والجهات الرقابية.</p>
+            <div class="service-tags">
+              <span class="tag" data-i18n="svc3.tag1">دفاع قانوني</span>
+              <span class="tag" data-i18n="svc3.tag2">نزاعات بنكية</span>
+              <span class="tag" data-i18n="svc3.tag3">إجراءات تعسفية</span>
+            </div>
+            <a href="#contact" class="service-link"><span data-i18n="svc3.link">احمِ حقوقك القانونية</span> <svg viewBox="0 0 24 24"><path d="M8.59 16.59 13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="more-services">
+        <h3 data-i18n="more.heading">المزيد من الخدمات المتخصصة</h3>
+        <div class="more-grid">
+          <div class="more-item reveal">
+            <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5v-3.5L12 18.5 2 13.5V17zm0-6l10 5 10-5v-3.5L12 13.5 2 8.5V11z"/></svg>
+            <b data-i18n="more1">قضايا الإفلاس والتبديد وتعويضات التأمين</b>
+          </div>
+          <div class="more-item reveal">
+            <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5L12 1zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+            <b data-i18n="more2">الدفاع أمام الجهات الرقابية والمحاكم الاقتصادية</b>
+          </div>
+          <div class="more-item reveal">
+            <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
+            <b data-i18n="more3">مبادرات البنك المركزي المخفضة للفوائد</b>
+          </div>
+          <div class="more-item reveal">
+            <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg>
+            <b data-i18n="more4">إدارة القروض والتسهيلات والمفاوضات البنكية</b>
+          </div>
+        </div>
+      </div>
+
+      <div class="view-all">
+        <a href="https://wa.me/201112825856?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D8%8C%20%D8%A3%D9%88%D8%AF%20%D8%AF%D8%B1%D8%A7%D8%B3%D8%A9%20%D8%AD%D8%A7%D9%84%D8%AA%D9%8A%20%D8%A7%D9%84%D8%A8%D9%86%D9%83%D9%8A%D8%A9" target="_blank" rel="noopener" class="btn btn-navy">
+          <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          <span data-i18n="services.cta">احصل على دراسة مجانية لموقفك</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ABOUT ===== -->
+  <section class="section" id="about">
+    <div class="container">
+      <div class="sec-head">
+        <div class="sec-eyebrow" data-i18n="about.badge">من نحن؟</div>
+        <h2 data-i18n="about.title">ميزة مكتب تسوية مديونيات العملاء</h2>
+        <p data-i18n="about.sub">نحن نقطة التحول الحاسمة في رحلتك المصرفية. فريق يجمع بين الخبرة المصرفية والاحترافية والفكر العصري وفقاً لقانون البنك المركزي المصري وقانون حماية حقوق العملاء.</p>
+      </div>
+      <div class="about-grid">
+        <div class="about-photo">
+          <img src="5.png" alt="فريق العمل" class="photo" loading="lazy">
+          <div class="quote-card">
+            <svg viewBox="0 0 24 24"><path d="M6 17h3l2-4V7H5v6h3zm8 0h3l2-4V7h-6v6h3z"/></svg>
+            <span data-i18n="about.quote">الاستشارات بنكوّها على السرية التامة والخبرة المصرفية والالتزام بالقوانين والقرارات المنظمة لأعمال البنوك.</span>
+            <b data-i18n="about.quoteBy">إدارة المكتب</b>
+          </div>
+        </div>
+        <div>
+          <div class="feature-row">
+            <div class="f-icon"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5L12 1zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg></div>
+            <div>
+              <h3 data-i18n="ftr1.t">سرية وأمان مطلق</h3>
+              <p data-i18n="ftr1.d">استشارات محمية بالسرية التامة مع الحفاظ الكامل على خصوصية حساباتك المالية وبياناتك المصرفية أمام أي جهة.</p>
+            </div>
+          </div>
+          <div class="feature-row">
+            <div class="f-icon"><svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg></div>
+            <div>
+              <h3 data-i18n="ftr2.t">إشراف مالي وقانوني متخصص</h3>
+              <p data-i18n="ftr2.d">نخبة من المستشارين الماليين والمحامين المتخصصين في قضايا البنوك لتمثيلك بثقة أمام القضاء والجهات الرقابية.</p>
+            </div>
+          </div>
+          <div class="feature-row">
+            <div class="f-icon"><svg viewBox="0 0 24 24"><path d="M12 2l2.4 7.2H22l-6 4.6 2.3 7.2-6.3-4.6-6.3 4.6L8 13.8 2 9.2h7.6z"/></svg></div>
+            <div>
+              <h3 data-i18n="ftr3.t">استعادة الاستقرار المالي والسيولة</h3>
+              <p data-i18n="ftr3.d">نساعدك على عبور الأزمات البنكية، إسقاط فوائد التأخير، والوصول لأفضل الصيغ القانونية والمصرفية لاستعادة عافيتك المالية.</p>
+            </div>
+          </div>
+          <div class="feature-row">
+            <div class="f-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-8 8z"/></svg></div>
+            <div>
+              <h3 data-i18n="ftr4.t">حلول مبتكرة ومخصصة للأفراد والشركات</h3>
+              <p data-i18n="ftr4.d">منظومة شاملة: تسوية المديونيات، التفاوض مع البنوك وشركات التمويل، إدارة القروض والتسهيلات، والدعم المحاسبي في القضايا البنكية.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== MUBADARAT BAND ===== -->
+  <section class="section alt" style="padding-top:48px; padding-bottom:80px;">
+    <div class="container">
+      <div class="band reveal">
+        <div>
+          <h2 data-i18n="band.title">الاستفادة من مبادرات البنك المركزي المصري</h2>
+          <p data-i18n="band.desc">تخفيض الفوائد البنكية وإجراء جدولات تمويلية تيسر عليك السداد وفقاً لمعايير وشروط محددة لدفع عجلة الاقتصاد.</p>
+        </div>
+        <a href="https://wa.me/201112825856?text=%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%A7%D9%84%D8%A7%D8%B3%D8%AA%D9%81%D8%A7%D8%AF%D8%A9%20%D9%85%D9%86%20%D9%85%D8%A8%D8%A7%D8%AF%D8%B1%D8%A7%D8%AA%20%D8%A7%D9%84%D8%A8%D9%86%D9%83%20%D8%A7%D9%84%D9%85%D8%B1%D9%83%D8%B2%D9%8A" target="_blank" rel="noopener" class="btn btn-white">
+          <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5v-3.5L12 18.5 2 13.5V17zm0-6l10 5 10-5v-3.5L12 13.5 2 8.5V11z"/></svg>
+          <span data-i18n="band.cta">اعرف المبادرات المتاحة لك</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== I-SCORE ===== -->
+  <section class="section" id="iscore" style="padding-top:0;">
+    <div class="container">
+      <div class="sec-head">
+        <div class="sec-eyebrow" data-i18n="iscore.badge">فحص التقرير الائتماني</div>
+        <h2 data-i18n="iscore.title">فحص تقرير الآيسكور (I-Score) وتحليل الجدارة الائتمانية</h2>
+        <p data-i18n="iscore.sub">قم برفع تقرير الآيسكور الخاص بك أو استخدم الأداة الذكية لفحص التاريخ الائتماني وتحديد نقاط القوة والضعف.</p>
+      </div>
+      <div class="iscore">
+        <div>
+          <ul class="iscore-list">
+            <li>
+              <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
+              <span><b data-i18n="isc1.t">تاريخ الانتظام في السداد</b><small data-i18n="isc1.d">رصد أيام التأخير وسجلات التعثر للقروض.</small></span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+              <span><b data-i18n="isc2.t">نسبة استغلال الحدود الائتمانية</b><small data-i18n="isc2.d">تحليل نسبة استخدام البطاقات والتسهيلات الائتمانية.</small></span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-8 8-1.41.41z"/></svg>
+              <span><b data-i18n="isc3.t">خطة الرفع من القوائم السلبية</b><small data-i18n="isc3.d">الخطوات الرسمية والمنهجية لتعديل درجتك الائتمانية.</small></span>
+            </li>
+          </ul>
+          <a href="credit_assessment_calculato.html" target="_blank" rel="noopener" class="btn btn-light">
+            <svg viewBox="0 0 24 24"><path d="M4 6h16v2H4V6zm2-4h12v2H6V2zm16 10H6V8H4v6h18v-2zm-10 6H6v-2h6v2zm12-4h-4v6l4-6z"/></svg>
+            <span data-i18n="iscore.btn">افتح أداة فحص الآيسكور الذكية</span>
+          </a>
+        </div>
+        <div class="iscore-tool">
+          <h3 data-i18n="iscore.h3">أداة فحص الآيسكور الذكية</h3>
+          <p data-i18n="iscore.p">بعد تحليل تقريرك، نحدد موقفك الائتماني الحالي ونرسم لك خارطة طريق لتحسين درجتك مع البنوك وشركات التمويل.</p>
+          <div class="t-label" data-i18n="iscore.label">مؤشر الجدارة الائتمانية</div>
+          <div class="bw-track"><div class="bw-fill"></div></div>
+          <ul class="checks">
+            <li><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-8 8z"/></svg><span data-i18n="iscore.c1">تحليل تاريخ الانتظام في السداد</span></li>
+            <li><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-8 8z"/></svg><span data-i18n="iscore.c2">تحديد إجراءات رفع التعثر</span></li>
+            <li><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-8 8z"/></svg><span data-i18n="iscore.c3">خطة تحسين مستقبل الائتمان</span></li>
+          </ul>
+          <a href="https://wa.me/201112825856?text=%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%AA%D8%AD%D9%84%D9%8A%D9%84%20%D8%AA%D9%82%D8%B1%D9%8A%D8%B1%20%D8%A7%D9%84%D8%A2%D9%8A%D8%B3%D9%83%D9%88%D8%B1%20%D8%A7%D9%84%D8%AE%D8%A7%D8%B5%20%D8%A8%D9%8A" target="_blank" rel="noopener" class="btn btn-whatsapp">
+            <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            <span data-i18n="iscore.wa">أرسل تقرير الآيسكور للتحليل</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CALCULATOR ===== -->
+  <section class="section alt" id="calculator">
+    <div class="container">
+      <div class="sec-head">
+        <div class="sec-eyebrow" data-i18n="calc.badge">حاسبة تقديرية</div>
+        <h2 data-i18n="calc.title">حاسبة تسوية المديونيات التقديرية</h2>
+        <p data-i18n="calc.sub">احسب حجم الوفر وتخفيض المديونية المتوقع. أدخل تفاصيل مديونيتك البنكية لتقدير نسبة الخصم وإعادة الجدولة المتاحة.</p>
+      </div>
+
+      <div class="calc-wrap">
+        <div class="calc-head">
+          <h3 data-i18n="calc.h3">احسب الوفر المتوقع من التسوية</h3>
+          <p data-i18n="calc.p">تقدير استرشادي مبني على متوسطات السوق — النتيجة النهائية بعد دراسة ملفك.</p>
+        </div>
+        <div class="calc-body">
+          <div class="calc-tabs">
+            <button class="calc-tab active" data-type="فرد" data-i18n="calc.tabInd" onclick="setType('فرد')" type="button">أفراد</button>
+            <button class="calc-tab" data-type="شركة" data-i18n="calc.tabComp" onclick="setType('شركة')" type="button">شركات</button>
+          </div>
+          <div class="calc-grid">
+            <div class="field">
+              <label data-i18n="calc.fDebt">إجمالي المديونية <small>(الأصل + الفوائد + غرامات التأخير)</small></label>
+              <div class="prefix">
+                <span data-i18n="calc.currency">ج.م</span>
+                <input type="number" id="debt" placeholder="500000" min="1000">
+              </div>
+            </div>
+            <div class="field">
+              <label data-i18n="calc.fRate">سعر الفائدة السنوي التقريبي <small>%</small></label>
+              <input type="number" id="rate" placeholder="22" min="0" step="0.5">
+            </div>
+            <div class="field">
+              <label data-i18n="calc.fStatus">معامل تعثر الديون</label>
+              <select id="status">
+                <option value="1.6" data-i18n="calc.s1">متأخر حتى 3 أشهر</option>
+                <option value="1.45" data-i18n="calc.s2">متأخر من 3 إلى 6 أشهر</option>
+                <option value="1.3" selected data-i18n="calc.s3">متأخر أكثر من 6 أشهر</option>
+                <option value="1.2" data-i18n="calc.s4">مطالبة قضائية / توقيع أحكام</option>
+                <option value="1.1" data-i18n="calc.s5">قضية تنفيذ مقيدة</option>
+              </select>
+            </div>
+            <div class="field">
+              <label data-i18n="calc.fAvail">الرصيد المتاح للسداد <small>(مبلغ واحد أو على دفعات)</small></label>
+              <div class="prefix">
+                <span data-i18n="calc.currency">ج.م</span>
+                <input type="number" id="available" placeholder="200000" min="0">
+              </div>
+            </div>
+          </div>
+          <div class="calc-actions">
+            <button class="btn btn-navy" onclick="calculate()" type="button">
+              <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM7 7h2v2H7V7zm0 4h2v2H7v-2zm0 4h2v2H7v-2zm4 4h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V7h2v2zm4 8h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V7h2v2z"/></svg>
+              <span data-i18n="calc.btn">احسب الآن</span>
+            </button>
+            <button class="btn btn-light" onclick="resetCalc()" type="button" data-i18n="calc.reset">إعادة تعيين</button>
+          </div>
+          <div class="calc-result" id="calc-result">
+            <div class="res-row"><span class="k" data-i18n="calc.rTotal">إجمالي المديونية الحالية (بعد إضافة الفوائد)</span><span class="v" id="res-total"></span></div>
+            <div class="res-row"><span class="k" data-i18n="calc.rSettle">التسوية القريبة المتوقعة (سداد عاجل)</span><span class="v highlight" id="res-settle"></span></div>
+            <div class="res-row"><span class="k" data-i18n="calc.rMonthly">إعادة الجدولة المقترحة (شهرياً)</span><span class="v" id="res-monthly"></span></div>
+            <div class="res-row"><span class="k" data-i18n="calc.rSave">التوفير الإجمالي المتوقع</span><span class="v highlight" id="res-savings"></span></div>
+            <div class="res-note" data-i18n="calc.note">* هذا تقدير استرشادي ولا يُعد التزاماً تعاقدياً. النتائج النهائية بعد دراسة ملفك من خبرائنا.</div>
+            <div class="cta">
+              <a href="https://wa.me/201112825856?text=%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%AF%D8%B1%D8%A7%D8%B3%D8%A9%20%D9%85%D8%A7%D9%84%D9%8A%D8%A9%20%D8%A7%D9%83%D8%AA%D9%85%D8%A7%D9%84%D8%A9%20%D9%84%D8%AA%D8%B3%D9%88%D9%8A%D8%A9%20%D9%85%D8%AF%D9%8A%D9%88%D9%86%D9%8A%D8%A7%D8%AA%D9%8A" target="_blank" rel="noopener" class="btn btn-whatsapp">
+                <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                <span data-i18n="calc.wa">احصل على دراسة مجانية كاملة</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CONTACT ===== -->
+  <section class="section" id="contact">
+    <div class="container">
+      <div class="sec-head">
+        <div class="sec-eyebrow" data-i18n="contact.badge">لنتواصل</div>
+        <h2 data-i18n="contact.title">تواصل مباشر وسري</h2>
+        <p data-i18n="contact.sub">فريقنا المتخصص جاهز للرد على تساؤلاتك ودراسة موقفك البنكي والقانوني بأقصى سرية. نعمل على مساندة الأفراد والشركات في تخطي الأزمات البنكية.</p>
+      </div>
+      <div class="contact-grid">
+        <div class="contact-info">
+          <h3 data-i18n="contact.infoH3">معلومات التواصل</h3>
+          <p data-i18n="contact.infoP">نساند الأفراد والشركات في تخطي الأزمات البنكية وتسوية المديونيات المتعثرة.</p>
+          <div class="info-item">
+            <div class="i-icon"><svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg></div>
+            <div>
+              <h4 data-i18n="contact.ph">رقم الهاتف</h4>
+              <a dir="ltr" href="tel:+201112825856">01112825856</a>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="i-icon"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg></div>
+            <div>
+              <h4 data-i18n="contact.em">البريد الإلكتروني</h4>
+              <a dir="ltr" href="mailto:Embaby2021@gmail.com">Embaby2021@gmail.com</a>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="i-icon"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></div>
+            <div>
+              <h4 data-i18n="contact.ad">العنوان</h4>
+              <span class="va" data-i18n="contact.adV">17 شارع مجلس الشعب – ميدان لاظوغلى<br>وسط البلد – القاهرة</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="i-icon"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg></div>
+            <div>
+              <h4 data-i18n="contact.hrs">مواعيد العمل</h4>
+              <span class="va" data-i18n="contact.hrsV">السبت – الخميس: 10 صباحاً – 6 مساءً</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="contact-form">
+          <h3 data-i18n="form.h3">طلب استشارة عاجلة</h3>
+          <p data-i18n="form.p">سيتم التحويل مباشرة إلى الواتساب مع خبير التسويات المصرفية بعد إرسال الطلب.</p>
+          <form onsubmit="submitForm(event)">
+            <div class="form-grid">
+              <div class="f-field"><input type="text" id="c-name" data-i18n-ph="form.name" placeholder="الاسم الكامل *" required></div>
+              <div class="f-field"><input type="tel" id="c-phone" data-i18n-ph="form.phone" placeholder="رقم الهاتف *" required></div>
+            </div>
+            <div class="f-field">
+              <select id="c-service" data-i18n-ph="form.service" required>
+                <option value="" selected disabled data-i18n="form.service">نوع الخدمة المطلوبة</option>
+                <option data-i18n="form.o1">تسوية وإعادة جدولة مديونية</option>
+                <option data-i18n="form.o2">تعديل وتحسين الآيسكور (I-Score)</option>
+                <option data-i18n="form.o3">حماية حقوق / قضية بنكية</option>
+                <option data-i18n="form.o4">نزاع مع بنك أو شركة تمويل</option>
+                <option data-i18n="form.o5">قضية إفلاس أو تبديد</option>
+                <option data-i18n="form.o6">مبادرات البنك المركزي</option>
+              </select>
+            </div>
+            <div class="f-field"><textarea id="c-msg" data-i18n-ph="form.msg" placeholder="باختصار.. ما هي مشكلتك البنكية أو القانونية؟"></textarea></div>
+            <button type="submit" class="btn btn-navy" style="width:100%;">
+              <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+              <span data-i18n="form.submit">إرسال عبر الواتساب</span>
+            </button>
+            <div class="privacy-note">
+              <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5L12 1zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+              <span data-i18n="form.privacy">بياناتك سرية تماماً ولن يتم مشاركتها مع أي جهة خارجية. جميع الاستشارات تخضع للسرية المهنية.</span>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <h3 data-i18n="brand.title">مكتب تسوية مديونيات العملاء</h3>
+          <p data-i18n="footer.about">متخصصون في تسوية المديونيات المتعثرة لدى البنوك وشركات التمويل، تعديل وتحسين الآيسكور، وإدارة النزاعات البنكية أمام المحاكم الاقتصادية وفقاً لقانون البنك المركزي المصري.</p>
+        </div>
+        <div class="footer-col">
+          <h4 data-i18n="footer.quick">روابط سريعة</h4>
+          <ul>
+            <li><a href="#home" data-i18n="nav.home">الرئيسية</a></li>
+            <li><a href="#services" data-i18n="nav.services">خدماتنا</a></li>
+            <li><a href="#about" data-i18n="nav.about">من نحن</a></li>
+            <li><a href="#iscore" data-i18n="nav.iscore">فحص الآيسكور</a></li>
+            <li><a href="#calculator" data-i18n="nav.calc">حاسبة التسوية</a></li>
+            <li><a href="#contact" data-i18n="nav.contact">اتصل بنا</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 data-i18n="footer.servicesHead">خدماتنا</h4>
+          <ul>
+            <li><a href="#services" data-i18n="f1">تسوية المديونيات</a></li>
+            <li><a href="#services" data-i18n="f2">تحسين الآيسكور</a></li>
+            <li><a href="#services" data-i18n="f3">حماية حقوق العملاء</a></li>
+            <li><a href="#services" data-i18n="f4">قضايا الإفلاس والتبديد</a></li>
+            <li><a href="#services" data-i18n="f5">مبادرات البنك المركزي</a></li>
+            <li><a href="#services" data-i18n="f6">المحاكم الاقتصادية</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 data-i18n="footer.contactHead">تواصل معنا</h4>
+          <ul class="footer-contact">
+            <li><svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg><a dir="ltr" href="tel:+201112825856">01112825856</a></li>
+            <li><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg><a dir="ltr" href="mailto:Embaby2021@gmail.com">Embaby2021@gmail.com</a></li>
+            <li><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg><span data-i18n="contact.adV">17 شارع مجلس الشعب – ميدان لاظوغلى – وسط البلد – القاهرة</span></li>
+            <li><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg><a href="https://wa.me/201112825856" target="_blank" rel="noopener" data-i18n="footer.wa">تواصل عبر واتساب</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span data-i18n="footer.rights">جميع الحقوق محفوظة © 2026 مكتب تسوية مديونيات العملاء</span>
+        <span><span data-i18n="footer.cbe">يعمل وفقاً لقانون</span> <a href="#home">البنك المركزي المصري</a> <span data-i18n="footer.cbe2">وقانون حماية حقوق العملاء</span></span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== FLOATING ===== -->
+  <a href="https://wa.me/201112825856?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7" target="_blank" rel="noopener" class="wa-float" aria-label="تواصل عبر واتساب">
+    <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  </a>
+
+  <button class="scroll-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="العودة للأعلى">
+    <svg viewBox="0 0 24 24"><path d="M7.41 15.41 12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg>
+  </button>
+
+<script>
+  /* ======== I18N ======== */
+  var I18N = {
+    ar: {
+      "brand.sub": "تسوية المديونيات البنكية لدى البنوك وشركات التمويل",
+      "brand.title": "تسوية مديونيات العملاء",
+      "nav.home": "الرئيسية", "nav.services": "خدماتنا", "nav.about": "من نحن",
+      "nav.iscore": "الآيسكور", "nav.calc": "الحاسبة", "nav.contact": "اتصل بنا",
+      "top.address": "17 شارع مجلس الشعب – ميدان لاظوغلى – وسط البلد – القاهرة",
+      "header.cta": "استشارة مجانية",
+      "home": "الرئيسية",
+      "hero.eyebrow": "تسوية المديونيات | الآيسكور | المحاكم الاقتصادية",
+      "hero.t1": "مديونيتك البنكية،", "hero.t2": "تُسوى بشكل مثالي.",
+      "hero.lead": "نساعدك في تسوية مديونياتك البنكية وإعادة الجدولة لدى البنوك وشركات التمويل، مع تعديل وتحسين الآيسكور (I-Score) وإدارة النزاعات البنكية أمام المحاكم الاقتصادية.",
+      "hero.ctaCalc": "احسب الوفر المتوقع", "hero.ctaServices": "تعرّف على خدماتنا",
+      "hero.trust1": "استشارات سرية وآمنة", "hero.trust2": "فريق متخصص", "hero.trust3": "حلول مخصصة وقانونية",
+      "hero.hvLabel": "تقدير استرشادي لعملية تسوية", "hero.hvSmall": "وفر متوسط متوقع",
+      "hero.ch1": "إجمالي المديونية الحالية", "hero.ch2": "بعد التسوية النقدية", "hero.ch3": "وفر إضافي من فوائد التأخير", "hero.ch3v": "إسقاط كامل",
+      "hero.s1": "سنوات خبرة", "hero.s2": "سرية تامة", "hero.s3": "تواصل مباشر",
+      "strip1.t": "تسوية", "strip1.s": "المديونيات وإعادة الجدولة",
+      "strip2.s": "تعديل وتحسين المؤشر الائتماني",
+      "strip3.t": "فوائد", "strip3.s": "إسقاط فوائد التأخير والغرامات",
+      "strip4.t": "قانوني", "strip4.s": "تمثيل أمام المحاكم الاقتصادية",
+      "services.badge": "خدماتنا",
+      "services.title": "باقة متكاملة من الخدمات المصرفية والتمويلية البنكية",
+      "services.sub": "خبرة واسعة في القوانين الاقتصادية المصرفية، ونتعامل مباشرة مع المحاكم الاقتصادية والجهات التمويلية وخبراء المحكمة لحماية حقوق عملائنا.",
+      "svc1.t": "تسوية المديونيات وإعادة الجدولة",
+      "svc1.d": "التفاوض مع البنوك وشركات التمويل لإعادة جدولة مديونياتك المتعثرة، تخفيض وإسقاط فوائد التأخير، والوصول لأفضل الصيغ القانونية والمصرفية.",
+      "svc1.tag1": "إعادة جدولة", "svc1.tag2": "إسقاط فوائد", "svc1.tag3": "دفعة واحدة أو أقساط", "svc1.link": "اطلب الخدمة",
+      "svc2.t": "تعديل وتحسين الآيسكور (I-Score)",
+      "svc2.d": "فحص تقرير الآيسكور وتحليل الجدارة الائتمانية، رفع اسمك من القوائم السلبية، وتعديل درجتك الائتمانية بخطوات رسمية وقانونية.",
+      "svc2.tag1": "تحليل التقرير", "svc2.tag2": "رفع التعثر", "svc2.tag3": "تحسين الدرجة", "svc2.link": "افحص مؤشرك الائتماني",
+      "svc3.t": "حماية حقوق العملاء والقضايا المرفوعة",
+      "svc3.d": "في ظل التوسع المصرفي قد يقع العملاء ضحية إجراءات غير منصفة أو تعسفية، نقدم الدعم القانوني للدفاع عن حقوقك أمام القضاء والجهات الرقابية.",
+      "svc3.tag1": "دفاع قانوني", "svc3.tag2": "نزاعات بنكية", "svc3.tag3": "إجراءات تعسفية", "svc3.link": "احمِ حقوقك القانونية",
+      "services.cta": "احصل على دراسة مجانية لموقفك",
+      "more.heading": "المزيد من الخدمات المتخصصة",
+      "more1": "قضايا الإفلاس والتبديد وتعويضات التأمين",
+      "more2": "الدفاع أمام الجهات الرقابية والمحاكم الاقتصادية",
+      "more3": "مبادرات البنك المركزي المخفضة للفوائد",
+      "more4": "إدارة القروض والتسهيلات والمفاوضات البنكية",
+      "about.badge": "من نحن؟",
+      "about.title": "ميزة مكتب تسوية مديونيات العملاء",
+      "about.sub": "نحن نقطة التحول الحاسمة في رحلتك المصرفية. فريق يجمع بين الخبرة المصرفية والاحترافية والفكر العصري وفقاً لقانون البنك المركزي المصري وقانون حماية حقوق العملاء.",
+      "about.quote": "الاستشارات نحفظها بالسرية التامة والخبرة المصرفية والالتزام بالقوانين والقرارات المنظمة لأعمال البنوك.",
+      "about.quoteBy": "إدارة المكتب",
+      "ftr1.t": "سرية وأمان مطلق", "ftr1.d": "استشارات محمية بالسرية التامة مع الحفاظ الكامل على خصوصية حساباتك المالية وبياناتك المصرفية أمام أي جهة.",
+      "ftr2.t": "إشراف مالي وقانوني متخصص", "ftr2.d": "نخبة من المستشارين الماليين والمحامين المتخصصين في قضايا البنوك لتمثيلك بثقة أمام القضاء والجهات الرقابية.",
+      "ftr3.t": "استعادة الاستقرار المالي والسيولة", "ftr3.d": "نساعدك على عبور الأزمات البنكية، إسقاط فوائد التأخير، والوصول لأفضل الصيغ القانونية والمصرفية لاستعادة عافيتك المالية.",
+      "ftr4.t": "حلول مبتكرة ومخصصة للأفراد والشركات", "ftr4.d": "منظومة شاملة: تسوية المديونيات، التفاوض مع البنوك وشركات التمويل، إدارة القروض والتسهيلات، والدعم المحاسبي في القضايا البنكية.",
+      "band.title": "الاستفادة من مبادرات البنك المركزي المصري",
+      "band.desc": "تخفيض الفوائد البنكية وإجراء جدولات تمويلية تيسر عليك السداد وفقاً لمعايير وشروط محددة لدفع عجلة الاقتصاد.",
+      "band.cta": "اعرف المبادرات المتاحة لك",
+      "iscore.badge": "فحص التقرير الائتماني",
+      "iscore.title": "فحص تقرير الآيسكور (I-Score) وتحليل الجدارة الائتمانية",
+      "iscore.sub": "قم برفع تقرير الآيسكور الخاص بك أو استخدم الأداة الذكية لفحص التاريخ الائتماني وتحديد نقاط القوة والضعف.",
+      "isc1.t": "تاريخ الانتظام في السداد", "isc1.d": "رصد أيام التأخير وسجلات التعثر للقروض.",
+      "isc2.t": "نسبة استغلال الحدود الائتمانية", "isc2.d": "تحليل نسبة استخدام البطاقات والتسهيلات الائتمانية.",
+      "isc3.t": "خطة الرفع من القوائم السلبية", "isc3.d": "الخطوات الرسمية والمنهجية لتعديل درجتك الائتمانية.",
+      "iscore.btn": "افتح أداة فحص الآيسكور الذكية",
+      "iscore.h3": "أداة فحص الآيسكور الذكية",
+      "iscore.p": "بعد تحليل تقريرك، نحدد موقفك الائتماني الحالي ونرسم لك خارطة طريق لتحسين درجتك مع البنوك وشركات التمويل.",
+      "iscore.label": "مؤشر الجدارة الائتمانية",
+      "iscore.c1": "تحليل تاريخ الانتظام في السداد", "iscore.c2": "تحديد إجراءات رفع التعثر", "iscore.c3": "خطة تحسين مستقبل الائتمان",
+      "iscore.wa": "أرسل تقرير الآيسكور للتحليل",
+      "calc.badge": "حاسبة تقديرية",
+      "calc.title": "حاسبة تسوية المديونيات التقديرية",
+      "calc.sub": "احسب حجم الوفر وتخفيض المديونية المتوقع. أدخل تفاصيل مديونيتك البنكية لتقدير نسبة الخصم وإعادة الجدولة المتاحة.",
+      "calc.h3": "احسب الوفر المتوقع من التسوية",
+      "calc.p": "تقدير استرشادي مبني على متوسطات السوق — النتيجة النهائية بعد دراسة ملفك.",
+      "calc.tabInd": "أفراد", "calc.tabComp": "شركات",
+      "calc.fDebt": "إجمالي المديونية (الأصل + الفوائد + غرامات التأخير)",
+      "calc.fRate": "سعر الفائدة السنوي التقريبي %",
+      "calc.fStatus": "معامل تعثر الديون",
+      "calc.fAvail": "الرصيد المتاح للسداد (مبلغ واحد أو على دفعات)",
+      "calc.s1": "متأخر حتى 3 أشهر", "calc.s2": "متأخر من 3 إلى 6 أشهر", "calc.s3": "متأخر أكثر من 6 أشهر",
+      "calc.s4": "مطالبة قضائية / توقيع أحكام", "calc.s5": "قضية تنفيذ مقيدة",
+      "calc.btn": "احسب الآن", "calc.reset": "إعادة تعيين",
+      "calc.currency": "ج.م", "calc.monthlySuffix": " / شهرياً تقريباً",
+      "calc.rTotal": "إجمالي المديونية الحالية (بعد إضافة الفوائد)",
+      "calc.rSettle": "التسوية القريبة المتوقعة (سداد عاجل)",
+      "calc.rMonthly": "إعادة الجدولة المقترحة (شهرياً)",
+      "calc.rSave": "التوفير الإجمالي المتوقع",
+      "calc.note": "* هذا تقدير استرشادي ولا يُعد التزاماً تعاقدياً. النتائج النهائية بعد دراسة ملفك من خبرائنا.",
+      "calc.wa": "احصل على دراسة مجانية كاملة",
+      "calc.alertDebt": "من فضلك أدخل قيمة إجمالي المديونية.",
+      "contact.badge": "لنتواصل", "contact.title": "تواصل مباشر وسري",
+      "contact.sub": "فريقنا المتخصص جاهز للرد على تساؤلاتك ودراسة موقفك البنكي والقانوني بأقصى سرية. نعمل على مساندة الأفراد والشركات في تخطي الأزمات البنكية.",
+      "contact.infoH3": "معلومات التواصل",
+      "contact.infoP": "نساند الأفراد والشركات في تخطي الأزمات البنكية وتسوية المديونيات المتعثرة.",
+      "contact.ph": "رقم الهاتف", "contact.em": "البريد الإلكتروني", "contact.ad": "العنوان", "contact.hrs": "مواعيد العمل",
+      "contact.adV": "17 شارع مجلس الشعب – ميدان لاظوغلى<br>وسط البلد – القاهرة",
+      "contact.hrsV": "السبت – الخميس: 10 صباحاً – 6 مساءً",
+      "form.h3": "طلب استشارة عاجلة",
+      "form.p": "سيتم التحويل مباشرة إلى الواتساب مع خبير التسويات المصرفية بعد إرسال الطلب.",
+      "form.name": "الاسم الكامل *", "form.phone": "رقم الهاتف *", "form.service": "نوع الخدمة المطلوبة",
+      "form.o1": "تسوية وإعادة جدولة مديونية", "form.o2": "تعديل وتحسين الآيسكور (I-Score)",
+      "form.o3": "حماية حقوق / قضية بنكية", "form.o4": "نزاع مع بنك أو شركة تمويل",
+      "form.o5": "قضية إفلاس أو تبديد", "form.o6": "مبادرات البنك المركزي",
+      "form.msg": "باختصار.. ما هي مشكلتك البنكية أو القانونية؟",
+      "form.submit": "إرسال عبر الواتساب",
+      "form.privacy": "بياناتك سرية تماماً ولن يتم مشاركتها مع أي جهة خارجية. جميع الاستشارات تخضع للسرية المهنية.",
+      "form.msgNew": "طلب استشارة جديدة:",
+      "form.msgName": "الاسم", "form.msgPhone": "الهاتف", "form.msgService": "الخدمة", "form.msgDetails": "التفاصيل",
+      "form.msgSite": "(تم الإرسال من الموقع)",
+      "footer.about": "متخصصون في تسوية المديونيات المتعثرة لدى البنوك وشركات التمويل، تعديل وتحسين الآيسكور، وإدارة النزاعات البنكية أمام المحاكم الاقتصادية وفقاً لقانون البنك المركزي المصري.",
+      "footer.quick": "روابط سريعة", "footer.servicesHead": "خدماتنا", "footer.contactHead": "تواصل معنا",
+      "f1": "تسوية المديونيات", "f2": "تحسين الآيسكور", "f3": "حماية حقوق العملاء",
+      "f4": "قضايا الإفلاس والتبديد", "f5": "مبادرات البنك المركزي", "f6": "المحاكم الاقتصادية",
+      "footer.wa": "تواصل عبر واتساب",
+      "footer.rights": "جميع الحقوق محفوظة © 2026 مكتب تسوية مديونيات العملاء",
+      "footer.cbe": "يعمل وفقاً لقانون", "footer.cbe2": "وقانون حماية حقوق العملاء",
+      "langSwitchTo": "English",
+      "title": "مكتب تسوية مديونيات العملاء | تسوية المديونيات البنكية وإعادة الجدولة والآيسكور",
+      "desc": "مكتب متخصص في تسوية مديونيات العملاء المتعثرين لدى البنوك وشركات التمويل، تعديل وتحسين الآيسكور (I-Score)، وإدارة النزاعات البنكية أمام المحاكم الاقتصادية."
+    },
+    en: {
+      "brand.sub": "Bank debt settlement with banks & financing companies",
+      "brand.title": "Debt Settlement Bureau",
+      "nav.home": "Home", "nav.services": "Services", "nav.about": "About Us",
+      "nav.iscore": "I-Score", "nav.calc": "Calculator", "nav.contact": "Contact",
+      "top.address": "17 Shaab Council St. – Lazoghly Sq., Downtown, Cairo",
+      "header.cta": "Free Consultation",
+      "home": "Home",
+      "hero.eyebrow": "Debt Settlement | I-Score | Economic Courts",
+      "hero.t1": "Your bank debt,", "hero.t2": "settled perfectly.",
+      "hero.lead": "We help you settle your bank debts and reschedule them with banks and financing companies, while improving your I-Score credit rating and managing banking disputes before the Economic Courts.",
+      "hero.ctaCalc": "Calculate your saving", "hero.ctaServices": "Explore our services",
+      "hero.trust1": "Confidential & secure consultations", "hero.trust2": "Specialized team", "hero.trust3": "Customized legal solutions",
+      "hero.hvLabel": "Estimate of a settlement process", "hero.hvSmall": "expected average saving",
+      "hero.ch1": "Current total debt", "hero.ch2": "After cash settlement", "hero.ch3": "Extra saving on late interest", "hero.ch3v": "Fully waived",
+      "hero.s1": "Years of experience", "hero.s2": "Full confidentiality", "hero.s3": "Direct contact",
+      "strip1.t": "Settlement", "strip1.s": "of debts & rescheduling",
+      "strip2.s": "Improving your credit rating",
+      "strip3.t": "Interest", "strip3.s": "Waiving late fees & fines",
+      "strip4.t": "Legal", "strip4.s": "Representation before Economic Courts",
+      "services.badge": "Our Services",
+      "services.title": "A complete suite of banking and financial services",
+      "services.sub": "Extensive expertise in banking economic laws. We deal directly with the Economic Courts, financing entities, and court experts to protect our clients' rights.",
+      "svc1.t": "Debt settlement & rescheduling",
+      "svc1.d": "Negotiating with banks and financing companies to reschedule your distressed debts, reduce and waive late payment interest, and reach the best legal and banking formulas.",
+      "svc1.tag1": "Rescheduling", "svc1.tag2": "Interest waivers", "svc1.tag3": "Lump sum or installments", "svc1.link": "Request the service",
+      "svc2.t": "Improving your I-Score credit rating",
+      "svc2.d": "Check your I-Score report and analyze your creditworthiness, get your name removed from negative lists, and improve your score through official legal steps.",
+      "svc2.tag1": "Report analysis", "svc2.tag2": "Deregister distress", "svc2.tag3": "Score improvement", "svc2.link": "Check your credit indicator",
+      "svc3.t": "Protecting client rights & bank-filed cases",
+      "svc3.d": "With banking expansion, clients may fall victim to unfair or arbitrary procedures. We provide legal support to defend your rights before courts and regulatory authorities.",
+      "svc3.tag1": "Legal defense", "svc3.tag2": "Banking disputes", "svc3.tag3": "Arbitrary procedures", "svc3.link": "Protect your legal rights",
+      "services.cta": "Get a free assessment of your position",
+      "more.heading": "More specialized services",
+      "more1": "Bankruptcy, dissipation & insurance compensation cases",
+      "more2": "Defense before regulators and the Economic Courts",
+      "more3": "Central Bank initiatives for lower interest",
+      "more4": "Loans & facilities management and bank negotiations",
+      "about.badge": "Who We Are",
+      "about.title": "The Debt Settlement Bureau advantage",
+      "about.sub": "We are the decisive turning point in your banking journey. A team that combines banking expertise, professionalism, and a modern mindset, in line with the Central Bank of Egypt law and the client rights protection law.",
+      "about.quote": "Our consultations are kept with absolute confidentiality, banking expertise, and full commitment to the laws and regulations governing banking business.",
+      "about.quoteBy": "Bureau Management",
+      "ftr1.t": "Absolute confidentiality & security", "ftr1.d": "Fully protected consultations with complete privacy for your bank accounts and banking data before any party.",
+      "ftr2.t": "Specialized financial & legal supervision", "ftr2.d": "An elite team of financial consultants and bank-dispute lawyers to represent you confidently before courts and regulatory bodies.",
+      "ftr3.t": "Restoring financial stability & liquidity", "ftr3.d": "We help you overcome banking crises, waive late interest, and reach the best legal and banking formulas to regain your financial health.",
+      "ftr4.t": "Innovative customized solutions for individuals & companies", "ftr4.d": "An integrated system: debt settlement, negotiation with banks and financing companies, loan and facilities management, and accounting support in banking cases.",
+      "band.title": "Benefit from Central Bank of Egypt initiatives",
+      "band.desc": "Lower bank interest rates and obtain financing rescheduling that makes repayment easier, under specific criteria and conditions to boost the economy.",
+      "band.cta": "See available initiatives",
+      "iscore.badge": "Credit Report Check",
+      "iscore.title": "Check your I-Score report & creditworthiness analysis",
+      "iscore.sub": "Upload your I-Score report or use the smart tool to examine your credit history and identify strengths and weaknesses.",
+      "isc1.t": "Payment regularity", "isc1.d": "Tracking late days and distress records on loans.",
+      "isc2.t": "Credit limit utilization rate", "isc2.d": "Analyzing the usage of credit cards and facilities.",
+      "isc3.t": "Removal from negative lists plan", "isc3.d": "Official systematic steps to improve your credit score.",
+      "iscore.btn": "Open the smart I-Score tool",
+      "iscore.h3": "Smart I-Score tool",
+      "iscore.p": "After analyzing your report, we determine your current credit position and draw a roadmap to improve your score with banks and financing companies.",
+      "iscore.label": "Creditworthiness indicator",
+      "iscore.c1": "Analyzing payment regularity", "iscore.c2": "Determining distress removal actions", "iscore.c3": "Future credit improvement plan",
+      "iscore.wa": "Send your I-Score report for analysis",
+      "calc.badge": "Estimation Calculator",
+      "calc.title": "Debt Settlement Estimator",
+      "calc.sub": "Calculate the expected saving and debt reduction. Enter your bank debt details to estimate the available discount and rescheduling ratio.",
+      "calc.h3": "Calculate your expected settlement saving",
+      "calc.p": "Indicative estimate based on market averages — the final result comes after reviewing your file.",
+      "calc.tabInd": "Individuals", "calc.tabComp": "Companies",
+      "calc.fDebt": "Total debt (principal + interest + late fees)",
+      "calc.fRate": "Approximate annual interest rate %",
+      "calc.fStatus": "Debt distress factor",
+      "calc.fAvail": "Amount available for payment (lump sum or installments)",
+      "calc.s1": "Up to 3 months late", "calc.s2": "3–6 months late", "calc.s3": "More than 6 months late",
+      "calc.s4": "Court claim / judgments", "calc.s5": "Registered execution case",
+      "calc.btn": "Calculate now", "calc.reset": "Reset",
+      "calc.currency": "EGP", "calc.monthlySuffix": "/month approx.",
+      "calc.rTotal": "Current total debt (after adding interest)",
+      "calc.rSettle": "Estimated fast settlement (urgent payment)",
+      "calc.rMonthly": "Proposed rescheduling (monthly)",
+      "calc.rSave": "Total expected saving",
+      "calc.note": "* This is an indicative estimate and not a contractual commitment. Final results come after reviewing your file by our experts.",
+      "calc.wa": "Get a complete free study",
+      "calc.alertDebt": "Please enter the total debt amount.",
+      "contact.badge": "Let's Connect", "contact.title": "Direct & confidential contact",
+      "contact.sub": "Our specialized team is ready to answer your questions and review your banking and legal position with the utmost confidentiality. We support individuals and companies in overcoming banking crises.",
+      "contact.infoH3": "Contact Information",
+      "contact.infoP": "We support individuals and companies in overcoming banking crises and settling distressed debts.",
+      "contact.ph": "Phone", "contact.em": "Email", "contact.ad": "Address", "contact.hrs": "Working hours",
+      "contact.adV": "17 Shaab Council St. – Lazoghly Sq.<br>Downtown, Cairo",
+      "contact.hrsV": "Saturday – Thursday: 10 AM – 6 PM",
+      "form.h3": "Request an urgent consultation",
+      "form.p": "You will be transferred directly to WhatsApp with our banking settlement expert after submitting the request.",
+      "form.name": "Full name *", "form.phone": "Phone number *", "form.service": "Required service type",
+      "form.o1": "Debt settlement & rescheduling", "form.o2": "I-Score improvement",
+      "form.o3": "Rights protection / banking case", "form.o4": "Dispute with a bank or financing company",
+      "form.o5": "Bankruptcy or dissipation case", "form.o6": "Central Bank initiatives",
+      "form.msg": "Briefly… what is your banking or legal problem?",
+      "form.submit": "Send via WhatsApp",
+      "form.privacy": "Your data is completely confidential and will not be shared with any third party. All consultations are subject to professional confidentiality.",
+      "form.msgNew": "New consultation request:",
+      "form.msgName": "Name", "form.msgPhone": "Phone", "form.msgService": "Service", "form.msgDetails": "Details",
+      "form.msgSite": "(Sent from the website)",
+      "footer.about": "Specialists in settling distressed debts with banks and financing companies, improving the I-Score, and managing banking disputes before the Economic Courts under the Central Bank of Egypt law.",
+      "footer.quick": "Quick Links", "footer.servicesHead": "Our services", "footer.contactHead": "Contact us",
+      "f1": "Debt settlement", "f2": "I-Score improvement", "f3": "Client rights protection",
+      "f4": "Bankruptcy & dissipation cases", "f5": "Central Bank initiatives", "f6": "Economic Courts",
+      "footer.wa": "Chat on WhatsApp",
+      "footer.rights": "All rights reserved © 2026 Debt Settlement Bureau",
+      "footer.cbe": "Operating under the", "footer.cbe2": "law and the client rights protection law",
+      "langSwitchTo": "العربية",
+      "title": "Debt Settlement Bureau | Bank debt settlement, rescheduling & I-Score",
+      "desc": "A specialized bureau for settling distressed client debts with banks and financing companies, improving the I-Score, and managing banking disputes before the Economic Courts."
+    }
+  };
+
+  var LANG = 'ar';
+
+  function t(key) {
+    return (I18N[LANG] && I18N[LANG][key]) || key;
+  }
+
+  function applyLang(lang, save) {
+    if (save) localStorage.setItem('siteLang', lang);
+    LANG = lang;
+    var root = document.documentElement;
+    root.setAttribute('lang', lang === 'en' ? 'en' : 'ar');
+    root.setAttribute('dir', lang === 'en' ? 'ltr' : 'rtl');
+    document.getElementById('langLabel').textContent = t('langSwitchTo');
+    /* page title & meta */
+    document.title = t('title');
+    document.querySelector('meta[name="description"]').setAttribute('content', t('desc'));
+    /* all text nodes */
+    document.querySelectorAll('[data-i18n]').forEach(function (el) {
+      el.innerHTML = t(el.getAttribute('data-i18n'));
+    });
+    /* placeholders */
+    document.querySelectorAll('[data-i18n-ph]').forEach(function (el) {
+      el.setAttribute('placeholder', t(el.getAttribute('data-i18n-ph')));
+    });
+    applyScramble();
+  }
+
+  function toggleLang() {
+    applyLang(LANG === 'ar' ? 'en' : 'ar', true);
+  }
+
+  function initLang() {
+    var saved = localStorage.getItem('siteLang');
+    applyLang(saved === 'en' ? 'en' : 'ar', false);
+  }
+
+  /* ======== BRAND SCRAMBLE (decode effect) ======== */
+  var scrambleFrame = null;
+
+  function scrambleText(el, finalText) {
+    if (scrambleFrame) cancelAnimationFrame(scrambleFrame);
+    el.setAttribute('aria-label', finalText);
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      el.textContent = finalText;
+      return;
+    }
+    var chars = finalText.split('');
+    var pool = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789#$%&*+_-=<>/?';
+    var span = document.createElement('span');
+    span.setAttribute('aria-hidden', 'true');
+    el.textContent = '';
+    el.appendChild(span);
+    var baseHold = 180;
+    var stagger = 52;
+    var lockTime = chars.map(function (_, i) { return baseHold + i * stagger; });
+    var start = performance.now();
+    function rand() { return pool.charAt(Math.floor(Math.random() * pool.length)); }
+    function frame(now) {
+      var elapsed = now - start;
+      var out = '';
+      for (var i = 0; i < chars.length; i++) {
+        out += elapsed >= lockTime[i] ? chars[i] : rand();
+      }
+      span.textContent = out;
+      if (elapsed < lockTime[chars.length - 1] + 140) {
+        scrambleFrame = requestAnimationFrame(frame);
+      } else {
+        span.textContent = finalText;
+      }
+    }
+    scrambleFrame = requestAnimationFrame(frame);
+  }
+
+  function applyScramble() {
+    var el = document.getElementById('brandTitle');
+    if (!el) return;
+    scrambleText(el, t('brand.title'));
+  }
+
+  /* ======== SPOTLIGHT (pointer-follow, Aceternity-style) ======== */
+  function initSpotlight() {
+    if (!(window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches)) return;
+    document.querySelectorAll('.hero, .service-card').forEach(function (el) {
+      el.addEventListener('mousemove', function (e) {
+        var r = el.getBoundingClientRect();
+        el.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+        el.style.setProperty('--my', (e.clientY - r.top) + 'px');
+      });
+    });
+  }
+
+  /* ======== NAV ======== */
+  function toggleMenu() {
+    document.getElementById('main-nav').classList.toggle('open');
+  }
+  document.querySelectorAll('#main-nav a').forEach(function (a) {
+    a.addEventListener('click', function () {
+      document.getElementById('main-nav').classList.remove('open');
+    });
+  });
+
+  function setActive() {
+    var pos = window.scrollY + 140;
+    document.querySelectorAll('section[id]').forEach(function (sec) {
+      var top = sec.offsetTop;
+      var height = sec.offsetHeight;
+      var a = document.querySelector('#main-nav a[href="#' + sec.id + '"]');
+      if (a && pos >= top && pos < top + height) {
+        document.querySelectorAll('#main-nav a').forEach(function (x) { x.classList.remove('active'); });
+        a.classList.add('active');
+      }
+    });
+  }
+  window.addEventListener('scroll', function () {
+    setActive();
+    document.querySelector('.scroll-top').classList.toggle('show', window.scrollY > 500);
+    document.querySelectorAll('.reveal').forEach(function (el) {
+      var r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight - 60) el.classList.add('visible');
+    });
+  });
+
+  function initReveal() {
+    document.querySelectorAll('.reveal').forEach(function (el) {
+      var r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight - 60) el.classList.add('visible');
+    });
+  }
+
+  /* ======== CALCULATOR ======== */
+  var currentType = 'فرد';
+
+  function setType(tp) {
+    currentType = tp;
+    document.querySelectorAll('.calc-tab').forEach(function (b) {
+      b.classList.toggle('active', b.getAttribute('data-type') === tp);
+    });
+    var legalOption = document.querySelector('#status option[value="1.1"]');
+    if (currentType === 'فرد') {
+      legalOption.disabled = true;
+      if (document.getElementById('status').value === '1.1') document.getElementById('status').value = '1.3';
+    } else {
+      legalOption.disabled = false;
+    }
+  }
+
+  function fmt(n) {
+    return new Intl.NumberFormat(LANG === 'en' ? 'en' : 'ar-EG', { maximumFractionDigits: 0 }).format(Math.round(n));
+  }
+
+  function calculate() {
+    var debt = parseFloat(document.getElementById('debt').value) || 0;
+    var rate = parseFloat(document.getElementById('rate').value) || 0;
+    var statusQ = parseFloat(document.getElementById('status').value) || 1.3;
+    var available = parseFloat(document.getElementById('available').value) || 0;
+
+    if (debt <= 0) {
+      alert(t('calc.alertDebt'));
+      document.getElementById('debt').focus();
+      return;
+    }
+
+    var total = debt * (1 + rate / 100);
+    var settlePct = currentType === 'شركة' ? 0.42 : 0.5;
+    var settle = total * settlePct;
+    if (available > 0 && available < settle) settle = Math.max(total * 0.55, available * 1.25);
+    if (available >= settle) settle = available * 0.85;
+    settle = Math.min(settle, total * statusQ * 0.9);
+
+    var monthly = total * 0.035;
+    var savings = total - settle;
+
+    document.getElementById('res-total').textContent = fmt(total) + ' ' + t('calc.currency');
+    document.getElementById('res-settle').textContent = fmt(settle) + ' ' + t('calc.currency');
+    document.getElementById('res-monthly').textContent = fmt(monthly) + ' ' + t('calc.currency') + t('calc.monthlySuffix');
+    document.getElementById('res-savings').textContent = fmt(savings) + ' ' + t('calc.currency');
+    document.getElementById('calc-result').classList.add('show');
+    document.getElementById('calc-result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function resetCalc() {
+    document.getElementById('debt').value = '';
+    document.getElementById('rate').value = '';
+    document.getElementById('available').value = '';
+    document.getElementById('status').value = '1.3';
+    document.getElementById('calc-result').classList.remove('show');
+  }
+
+  /* ======== FORM -> WHATSAPP ======== */
+  function submitForm(e) {
+    e.preventDefault();
+    var name = document.getElementById('c-name').value.trim();
+    var phone = document.getElementById('c-phone').value.trim();
+    var service = document.getElementById('c-service').value;
+    var msg = document.getElementById('c-msg').value.trim();
+    var n = decodeURIComponent(encodeURIComponent(name));
+    var text = t('form.msgNew') + '%0A' +
+      t('form.msgName') + ': ' + encodeURIComponent(n) + '%0A' +
+      t('form.msgPhone') + ': ' + encodeURIComponent(phone) + '%0A' +
+      t('form.msgService') + ': ' + encodeURIComponent(service) + '%0A' +
+      (msg ? t('form.msgDetails') + ': ' + encodeURIComponent(msg) + '%0A' : '') +
+      t('form.msgSite');
+    window.open('https://wa.me/201112825856?text=' + text, '_blank');
+    return false;
+  }
+
+  /* ======== INIT ======== */
+  initLang();
+  initReveal();
+  initSpotlight();
+</script>
+
+</body>
+</html>

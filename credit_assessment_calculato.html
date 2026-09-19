@@ -1,229 +1,3119 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>قارئ تقرير I-Score</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
-  
-  body { background-color: #eef2f6; font-family: 'Cairo', Tahoma, Arial, sans-serif !important; margin: 20px; }
-  
-  /* الحاوية الرئيسية */
-  .wrap {
-    max-width: 950px;
-    margin: 30px auto;
-    background: transparent;
-    border: none !important;
-    box-shadow: none;
-    overflow: visible;
-  }
-  
-  /* تصميم الجدول */
-  .wrap table {
-    width: 100%;
-    margin: 0 auto;
-    background: #ffffff;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    border: none !important;
-    overflow: hidden;
-    table-layout: fixed;
-  }
-  
-  /* الهيدر الاحترافي */
-  .pro-header-cell {
-    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
-    color: #ffffff;
-    padding: 30px 20px !important;
-    text-align: center;
-    border-bottom: 5px solid #f59e0b !important;
-  }
-  .pro-header-cell h1 { margin: 0; font-size: 34px; font-weight: 900; letter-spacing: 1px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+:root{--blue:#1f5f99;--dark:#153a5b;--bg:#f4f7fb;--line:#d9e2ec}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);font-family:Tahoma,Arial,sans-serif;color:#243b53}
+.app{max-width:1450px;margin:24px auto;padding:0 18px}.hero{background:linear-gradient(135deg,#153a5b,#2878b5);color:#fff;border-radius:16px;padding:24px;box-shadow:0 12px 30px rgba(21,58,91,.18)}
+.hero h1{margin:0 0 8px;font-size:28px}.hero p{margin:0;line-height:1.9}.toolbar{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0}
+button{border:0;border-radius:9px;padding:12px 18px;font-size:16px;font-weight:bold;cursor:pointer}.primary{background:#1f6fb2;color:#fff}.danger{background:#fff0f0;color:#b42318;border:1px solid #f4b4b4}.secondary{background:#fff;color:#1f5f99;border:1px solid #a9c7df}
+.customer{display:none;background:#fff;padding:12px 16px;border:1px solid var(--line);border-radius:10px;margin-bottom:14px;font-weight:bold}.customer input{width:100%;border:0;background:transparent;font:inherit;color:#243b53;text-align:right;outline:none}
+#iscore-wrap .loader{display:none;margin:20px 0;font-weight:bold;color:#2b6cb0;font-size:16px;text-align:center}#iscore-wrap #result-box{margin-top:20px;display:none;text-align:center}#iscore-wrap .total-amount{font-size:38px;font-weight:bold;color:#22543d;background:#c6f6d5;padding:15px 30px;border-radius:8px;margin-top:10px;border:1px solid #9ae6b4;display:inline-block}
+#iscore-wrap table{width:100%;border-collapse:collapse;margin-top:30px;display:none;font-size:14px;text-align:right;background:#fff;box-shadow:0 4px 12px rgba(0,0,0,.06)}#iscore-wrap th,#iscore-wrap td{border:1px solid #e2e8f0;padding:11px;text-align:center;vertical-align:middle}#iscore-wrap th{background:#2b6cb0;color:#fff}#iscore-wrap tr:nth-child(even){background:#f7fafc}
+#iscore-wrap .ignored{color:#e53e3e;font-weight:bold}#iscore-wrap .calculated{color:#d69e2e;font-weight:bold}#iscore-wrap .normal{color:#22543d;font-weight:bold}#iscore-wrap .facility-name{font-weight:bold;color:#2b6cb0}#iscore-wrap .bank-name{font-weight:bold;color:#4a5568}#iscore-wrap .bad-debt-row{background:#fed7d7!important}#iscore-wrap .bad-debt-row td{color:#9b2c2c!important;font-weight:bold;border-color:#feb2b2!important}#iscore-wrap .payment-warning-row{background:#fff5f5!important}#iscore-wrap .payment-excepted-row,#iscore-wrap .payment-excepted-row td{background:#fef08a!important;color:#b45309!important;font-weight:bold!important;border-color:#fbbf24!important}#iscore-wrap .bkt-warning-yellow{color:#d97706;font-weight:bold}#iscore-wrap .history-cell{font-family:Consolas,'Courier New',monospace;font-size:13px;line-height:1.6;white-space:nowrap}#iscore-wrap .bkt-warning{color:#e53e3e;font-weight:bold}#iscore-wrap .bkt-safe{color:#38a169;font-weight:bold}#iscore-wrap .bkt-none{color:#a0aec0}
+.hidden-support{display:none!important}@media(max-width:800px){.table-scroll{overflow:auto}#iscore-wrap table{min-width:1050px}.hero h1{font-size:23px}}
 
-  /* تصميم خلايا الجدول */
-  .wrap td.data-cell {
-    padding: 20px !important;
-    background: #ffffff;
-    border-bottom: 1px solid #f1f5f9 !important;
-    vertical-align: middle;
-    text-align: center;
-  }
-  
-  .wrap td.lbl-pro {
-    background: #f8fafc !important;
-    color: #0f172a !important;
-    font-size: 18px;
-    font-weight: 800;
-    border-right: 5px solid #3b82f6 !important;
-    padding: 20px !important;
-    border-bottom: 1px solid #f1f5f9 !important;
-    vertical-align: middle;
-    text-align: center;
-  }
-  
-  /* تصميم الحقول */
-  .wrap input.pro-inp {
-    width: 100%;
-    border: 2px solid #cbd5e1 !important;
-    border-radius: 10px !important;
-    padding: 12px !important;
-    font-size: 20px !important;
-    font-weight: 700 !important;
-    color: #0f172a !important;
-    background: #f8fafc !important;
-    text-align: center;
-    transition: all 0.3s ease;
-    box-sizing: border-box;
-    font-family: 'Cairo', sans-serif !important;
-  }
-  .wrap input.pro-inp:focus {
-    border-color: #3b82f6 !important;
-    background: #ffffff !important;
-    outline: none;
-    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15) !important;
-  }
-  .wrap input.pro-inp.read { background: #e2e8f0 !important; color: #475569 !important; border-color: #cbd5e1 !important; }
-  
-  /* تفاعل الخلايا مع الأكواد البرمجية */
-  .wrap td.ok { background: #f0fdf4 !important; }
-  .wrap td.ok input.pro-inp { color: #16a34a !important; background: #dcfce7 !important; border-color: #86efac !important; }
-  .wrap td.bad { background: #fef2f2 !important; }
-  .wrap td.bad input.pro-inp { color: #dc2626 !important; background: #fee2e2 !important; border-color: #fca5a5 !important; }
-  
-  /* التوقيع أسفل الجدول */
-  .pro-footer-cell {
-    text-align: center;
-    padding: 20px !important;
-    background: #0f172a;
-    color: #f59e0b;
-    font-size: 18px;
-    font-weight: 900;
-    letter-spacing: 1.5px;
-  }
-  
-  /* واجهة الأزرار */
-  .pro-actions {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 12px;
-    padding: 30px 10px 10px;
-  }
-  .pro-btn {
-    padding: 12px 24px !important;
-    font-size: 17px !important;
-    font-weight: 800 !important;
-    font-family: 'Cairo', sans-serif !important;
-    border: none !important;
-    border-radius: 12px !important;
-    cursor: pointer !important;
-    color: #fff !important;
-    transition: all 0.3s ease !important;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important;
-  }
-  .pro-btn:hover { transform: translateY(-3px) !important; box-shadow: 0 6px 15px rgba(0,0,0,0.15) !important; }
-  .btn-primary { background: #2563eb !important; }
-  .btn-success { background: #16a34a !important; }
-  .btn-warning { background: #d97706 !important; }
-  .btn-danger { background: #dc2626 !important; }
-  
-  /* واجهة التعليمات */
-  .pro-notes {
-    margin: 20px auto 30px;
-    padding: 25px;
-    background: #ffffff;
-    border-right: 6px solid #3b82f6;
-    border-radius: 15px;
-    font-size: 16px;
-    line-height: 2.2;
-    color: #334155;
-    text-align: right;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-  }
-  .pro-notes strong { color: #1e3a8a; font-size: 20px; display: block; margin-bottom: 15px; }
+.ownership-banner{text-align:center;margin-bottom:16px;padding:14px 18px;background:#fff;border:1px solid #d9e2ec;border-radius:12px;box-shadow:0 5px 16px rgba(21,58,91,.08)}
+.ownership-banner .office-title{font-size:22px;font-weight:900;color:#153a5b;line-height:1.7}
+.ownership-banner .copyright{font-size:14px;font-weight:bold;color:#61758a;margin-top:3px}
+.whatsapp-btn{background:#25D366;color:#fff;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:9px;padding:12px 18px;font-size:16px;font-weight:bold;box-shadow:0 4px 12px rgba(37,211,102,.22)}
+.whatsapp-btn:hover{background:#1fb958}
 </style>
+</head><body><main class="app">
+<section class="ownership-banner" aria-label="حقوق الملكية">
+  <div class="office-title">مكتب تسوية مديونيات العملاء المتعثرين فى السداد</div>
+  <div class="copyright">جميع حقوق الملكية محفوظة | تحديث 2026</div>
+</section>
+<section class="hero"><h1>قارئ تقرير I-Score</h1><p>ارفع تقرير الـ I-Score بصيغة PDF لاستخراج التسهيلات والقروض والكروت، وتحديد القسط المعتمد، وعرض التأخيرات والشيكات المرتدة والديون المعدومة والإجراءات القضائية.</p></section>
+<div class="toolbar"><button class="primary" onclick="document.getElementById('pdfUploadIscore').click()">رفع تقرير I-Score PDF</button><button class="danger" onclick="window.resetIscoreIntegration&&window.resetIscoreIntegration()">مسح التقرير</button><button class="secondary" onclick="window.saveIscoreTableImage&&window.saveIscoreTableImage()">حفظ النتيجة كصورة</button><a class="whatsapp-btn" href="https://wa.me/201112825856?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D9%8B%D8%8C%20%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%B7%D9%84%D8%A8%20%D8%A7%D8%B3%D8%AA%D8%AE%D8%B1%D8%A7%D8%AC%20%D8%AA%D9%82%D8%B1%D9%8A%D8%B1%20I-Score." target="_blank" rel="noopener noreferrer" aria-label="طلب استخراج I-Score عبر واتساب">طلب استخراج ايسكور عبر واتساب</a></div>
+<input id="pdfUploadIscore" type="file" accept="application/pdf" hidden onchange="window.processIscoreUpload&&window.processIscoreUpload(event)">
+<div class="customer" id="customerCard"><input id="customerInfo" readonly placeholder="بيانات العميل"></div><input id="loans" class="hidden-support" value="0">
+<div id="iscore-wrap"><div id="iscoreExportArea"><div class="loader" id="loading">جاري الفحص المتقدم واستخراج البيانات... ⏳</div><div id="result-box"><div style="color:#4a5568;font-size:18px;font-weight:bold">إجمالي الأقساط المعتمدة المستحقة:</div><div class="total-amount" id="totalValue">0</div></div><div id="warnings-summary" style="display:none;width:100%;margin-top:25px;text-align:right"></div><div class="table-scroll"><table id="detailsTable"><thead><tr><th>جهة التمويل</th><th>نوع التسهيل</th><th>إجمالي المبلغ</th><th>القسط</th><th>مدة القرض</th><th>نوع السداد</th><th>سجل السداد (BKT)</th><th>القاعدة المطبقة</th><th>القسط المعتمد</th></tr></thead><tbody id="detailsBody"></tbody></table></div></div></div>
+<script>
+const companyCodes = {"CB01280001":"المصرف المتحد","CB13000001":"البنك التجاري الدولي مصر","CB14000001":"بنك بلوم - مصر","CB15000001":"بنك الامارات دبى الوطنى","CB17000001":"بنك قناة السويس","CB19000001":"بنك ابوظبى الاول مصر","CB20000001":"البنك الاهلي المتحد","CB23000001":"بنك فيصل الاسلامى المصرى","CB24000001":"البنك الاهلى الكويتى- مصر","CB25010001":"مصرف ابو ظبى الاسلامى","CB26000001":"بنك البركه – مصر","CB27000001":"بنك الكويت الوطنى - مصر","CB30000001":"بنك ابو ظبى التجارى-مصر","CB32000001":"البنك المصري الخليجي","CB33000001":"بنك أتش أس بى سى مصر","CB34000001":"بنك العمال المصري","CC00010001":"بريميوم انترناشيوناال","CC96010001":"شركة اميكس مصر","FB36000001":"ذي بنك اوف نوفا سكوشيا","FB37000001":"البنك الوطني العماني","FB38000001":"بنك المشرق","FB39000001":"البنك العربي","FB51000001":"بنك أبو ظبي الأول","FB53000001":"سيتي بنك ان ايه / مصر","FB57000001":"البنك الأهلي اليوناني","FS00010001":"الشركة المصرية للتخصيم ايجيبت فاكتورز","FS00020001":"كاتليست بارتنرز","FS00030001":"تشارتر للاستشارات الماليه","FS00040001":"شركة القاهرة للتخصيم","FS00060001":"شركة مصر لرأس المال المخاطر","FS00080001":"بيت الخبرة للتخصيم تكنو فكتورينج","FS00100001":"بلتون لرأس مال المخاطر","FS00110001":"شركة توسع للتخصيم","FS00120001":"شركة كونتكت للتخصيم","FS00130001":"شركه ضمان مخاطر الائتمان","FS00140001":"كريديتر للتكنولوجيا المالية","FS00150001":"كيو ان بى الاهلى للتخصيم","FS00160001":"جلوبال للتخصيم","FS98890001":"شركة اندورس للتمويل و الخدمات المالية غير المصرفية","HS00010001":"مدينه نصر للاسكان والتعمير","HS00020001":"شركة مجموعة عامر القابضة","HS00040001":"اشجار سيتى للتنمية و التطوير","HS00050001":"بالم هيلز للتعمير","HS00060001":"ايه اى سى فاينانس للتجارة","HS00070001":"مجموعة مطاوع جروب للاستثمار العقارى و السياحى","HS00080001":"الشركة الدولية للتنمية العقارية و ادارة المشروعات","HS00090001":"شركة البطل للإسكان و التعمير","HS00091001":"ماونتن فيو","HS00092001":"بورتو جروب","HS00093001":"الشركة الخليجية للانشاء و للتعمير","IB41000001":"التجاري وفا بنك ايجيبت ش . م . م","IB42000001":"ميد بنك","IB43000001":"بنك الشركة المصرفية العربية الدولية","IB44000001":"بنك كريدي أجريكول - مصر","IB45000001":"بنك قطر الوطنى الاهلى","IB46000001":"بنك الاستثمار العربي - المصرف الاتحادي العربي للتنمية والاستثمار","IB47000001":"بنك التعمير والاسكان","IB49000001":"بنك المؤسسة العربية المصرفية - مصر","IB50000001":"البنك المصري لتنمية الصادرات","IB54000001":"البنك العربي الافريقي الدولي","LF08860001":"الشركة المصرية لخدمات التأجير التمويلى-فين ليس","LF98500001":"الشركة الدولية للتاجير التمويلي- انكوليز","LF98520001":"شركة كوربليس للتاجير التمويلي","LF98530001":"سماء للتمويل","LF98540001":"شركة التوفيق للتاجير التمويلى","LF98550001":"املاك للتمويل مصر","LF98560001":"تكنوليس للتأجير التمويلى","LF98570001":"شركة الاهلى الكويتي - مصر للتأجير التمويلي","LF98590001":"جي بي للتاجير التمويلي","LF98600001":"شركة ترو فاينانس للتأجير التمويلى - تروليس","LF98610001":"شركة كيو ان بى للتأجير التمويلى","LF98620001":"ابو ظبى الإسلامى للتمويل-اديفاينانس","LF98630001":"تمويل للتأجير التمويلى","LF98640001":"شركة ارتشر فاينانس للتأجير التمويلى","LF98670001":"الاهلى للتأجير التمويلى","LF98680001":"كونتكت للتأجير التمويلى","LF98700001":"لمجموعة المالية هيرميس للحلول التمويلية","LF98710001":"العربى الافريقى الدولى للتأجير التمويلى","LF98720001":"جلوبال ليز للتأجير التمويلى","LF98730001":"شركة يو اي فاينانس","LF98740001":"شركة التعمير للتأجير التمويلى (الاولى)","LF98750001":"شركة انماء للتأجير التمويلى","LF98760001":"يونايتد للتمويل","LF98770001":"بى ام ليس للتأجير التمويلى","LF98780001":"تنمية للتأجير التمويلى ايجى ليس","LF98800001":"كايرو للتأجير التمويلى","LF98810001":"شركة التعمير والاسكان للتأجير التمويلى","LF98820001":"زيلا للتمويل","LF98830001":"شركة اور للتأجير التمويلى","LF98860001":"الشركة المصرية لخدمات التأجير التمويلى-فين ليس","LF98870001":"شركة كتاليست للتأجير التمويلي","LF98900001":"شركة بلتون للتأجير التمويلى","LF98910001":"شركة إيزيليس للتأجير التمويلي","LF98920001":"سكاى للتأجير التمويلى","LF98930001":"تدبير للتأجير التمويلى والتخصيم","LF98940001":"شركة بروليس للتأجير التمويلي","LF98950001":"انفستيا للتأجير التمويلى","LF98960001":"مصر فاينانس للخدمات المالية","LF98970001":"شركة اليفات للتأجير التمويلى","LF98980001":"شركة النيل للتأجير التمويلى","LF98990001":"شركة أمل مصر للتأجير التمويلى","MF00010001":"شركة تنميه لخدمات المشروعات الصغيره","MF00020000":"الاتحاد المصرى للتمويل متناهى الصغر","MF00020001":"جمعية رجال اعمال اسكندرية","MF00020002":"الجمعيه المصريه لتنمية و تمويل المشروعات","MF00020003":"جمعية رجال اعمال و المستثمرين بالدقهلية","MF00020008":"الشركة الاولى للتمويل متناهى الصغر","MF00020010":"شركة فاروس للتمويل متناهي الصغر","MF00020011":"شركة كاش للتمويل متناهي الصغر","MF00020012":"شركة فاروس للتمويل متناهى الصغر","MF00020013":"اور لتمويل المشروعات متناهية الصغر","MF00020015":"شركة فينبى للتمويل متناهى الصغر","MF00020018":"شركة الخير للتمويل المتناهي الصغر","MF00021002":"جمعية التنمية الاقتصادية والاجتماعية لأصحاب المعاش المبكر -القاهرة","MF00021004":"جمعية شروق مصر للقروض متناهية الصغر","MF00021005":"جمعية سيدات الاعمال لتنمية الصناعات الصغيرة و المتوسطة","MF00021006":"الجمعية المصرية لتنمية وتطوير المشروعات – لييـــد","MF00021007":"المؤسسه المصرية للتمويل","MF00021008":"جمعية تنمية المجتمع المحلى بالكوم الأحمر - بلقاس الدقهلية","MF00021009":"جمعية تنمية المشروعات الصغيرة والنهوض بالمجتمع - سجدا الجيزة","MF00021014":"جمعية تنمية المجتمع المحل بالمفتى كفر شكر قليوبية","MF00021016":"جمعية تنمية المجتمع بميت ابو العربي مركز الزقازيق","MF00021019":"مؤسسة أفاق جديدة للتنمية الاجتماعية","MF00021020":"جمعية قرية الأمل القاهرة","MF00021021":"مؤسسة أنا المصري","MF00021026":"جمعية سيدات اعمال المستقبل","MF00021027":"جمعية رجال اعمال اسوان","MF00021028":"جمعية نادي رجال اعمال- نجع حمادى","MF00021029":"جمعية رجال الاعمال لتنمية المجتمع بالشرقية","MF00021030":"جمعية تنمية المشروعات الصغيرة بنى سويف ريدك","MF00021032":"جمعية رجال الاعمال باسيوط","MF00021034":"جمعية تنمية المجتمع المحلي بعلى حموده بني سويف","MF00021037":"جمعية رجال الاعمال للتنمية بفرشوط","MF00021040":"الجمعية المصرية للتنمية الشاملة","MF00021041":"جمعية تنمية المجتمع بطحلة-القليوبية","MF00021043":"جمعية تنمية المجتمع بالعركي - نجع العركي","MF00021051":"جمعية فكرة للتنمية ورعاية الباعة الجائلين - المنيا","MF00021052":"المؤسسه الكاثوليكيه للتنميه الشامله","MF00021054":"جمعية سان مارك بالمنيا","MF00021057":"جمعية المحافظة على القران الكريم بالتناغة الشرقية بأسيوط","MF00021062":"جمعية تنمية البيئه والمجتمع بدندرة - قنا","MF00021064":"جمعية تنمية المشروعات الصغيرة بالفيوم","MF00021065":"جمعية تنمية المجتمع بفرشوط","MF00021067":"الجمعية المصرية لشباب المستثمرين ورجال الاعمال بسوهاج","MF00021070":"الجمعية المصريةللتدريب والتنمية للمشروعات الصغيرة","MF00021071":"مؤسسه الوفاء","MF00021072":"جمعية تنمية المجتمع ببندف مركز منيا القمح الشرقية","MF00021076":"مؤسسة حواء المستقبل - المنيا","MF00021082":"جمعية تنمية المجتمع بفدمين الفيوم","MF00021085":"جمعية تنمية المجتمع بتلراك مركز أولاد صقر الشرقية","MF00021089":"جمعية تنمية المجتع الريفى بقرية ديبونو","MF00021090":"جمعية مصر المحروسة بلدي","MF00021097":"جمعية رابطة المرأة العربية القاهرة","MF00021098":"جمعية الشابات المسلمات بالفشن","MF00021103":"جمعية تنمية البيئة والأسرة - فدا بقنا","MF00021104":"مؤسسة ابناء مصر للتنمية المستدامة - ارض سلطان -المنيا","MF00021109":"جمعية تنمية المجتمع بالبسايسة","MF00021111":"جمعية نهوض وتنمية المرأة","MF00021113":"جمعيه الحياة الافضل للتنميه المستدامه وتنميه المجتمع بأسيوط","MF00021114":"باب رزق جميل","MF00021115":"الجمعية الخيرية الرفاعية بتلة","MF00021119":"مؤسسة دعم وتنمية منشآت الأعمال – بست","MF00021121":"جمعيه الخطاريه لتنميه المجتمع","MF00021122":"جمعية السلام المسيحي الخيري بقوص - قنا","MF00021123":"الجمعية المصرية للتنمية بفرشوط قنا","MF00021124":"جمعية الرؤية الجديدة للتنمية بالمنيا","MF00021125":"الجمعية النسائية لتحسين الصحة - المفتى كفر شكر- القليوبية","MF00021126":"جمعية المستقبل الخيرية باولاد عمرو قنا","MF00021130":"جمعية المحروسة للتنمية - بنى حسن - الشرقية","MF00021132":"جمعية نادي رجال اعمال- نجع حمادى","MF00021133":"جمعية تنمية المجتمع لرعاية المراة الريفية بهرماس","MF00021135":"جمعية تنمية المجتمع بالطيبة - الزقازيق","MF00021143":"جمعية تنمية المجتمع ورعاية الأطفال ذوى الإحتياجات الخاصة بسوهاج","MF00021145":"مؤسسة المستقبل لتنمية المجتمع بأرض سلطان المنيا","MF00021147":"جمعية المرأة للتنمية الإنسانية - حياتي القليوبية","MF00021149":"جمعية تنمية المجتمع بالعزية","MF00021150":"الجمعية المصرية لتنظيم الأسرة بأسوان","MF00021151":"جمعية علشانك يا بلدي للتنمية المستدامة","MF00021156":"جمعية فجر الأسلام الخيرية لرعاية الأيتام والفقراء وتنمية المجتمع المحلي -بني سويف","MF00021157":"مؤسسة المصريين للتنمية الشاملة المنيا","MF00021158":"جمعية المستقبل لأجيال مصر للتنمية","MF00021161":"الجمعية الخيرية لأبناء الفيوم بالأسكندرية","MF00021166":"مؤسسة اغابي للتنمية - ارض سلطان-المنيا","MF00021169":"جمعية تنمية المجتمع بنجع العكرمي","MF00021173":"جمعية المستقبل للتمويل الاصغر","MF00021174":"المؤسسه الاولي للتمويل متناهي الصغر","MF00021177":"جمعية ام القرى لتنمية المجتمع المحلى - كوم امبو","MF00021178":"جمعية تنمية المجتمع - الاقالتة- الاقصر","MF00021180":"الجمعية الإنجيلية للتنمية المتواصلة بالمنيا","MF00021181":"مؤسسة معاً للتنمية والبيئة المنيا","MF00021183":"جمعية النصر للتنمية الإجتماعية بالسيل الريفي بدار الضيافة أسوان","MF00021188":"جمعية العفاف للنهوض بالمرأة والتنمية - باسيوط","MF00021189":"جمعية تنمية المجتمع بالعليقات","MF00021194":"الجمعية الخيرية لتنمية المجتمع خدمة البيئة بالقضاة كفر الدوار - البحيرة","MF00021196":"جمعية تنمية المجتمع بخارفة قنا","MF00021200":"جمعية تنمية المجتمع بلانة ثالث اسوان","MF00021203":"الجمعية الخيرية للاسلامية لتنميةالمجتمع بابنوب اسيوطب","MF00021206":"مؤسسة تنمية الأسرة المصرية بأسوان","MF00021209":"جمعية تنمية المجتمع - الشيخ عيسي","MF00021213":"جمعية تنمية المجتمع بكفر سبطاس - مركز طنطا الغربيه","MF00021214":"جمعية تنمية المجتمه - بشبشير الحصة -الغربية","MF00021215":"جمعيه تنميه المجتمع لرعايه الايتام بأبنوب اسيوط","MF00021217":"جمعية الشبان المسيحية بأسوان","MF00021218":"جمعية الرعاية الإجتماعية الخيرية ببرج مغيزل كفر الشيخ","MF00021219":"جمعية تنمية المجتمع المحلى - جزيرة ببا - بني سويف","MF00021220":"جمعية تنمية المجتمع المحلي بالشراونة قبلى - أسوان","MF00021221":"جمعيه تنميه المجتمع بمشال بسيون الغربيه","MF00021222":"جمعية رابطة المرأة العربية المنيا","MF00021227":"الجمعية النسائية للتنمية الشاملة - الدهسة - فرشوط","MF00021231":"جمعية تنمية المجتمع للمشروعات الصغيرة و الحرفية بسوهاج","MF00021242":"جمعية النداء للتنمية الاجتماعية-دشنا","MF00021244":"جمعية الشبان المسلمين بالقصير - البحر الاحمر","MF00021245":"جمعية تنمية المجتمعات المحلية والمشروعات الصغيرة - المبادرة","MF00021251":"جمعية تنمية المجتمع بأبنود","MF00021252":"أيادينا للتنمية الشاملة","MF00021255":"جمعية تنمية المجتمع بالوقف-قنا","MF00021256":"جمعية سيدات الاعمال باسيوط","MF00021258":"جمعية تنمية المجتمع بدكران - أبو تيج أسيوط","MF00021259":"جمعية تنمية المجتمع بالهيشة -العقال القبلي- البداري","MF00021260":"جمعية كنوز البردويل للتنمية الشاملة العريش شمال سيناء","MF00021261":"جمعية ابو بكر لتنمية المجتمع بالطود- الاقصر","MF00021262":"جمعية شباب مصر لتنمية المجتمع - الفيوم","MF00021263":"جمعية الرجاء والمحبة ، بنجع حمادى-قنا","MF00021264":"جمعية تنمية المجتمع بساحل سليم بأسيوط","MF00021274":"جمعيه الوحدة الاجتماعيه السكنيه بمدينه الصف - الجيزه","MF00021276":"الجمعية المصرية للشباب والتنمية بسوهاج","MF00021283":"جمعية تنمية المجتمع المحلى - الزيتون","MF00021285":"جمعيه تنميع المجتمع المحلى بلفيا - بنى سويف","MF00021286":"جمعية خريجى أبيس للتنمية-الأسكندرية","MF00021288":"جمعية أصدقاء الوطن للتنمية الشاملة بالمنيا","MF00021289":"جمعية تتنمية المجتمع بسجين الكوم - مركز قطور- الغربية","MF00021295":"جمعية تنمية المجتمع بدمشقين","MF00021299":"جمعية تنمية المجتمع بأم شلباية ادفو","MF00021301":"جمعية الغد المشرق بالمنيا","MF00021304":"جمعية تنمية المجتمع الزراعي- اولاد يحي سوهاج","MF00021306":"المؤسسة المصرية للتنمية والتدريب بسوهاج","MF00021310":"جمعية تنمية المجتمع ببئر عنبر قنا","MF00021313":"الجمعية النسائية لتنمية المرأة الريفية بحجازة قبلى - نجع العوارى - قنا","MF00021314":"جمعية تنمية المجتمع -نجع زيدان -قنا","MF00021320":"جمعية تنمية المجتمع المحلي - الزرابي بني سويف","MF00021323":"جمعية تنظيم الأسرة بالمنيا","MF00021324":"مؤسسة سان مينا للخدمات الانسانية - ارض سلطان - المنيا","MF00021325":"جمعية الشابات المسيحية بالمنيا","MF00021326":"جمعية سيدات الاعمال لتنمية المجتمع والمشروعات الصغيرة","MF00021330":"جمعية تنمية المجتمع بزاوية سلطان-المنيا","MF00021346":"جمعية تنمية المجتمع بالغنايم أسيوط","MF00021347":"جمعية تنمية المجتمع بالعونة اسيوط","MF00021352":"الجمعية المصرية لمبادرات المجتمع للتنمية أسوان","MF00021356":"جمعية تنمية المجتمع- الترامسة","MF00021359":"جمعية تنمية قدرات المجتمع و حماية البيئة بقنا ريديك","MF00021360":"جمعية تنمية المجتمع بموشا-أسيوط","MF00021362":"جمعية تنمية المجتمع للمرأة الريفية والحضرية بقنا","MF00021373":"كاريتاس مصر","MF00021375":"الجمعية الأقليمية للتنمية والمشروعات بسوهاج","MF00021384":"جمعية تنمية المجتمع ببوريج مركز قطور- الغربية","MF00021400":"الجمعية الخيريةالاسلامية بنجع الدار الأقصر","MF00021405":"الجمعية المصرية لمحبي العلم والعلماء- الأسكندرية","MF00021406":"جمعيه تنميه المجتمع بجرجا","MF00021413":"جمعية شموع للتنمية المستدامة - المنيا","MF00021416":"جمعية رجال الاعمال بشمال سيناء","MF00021420":"جمعية الصعيد للتربية والتنمية- القاهرة","MF00021422":"جمعية الخدمات الاجتماعية بجزيرة مطيرة قنا","MF00021424":"جمعية الطفولة والتنمية باسيوط","MF00021425":"جمعية تنمية الاسرة و المجتمع المحلى الفيوم","MF00021427":"جمعيه الامام الحسين الدينيه الخيريه","MF00021429":"جمعية تنظيم الأسرة","MF00021430":"جمعية تنمية المجتمع المحلى نزلة باقور اسيوط","MF00021435":"جمعية تنمية المجتمع المحلى طوخ الاقلام","MF00021443":"جمعية مفتاح الحياة - الأقصر","MF00021446":"مركز خدمات التنمية والسكان","MF00021463":"جمعيه تنميه المجتمع نقاده قنا","MF00021477":"جمعية الشابات المسلمات بالعريش-شمال سيناء","MF00021502":"مؤسسة فكرة للتعليم والتنمية","MF00021518":"جمعية الواحة الجميلة لذوي الاحتياجات الخاصة وتنمية المجتمع الفيوم","MF00021527":"مؤسسة رخاء لتمويل وتطوير المشروعات الصغيرة","MF00021533":"جمعية المصري للتنمية والتدريب","MF00021541":"جمعية تنمية المجتمع بنجع سبع أسيوط","MF00021543":"جمعية تنمية المجتمع بالعجمين الفيوم","MF00021548":"جمعية النهضة للاغاثة والتنمية بأبو غرير ابو قرقاص المنيا","MF00021552":"جمعية انا مصرى للتنمية والتدريب بقنا","MF00021553":"مؤسسة وادي النيل لرعاية عمال المحاجر المنيا","MF00021582":"مؤسسة بداية جديدة - ابو قرقاص المنيا","MF00021594":"المجمع الخيرى الاسلامى بسفلاق-سوهاج","MF00021609":"جمعية سيكم للتنمية - بلبيس الشرقية","MF00021615":"الجمعية الايطالية للتمكين والتضامن ماييس","MF00021621":"جمعية رعاية الصيادين وعمال الصيد-أسوان","MF00021635":"جمعية تنمية المجتمع المحلى بكوم الاطرون القليوبية","MF00021639":"جمعية اجيال المستقبل للتنمية\\ المنيا","MF00021646":"جمعية تنمية المجتمع بدوينة - ابو تيج","MF00021651":"جمعية تنمية المجتمع - بنشيل الغربية","MF00021659":"جمعيه تنميه المجتمع بالمنيره الحديثه قنا","MF00021673":"جمعية كوم المحرص لتنمية المجتمع -أو قرقاص","MF00021684":"مؤسسة الكرمة للخدمات الانسانية بالمنيا","MF00021697":"مؤسسة منة الله للتنمية - الجيزة","MF00021701":"مؤسسة أولاد الملوك للتنمية الشاملة المنيا","MF00021710":"جمعية تنمية المجتمع بالصالحية ومقرها البياضية","MF00021732":"جمعية المحبة لتنمية المجتمع-صفط-المنيا","MF00021751":"جمعيه الجزويت والفرير للتنميه بالمنيا","MF00021755":"جمعية وادى النيل للتنمية طهطا","MF00021763":"جمعية الصحوة المصرية للتنمية الثقافية - الدقي الجيزة","MF00021768":"جمعية الشروق لتنمية المرأة الريفية بنقادة - قنا","MF00021780":"جمعية البر لتنمية المجتمع المحلي بسيوة - مرسي مطروح","MF00021784":"جمعية ريادة الاعمال لتنمية المجتمع بطهطا بسوهاج","MF00021791":"جمعية أصدقاء المرور بأسيوط","MF00021801":"جمعيه تنميه المجتمع بالشاميه ساحل سليم اسيوط","MF00021806":"جمعية تنمية المجتمع بنجع عمارة نجع حمادي قنا","MF00021810":"مؤسسة أضواء المستقبل للتنمية بالقاهرة","MF00021815":"مؤسسة نهضة بني سويف","MF00021821":"جمعية تحديث الصناعات الصغيرة - جناكليس الاسكندرية","MF00021856":"مؤسسة الايدى الامينة للتنمية الشاملة بنزلة العمودين","MF00021864":"مؤسسة خالد عبد الله للرعاية الأجتماعية بالقاهرة","MF00021869":"مؤسسة الحق والحياة للتنمية الشاملة بالمنيا","MF00021870":"جمعية ابناء مصر الحرة للخدمات الاجتماعية والاعمال الخيرية بالمنيا","MF00021872":"جمعيه نهضه مصر للتنميه الشامله","MF00021900":"جمعية تنمية المجتمع نجع الحجيرى فقط قنا","MF00021903":"مؤسسة الرعاية الاسقفية للخدامت الاجتماعية الزمالك","MF00021918":"مؤسسة د/عبد الأحد جمال الدين للتنمية","MF00021931":"مؤسسة امان للتنمية البشرية وتنمية المجتمع بأسيوط","MF00021968":"مؤسسة حياة للتنميى المستدامة المنيا","MF00021978":"جمعية نور الحياة للتنمية والتدريب - ابو قرقاص - المنيا","MF00021979":"جمعية الكرامة لتنميىة المجتمعات المحليه","MF00021986":"جمعية شباب المحرص للتنمية والاعمال الخيرية - المنيا","MF00021987":"مؤسسة حلم لتمويل المشروعات المتناهية الصغر - بنى سويف","MF00022007":"جمعية تنمية المجتمع بالصلعا","MF00030001":"شركه ريفى لخدمات القروض متناهيه الصغر","MF00040001":"شركة تساهيل للتمويل متناهى الصغر","MF00050001":"مؤسسة التضامن للتمويل الاصغر","MF00060001":"جمعية تنمية المشروعات الصغيرة ببور سعيد","MF00070001":"الهيئة القبطية الإنجلية للخدمات الاجتماعية","MF00090001":"(مؤسسة مصر -الخير","MF00100001":"سنده للتمويل المتناهى الصغر","MF00110001":"امان لتمويل المشروعات المتناهية الصغر","MF00120001":"تمويلى للمشروعات متناهية الصغر","MF00121007":"ارادة لتمويل المشروعات متناهية الصغر","MF00130001":"فورى للتمويل متناهى الصغر","MF00131007":"انجاز للتمويل متناهى الصغر","MF00140001":"بساطة لتمويل المشروعات الصغيرة و المتوسطة و متناهية الصغر","MF00150001":"المؤسسة العامة للتكافل الاجتماعى","MF00160001":"الجمعية المصرية لمساعدة صغار الصناع و الحرفين","MF00180001":"شركة الاهلى كابيتال للتمويل متناهى الصغر-تمكين","MF00190001":"بدايتي - للتمويل متناهي الصغر","MF00200001":"ايزي كريديت للتمويل متناهى الصغر","MF00210001":"المصرية للتمويل متناهي الصغر - مكسب","MF00220001":"ثقة للتمويل متناهى الصغر","MF00230001":"شاري للتمويل متناهي الصغر","MG98000001":"التعمير للتمويل العقاري (الاولي","MG98010001":"المصرية للتمويل العقاري","MG98020001":"تمويل للتمويل العقاري","MG98040001":"تمويل الامارات","MG98050001":"بداية للتمويل العقارى","MG98060001":"العربى الافريقى الدولى للتمويل العقارى","MG98070001":"شركة سكن للتمويل العقارى","MG98080001":"الاهلى المتحد للتمويل","MG98090001":"شركة الاهلى للتمويل العقارى","MG98120001":"شركة كونتكت للتمويل العقارى","MG98130001":"سي اي للتمويل العقاري","MG98140001":"ام ال اف للتمويل العقارى و التأجير التمويلى و التخصيم","MG98150001":"شركة بلتون للتمويل العقارى","MG98160001":"شركة التجاري الدولى للتمويل","NB00010001":"جهاز تنمية المشروعات المتوسطه والصغيره ومتناهية الصغر","NB94000001":"المصرف العربي الدولي","NB95000001":"بنك ناصر الاجتماعي","NG00010001":"مؤسسه مصر الخير","PC01000001":"بنك الاسكندريه","PC02000001":"البنك الاهلى المصرى","PC03000001":"بنك القاهره","PC04000001":"بنك مصــــر","RA00990001":"البنك المركزى المصرى","RA00990002":"الهيئة العامة للرقابة المالية","RC00010001":"مجموعة هاى باك","RC00020001":"ترونيك هوم للتجارة","RC00030001":"عبد اللطيف جميل للتمويل","RC00040001":"الشركة الدولية للاستثمار و التجارة","RC00050001":"يونيون جروب للتجارة","RC00060001":"المجموعه المصريه للانظمه الطبيه","RC00070001":"درايف لتجارة السيارات","RC00080001":"شركه هورس كار","RC00100001":"الراشدين -مصر","RC00110001":"رايه","RC00120001":"رواج لتجارة السيارات","RC00130001":"عفراء لتكنولوجيا الحاسبات","RC00150001":"المصرية لأنظمة التغليف و البلاستيك","RC00160001":"بروسوفت لنظم المعلومات","RC00170001":"شركة البويات و الصناعات الكيماوية - باكين","RC00180001":"شركة بروج للتوكيلات التجارية","RC00190001":"سكاى ايجيبت للتوريدات","RC00200001":"غليونجى للتجارة","RC00210001":"شركة سكاى فاينانس لتقسيط السيارات","RC00220001":"جت جو لخدمات البيع بالتقسيط","RC00230001":"كونتكت لتقسيط السيارات","RC00240001":"شركة كونتكت المصرية العالمية لتقسيط السيارات","RC00250001":"مودرن فاينانس","RC00260001":"ستار لتقسيط السيارات","RC00270001":"عز العرب كونتكت فايننشال","RC00280001":"بافاريان كونتكت لتجارة السيارات","RC00290001":"شركة فاليو لخدمات البيع بالتقسيط","RC00300001":"شركة فاين استون للاستثمارات","RC00310001":"شركة مالتى ميديكال انترناشيونال","RC00320001":"شركة امان للخدمات المالية","RC00330001":"شركة عز العرب للسيارات","RC00340001":"شركة ام اوتو","RC00350001":"شهرى للتمويل الاستهلاكى","RC00360001":"شركة مانترا للسيارات","RC00370001":"شركة المنصور للسيارات منصور شيفروليه","RC00400001":"شركة بي أم للتمويل الاستهلاكى سهولة","RC00410001":"مشيد للتجارة و النقل","RC00420001":"شركة انيرجيا لكابلات الطاقة السويدى","RC00430001":"ار اى زد جروب","RC00440001":"ايجيتك للكابلات","RC00450001":"شركة المهر لتجارة و استيراد السيارات و التوكيلات التجارية ابو غالى موتورز","RC00460001":"مشروعى للتجارة","RC00480001":"شركة بى تك للتجارة و التوزيع","RC00490001":"شركة انتركوم انتربرايزس للتكنولوجيا المالية","RC00500001":"اس ام جى لخدمات التقسيط","RC00510001":"بلتون لخدمات البيع بالتقسيط (بل كاش)","RC00520001":"فارما اوفرسيز لتجارة و توزيع الأدوية","RC00530001":"اميز للتجارة","RC00540001":"الشركة المتحدة للكيماويات و المستحضرات الطبية","RC00550001":"شركة عالم الرزراعة و البيطرة-وافكو","RC00570001":"شركة بلنك للتمويل الاستهلاكى","RC00580001":"حالا للتمويل الاستهلاكى","RC00590001":"جلوبال كورب للتمويل الاستهلاكى","RC00600001":"شركه تكنولوجيا تشغيل الاسواق الاكترونيه","RC00610001":"ابو ظبى الاسلامى للتمويل الاستهلاكى","RC00620001":"ابتك مصر","RC00640001":"شركة المدينة للصلب","RC00650001":"وستكون جروب ايجيبت","RC00660001":"تارجت مصر للتجاره والاستثمار والنقل","RC00670001":"درايف للتمويل والخدمات الماليه غير المصرفيه","RC00680001":"وان فينانس لخدمات التمويل الاستهلاكى","RC00690001":"ميد بنك للتمويل الاستهلاكى","RC00700001":"شركة فوري للتمويل الاستهلاكى","RC00720001":"اوباى ناو","RC00730001":"ابو غالى لخدمات التقسيط","RC00740001":"الكان فاينانس للخدمات المالية","RC00750001":"كونتكت كريدى تك للتمويل الاستهلاكى","RC00780001":"فاروس للتمويل الاستهلاكى (ابجد)","RC00781001":"بيج هاوس لعموم التجارة والاستثمار","RC00800001":"اور للتمويل الاستهلاكى","RC00810001":"شركة امان للتمويل الاستهلاكى","SB00010001":"المجموعه الماليه هيرمس","SB00010002":"اتش سي لتداول الأوراق المالية والسندات","SB77000001":"البنك العقاري المصري العربي","SB80000001":"بنك التنمية الصناعية","SB82010001":"البنك الزراعى المصرى","UC00010001":"الشركة الوطنية للغاز(ناتجاس","UC00020001":"اورانج","UC00030001":"شركه الفيوم للغاز"};
 
-<div class="wrap">
-    <!-- حقول مخفية للحفاظ على عمل أكواد الـ I-Score دون أخطاء برمجية -->
-    <div style="display:none;">
-        <input id="customerInfo" type="text" />
-        <input id="branchSearch" type="text" />
-        <input id="dayrah" type="text" value="0" />
-        <div id="branchStatusCell"><input id="branchStatus" type="text" /></div>
-        <input id="durableMonths" type="text" value="24" />
-        <input id="durableLoanAmt" type="text" value="0" />
-        <input id="durableMonthly" type="text" value="0" />
-        <input id="income" type="text" value="0" />
-        <div id="dbrCell"><input id="dbr" type="text" value="0.00%" /></div>
-        <div id="lastCell"><input id="lastAllowed" type="text" value="0" /></div>
-    </div>
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
-    <!-- الجدول الاحترافي (هذا الجزء هو الذي سيتم أخذ صورة له) -->
-    <table>
-        <colgroup><col style="width:40%"/><col style="width:35%"/><col style="width:25%"/></colgroup>
+function normalizeText(s) { return (s || '').replace(/ /g, ' ').replace(/\s+/g, ' ').trim(); }
+function normalizeArabic(s) { return normalizeText(s).replace(/[أإآ]/g, 'ا').replace(/ى/g, 'ي').replace(/ة/g, 'ه'); }
+
+function normalizeBankCode(code) {
+  if (!code) return "UNKNOWN";
+  let clean = code.toUpperCase().replace(/[^A-Z0-9]/g, '');
+  let flip = clean.match(/^(\d+)([A-Z]{2})$/);
+  return flip ? flip[2] + flip[1] : clean;
+}
+
+function normalizeLoanTypeLabel(type) {
+    let raw = normalizeText(type || '');
+    let norm = normalizeArabic(raw).replace(/[(){}\[\]<>]/g, ' ').replace(/\s+/g, ' ').trim();
+    // ESSAM_V46_MORTGAGE_MIDDLE_INCOME_NAME_FIX
+    const squashRaw = (typeof normalizeForSectionMatch === 'function' ? normalizeForSectionMatch(raw) : normalizeArabic(raw).replace(/[|\s]+/g,''));
+    if (/تمويلعقاري|تمويلعقار|مبادرةالبنكالمركزي|متوسطيالدخل/.test(squashRaw)) {
+        if (/متوسطيالدخل/.test(squashRaw)) return 'قرض تمويل عقاري (متوسطي الدخل) – مبادرة البنك المركزي المي 3%';
+        if (/محدوديالدخل/.test(squashRaw)) return 'قرض تمويل عقاري (محدودي الدخل) – مبادرة البنك المركزي المي';
+        return raw.replace(/\|?\s*تاريخ.*$/,'').replace(/\)\s*متوسطي\s*الدخل\s*\(/,'(متوسطي الدخل)').replace(/\s+/g,' ').trim();
+    }
+    if (/قرض\s*شخ/.test(norm)) return 'قرض شخصي';
+    const hasInstallment = /بالتقسيط|التقسيط/.test(norm);
+    const hasDurables = /سلع\s*معمر|معمره|معمرة/.test(norm);
+    const malformedInstallment = /(^|\s)اء\s*بالتقسيط/.test(norm) || /شراء\s*بالتقسيط/.test(norm);
+    if ((hasInstallment && hasDurables) || (malformedInstallment && /سلع/.test(norm)) || (/سلع/.test(norm) && /بالتقسيط/.test(norm))) {
+        return 'شراء بالتقسيط (سلع معمرة)';
+    }
+    return raw;
+}
+
+function smartFieldIsNumericToken(val) {
+    return /^\d+(\.\d+)?$/.test((val || '').replace(/,/g, ''));
+}
+function smartFieldIsMissingToken(val) {
+    return /غ\s*م/.test(normalizeText(val || ''));
+}
+function smartFieldIsValueToken(val) {
+    return smartFieldIsNumericToken(val) || smartFieldIsMissingToken(val);
+}
+function smartFieldToNumber(val) {
+    return parseFloat((val || '').replace(/,/g, '').replace(/غ م/g, '0')) || 0;
+}
+function smartNormalizeDurationRaw(durRaw, countRaw) {
+    let finalDurRaw = normalizeText(durRaw || '');
+    const finalCountRaw = normalizeText(countRaw || '');
+
+    const durNum = smartFieldToNumber(finalDurRaw);
+    const countNum = smartFieldToNumber(finalCountRaw);
+    const durMissing = !finalDurRaw || smartFieldIsMissingToken(finalDurRaw);
+    const countValid = !!finalCountRaw && !smartFieldIsMissingToken(finalCountRaw) && countNum > 0 && countNum <= 600;
+    const durLooksWrong = !durMissing && (
+        durNum <= 0 ||
+        durNum > 600 ||
+        /^0+(?:\.0+)?$/.test(finalDurRaw)
+    );
+
+    if (durMissing) {
+        finalDurRaw = countValid ? finalCountRaw : 'غ م';
+    } else if (durLooksWrong && countValid) {
+        finalDurRaw = finalCountRaw;
+    } else if (smartFieldIsMissingToken(finalDurRaw)) {
+        finalDurRaw = countValid ? finalCountRaw : 'غ م';
+    }
+
+    return finalDurRaw;
+}
+function smartIsReasonableDurationToken(val) {
+    const num = smartFieldToNumber(val);
+    return num > 0 && num <= 600;
+}
+function buildSmartIssueCandidate(amountRaw, instRaw, durRaw, countRaw, bonusScore) {
+    const finalDurRaw = smartNormalizeDurationRaw(durRaw, countRaw);
+    const amount = smartFieldToNumber(amountRaw);
+    const installment = smartFieldToNumber(instRaw);
+    const countNum = smartFieldToNumber(countRaw);
+    let score = bonusScore || 0;
+
+    if (amount > 0) score += 5;
+    if (normalizeText(instRaw || '')) score += 1;
+    if (smartIsReasonableDurationToken(finalDurRaw)) score += 4;
+    else if (!finalDurRaw || smartFieldIsMissingToken(finalDurRaw)) score -= 1;
+    if (!!normalizeText(countRaw || '') && !smartFieldIsMissingToken(countRaw || '') && countNum > 0 && countNum <= 600) score += 1;
+
+    return {
+        amount,
+        installment,
+        installmentStr: normalizeText(instRaw || 'غ م') || 'غ م',
+        durationRaw: finalDurRaw,
+        duration: smartFieldToNumber(finalDurRaw) > 0 ? smartFieldToNumber(finalDurRaw) : 1,
+        score,
+        countRaw: normalizeText(countRaw || '')
+    };
+}
+function extractBestSmartTailLayout(amountRaw, tailTokens) {
+    const tail = (tailTokens || []).map(normalizeText).filter(Boolean);
+    if (!tail.length) return buildSmartIssueCandidate(amountRaw, 'غ م', '', '', 0);
+
+    const candidates = [];
+    candidates.push(buildSmartIssueCandidate(amountRaw, tail[0] || 'غ م', tail[1] || '', tail[2] || '', 0));
+
+    if (tail.length >= 4) {
+        const shiftBonus = smartFieldIsMissingToken(tail[0]) ? 3 : 0;
+        candidates.push(buildSmartIssueCandidate(amountRaw, tail[1] || 'غ م', tail[2] || '', tail[3] || '', shiftBonus));
+    }
+
+    if (tail.length >= 5) {
+        const shiftBonus = smartFieldIsMissingToken(tail[0]) && smartFieldIsMissingToken(tail[1]) ? 2 : -1;
+        candidates.push(buildSmartIssueCandidate(amountRaw, tail[2] || 'غ م', tail[3] || '', tail[4] || '', shiftBonus));
+    }
+
+    candidates.sort((a, b) => (b.score || 0) - (a.score || 0));
+    return candidates[0] || null;
+}
+function extractSmartIssueCandidateFromParts(parts) {
+    const cleanParts = (parts || []).map(normalizeText).filter(Boolean);
+    const cIdx = cleanParts.findIndex(p => p.includes('جنيه') || p.includes('EGP'));
+    if (cIdx === -1) return null;
+
+    const prevAmountCandidate = [...cleanParts.slice(Math.max(0, cIdx - 2), cIdx)]
+        .reverse()
+        .find(v => smartFieldIsNumericToken(v) && smartFieldToNumber(v) >= 100) || '';
+
+    const afterCurrency = cleanParts.slice(cIdx + 1)
+        .filter(v => !/يوجد|مقترض|حامل|اساسيه|اساسية|تجاري|زراعي|استهك|متناهي|غراض/.test(normalizeArabic(v)))
+        .filter(smartFieldIsValueToken);
+
+    let amountRaw = '';
+    let rawTail = [];
+
+    const oldLayoutLikely = !!prevAmountCandidate && afterCurrency.length > 0 && (
+        smartFieldIsMissingToken(afterCurrency[0]) ||
+        !smartFieldIsNumericToken(afterCurrency[0]) ||
+        smartFieldToNumber(afterCurrency[0]) < smartFieldToNumber(prevAmountCandidate)
+    );
+
+    if (oldLayoutLikely) {
+        amountRaw = prevAmountCandidate;
+        rawTail = afterCurrency.slice(0, 5);
+    } else {
+        const amountAfterIdx = afterCurrency.findIndex(v => smartFieldIsNumericToken(v) && smartFieldToNumber(v) >= 100);
+        if (amountAfterIdx !== -1) {
+            amountRaw = afterCurrency[amountAfterIdx];
+            rawTail = afterCurrency.slice(amountAfterIdx + 1, amountAfterIdx + 6);
+        } else if (prevAmountCandidate) {
+            amountRaw = prevAmountCandidate;
+            rawTail = afterCurrency.slice(0, 5);
+        }
+    }
+
+    if (!amountRaw) return null;
+    const bestLayout = extractBestSmartTailLayout(amountRaw, rawTail);
+    if (bestLayout) return bestLayout;
+
+    return buildSmartIssueCandidate(amountRaw, rawTail[0] || 'غ م', rawTail[1] || '', rawTail[2] || '', 0);
+}
+function extractSmartFacilityFields(loanLines) {
+    const lines = (loanLines || []).map(normalizeText).filter(Boolean);
+    if (!lines.length) return null;
+
+    // نقرأ سطر العملة نفسه + نوافذ مجاورة قبله/بعده حتى لو اتغيّر مكان الحقول بين سطرين أو ثلاثة
+    let best = null;
+    lines.forEach((line, idx) => {
+        const variants = [line];
+        if (idx > 0) variants.push(lines[idx - 1] + ' | ' + line);
+        if (idx < lines.length - 1) variants.push(line + ' | ' + lines[idx + 1]);
+        if (idx > 0 && idx < lines.length - 1) variants.push(lines[idx - 1] + ' | ' + line + ' | ' + lines[idx + 1]);
+
+        variants.forEach(variant => {
+            if (!(variant.includes('جنيه') || variant.includes('EGP'))) return;
+
+            const parts = variant.split('|').map(normalizeText).filter(Boolean);
+            const candidate = extractSmartIssueCandidateFromParts(parts);
+            if (!candidate || candidate.amount <= 0) return;
+
+            let proximityBoost = 0;
+            for (let j = Math.max(0, idx - 2); j <= Math.min(lines.length - 1, idx + 2); j++) {
+                const nLine = normalizeArabic(lines[j]);
+                if (nLine.includes('بيانات اصدار')) proximityBoost += 5;
+                if (nLine.includes('مده القرض') || nLine.includes('مدة القرض')) proximityBoost += 2;
+                if (nLine.includes('عدد اقساط')) proximityBoost += 2;
+            }
+            candidate.score += proximityBoost;
+
+            if (!best || candidate.score > best.score) best = candidate;
+        });
+    });
+
+    return best;
+}
+
+function smartTokenIsNumericOrMissing(val) {
+    return smartFieldIsNumericToken(val) || smartFieldIsMissingToken(val);
+}
+function facilityLineHasCurrency(line) {
+    return /جنيه|EGP/.test(normalizeText(line || ''));
+}
+function isFacilitySubtableBoundaryLine(line) {
+    const clean = normalizeForSectionMatch(line || '');
+    return /بياناتالسداد|البياناتالتاريخيه|شيكاتمرتده|اجراءاتالمتخذه|اجراءاتالمتخذة|بياناتالشكوي|بياناتالشكوى|بياناتموقفالتسهيل|بياناتموقف|نوعالدخل/.test(clean);
+}
+function getFacilityIssuanceLines(loanLines) {
+    const lines = (loanLines || []).map(normalizeText).filter(Boolean);
+    if (!lines.length) return [];
+    let started = false;
+    let issuance = [];
+    for (const line of lines) {
+        const clean = normalizeForSectionMatch(line);
+        if (!started) {
+            issuance.push(line);
+            if (/بياناتاصدار/.test(clean)) started = true;
+            continue;
+        }
+        if (/بياناتالسداد/.test(clean)) break;
+        if (/البياناتالتاريخيه|شيكاتمرتده|اجراءاتالمتخذه|اجراءاتالمتخذة|بياناتالشكوي|بياناتالشكوى/.test(clean)) break;
+        issuance.push(line);
+    }
+    return issuance;
+}
+function buildStructuredIssueCandidate(amountRaw, instRaw, durRaw, countRaw, score) {
+    const amountText = normalizeText(amountRaw || '');
+    const installmentText = normalizeText(instRaw || 'غ م') || 'غ م';
+    const finalDurRaw = smartNormalizeDurationRaw(normalizeText(durRaw || ''), normalizeText(countRaw || ''));
+    const amount = smartFieldToNumber(amountText);
+    const installment = smartFieldToNumber(installmentText);
+    const duration = smartFieldToNumber(finalDurRaw) > 0 ? smartFieldToNumber(finalDurRaw) : 1;
+    return {
+        amount,
+        installment,
+        installmentStr: installmentText,
+        durationRaw: finalDurRaw || 'غ م',
+        duration,
+        score: score || 0,
+        countRaw: normalizeText(countRaw || '')
+    };
+}
+function extractStructuredFacilityFields(loanLines) {
+    const issuanceLines = getFacilityIssuanceLines(loanLines);
+    if (!issuanceLines.length) return null;
+
+    let best = null;
+    issuanceLines.forEach((line, idx) => {
+        if (!facilityLineHasCurrency(line)) return;
+        const variants = [line];
+        if (idx > 0) variants.push(issuanceLines[idx - 1] + ' | ' + line);
+        if (idx < issuanceLines.length - 1) variants.push(line + ' | ' + issuanceLines[idx + 1]);
+        if (idx > 0 && idx < issuanceLines.length - 1) variants.push(issuanceLines[idx - 1] + ' | ' + line + ' | ' + issuanceLines[idx + 1]);
+
+        variants.forEach(variant => {
+            const parts = variant.split('|').map(normalizeText).filter(Boolean);
+            const cIdx = parts.findIndex(p => /جنيه|EGP/.test(p));
+            if (cIdx === -1) return;
+
+            const prevAmountCandidate = [...parts.slice(Math.max(0, cIdx - 2), cIdx)]
+                .reverse()
+                .find(v => smartFieldIsNumericToken(v));
+            const tail = parts.slice(cIdx + 1).filter(v => smartTokenIsNumericOrMissing(v));
+            if (!tail.length && !prevAmountCandidate) return;
+
+            let amountRaw = '';
+            let offset = 0;
+            if (tail.length && smartFieldIsNumericToken(tail[0])) {
+                amountRaw = tail[0];
+                offset = 1;
+            } else if (prevAmountCandidate) {
+                amountRaw = prevAmountCandidate;
+                offset = 0;
+            }
+            if (amountRaw === '') return;
+
+            const candidate = buildStructuredIssueCandidate(
+                amountRaw,
+                tail[offset] || 'غ م',
+                tail[offset + 1] || '',
+                tail[offset + 2] || '',
+                100
+            );
+
+            const variantNorm = normalizeArabic(variant);
+            if (/بياناتاصدار/.test(variantNorm)) candidate.score += 5;
+            if (/مدهالقرض|مدةالقرض/.test(variantNorm)) candidate.score += 2;
+            if (/عدداقساط/.test(variantNorm)) candidate.score += 2;
+            if (candidate.amount === 0) candidate.score += 8;
+            if (candidate.installmentStr === 'غ م') candidate.score += 2;
+
+            if (!best || candidate.score > best.score) best = candidate;
+        });
+    });
+
+    return best;
+}
+
+function applySmartFacilityFieldFix(loan) {
+    if (!loan || !Array.isArray(loan.lines) || !loan.lines.length) return loan;
+
+    const structuredFields = extractStructuredFacilityFields(loan.lines);
+    if (structuredFields) {
+        loan.amount = structuredFields.amount;
+        loan.installment = structuredFields.installment;
+        loan.installmentStr = structuredFields.installmentStr;
+        loan.durationRaw = structuredFields.durationRaw;
+        loan.duration = structuredFields.duration;
+        return loan;
+    }
+
+    const smartFields = extractSmartFacilityFields(loan.lines);
+    if (!smartFields) return loan;
+
+    loan.amount = smartFields.amount;
+    loan.installment = smartFields.installment;
+    loan.installmentStr = smartFields.installmentStr;
+    loan.durationRaw = smartFields.durationRaw;
+    loan.duration = smartFields.duration;
+    return loan;
+}
+
+
+const monthMap = {"يناير":1, "فبراير":2, "مارس":3, "أبريل":4, "ابريل":4, "مايو":5, "يونيو":6, "يوليو":7, "أغسطس":8, "اغسطس":8, "سبتمبر":9, "أكتوبر":10, "اكتوبر":10, "نوفمبر":11, "ديسمبر":12};
+function parseDateObj(dateStr) {
+    if(!dateStr) return null;
+    let str = dateStr.toLowerCase().replace(/\s+/g, '');
+    let m = 0, y = 0;
+    for (let key in monthMap) { if (str.includes(key)) { m = monthMap[key]; break; } }
+    let yearMatch = str.match(/(20\d{2})/);
+    if (yearMatch) y = parseInt(yearMatch[1]);
+    return (m > 0 && y > 0) ? { month: m, year: y } : null;
+}
+
+function extractBktHistory(loanLines) {
+    const lines = loanLines.map(normalizeText);
+    for (let i = 0; i < lines.length; i++) {
+        if (!normalizeArabic(lines[i]).includes('الشهور')) continue;
         
-        <!-- عنوان الصفحة -->
-        <tr>
-            <th colspan="3" class="pro-header-cell">
-                <h1>مكتب تسوية مديونيات العملاء</h1>
-            </th>
-        </tr>
+        let dataRows = [];
+        for (let j = i + 1; j < Math.min(lines.length, i + 15); j++) {
+            let parts = lines[j].split('|').map(normalizeText).filter(p => p !== '');
+            let numericOnly = parts.filter(p => /^\d+$/.test(p) || p === 'غ م');
+            if (numericOnly.length >= 8) dataRows.push(numericOnly);
+        }
         
-        <!-- مسافة بيضاء جمالية -->
-        <tr><td colspan="3" style="height: 15px; background: #fff; padding: 0 !important; border: none !important;"></td></tr>
+        let delayRow = dataRows.length >= 2 ? dataRows[1] : (dataRows.length === 1 ? dataRows[0] : []);
+        return delayRow.map(v => v === 'غ م' ? 0 : parseInt(v));
+    }
+    return [];
+}
 
-        <!-- الصف الأول -->
-        <tr>
-            <td class="lbl-pro">أقساط القروض من إسكور</td>
-            <td class="data-cell">
-                <input class="pro-inp green-text" id="loans" placeholder="أقساط القروض" type="text" value="0"/>
-            </td>
-            <td class="data-cell ok" id="branchFinalCell">
-                <input id="branchFinal" class="pro-inp read" readonly="" type="text" value=""/>
-            </td>
-        </tr>
+function processBktAlerts(delays, isDelayExcepted) {
+    let b1 = delays.slice(0, 3), b2 = delays.slice(3, 6), b3 = delays.slice(6, 12);
+    let alerts = [];
+    if (b1.some(d => d > 30)) alerts.push("BKT1 (>30)");
+    if (b2.some(d => d > 60) || b2.filter(d => d === 60).length > 1) alerts.push("BKT2 (إنذار 60)");
+    if (b3.some(d => d > 90)) alerts.push("BKT3 (>90)");
+    
+    let max1 = b1.length ? Math.max(...b1) : 0;
+    let max2 = b2.length ? Math.max(...b2) : 0;
+    let max3 = b3.length ? Math.max(...b3) : 0;
+    
+    let warningClass = isDelayExcepted ? 'bkt-warning-yellow' : 'bkt-warning';
+    let alertPrefix = isDelayExcepted ? 'استثناء: ' : '';
+    
+    let label = alerts.length ? `<span class='${warningClass}'>${alertPrefix}${alerts.join(' + ')}</span>` : `<span class='bkt-safe'>سليم</span>`;
+    let details = `<br><span style='color:#718096; font-size:11px;'>BKT1 ${max1} | BKT2 ${max2} | BKT3 ${max3}</span>`;
+    
+    return { label, details, warning: alerts.length > 0, buckets: {bkt1: max1, bkt2: max2, bkt3: max3}, isExcepted: isDelayExcepted };
+}
+
+
+const iscoreState = { loaded:false, before:{ customer:'', loans:'0' } };
+function getCustomerInput(){ return document.getElementById('customerInfo') || document.querySelector('input[placeholder*="الاسم"]') || document.querySelector('input.green-text'); }
+function savePreIscoreState(){
+  if(iscoreState.loaded) return;
+  const customerEl = getCustomerInput();
+  const loansEl = document.getElementById('loans');
+  iscoreState.before.customer = customerEl ? customerEl.value : '';
+  iscoreState.before.loans = loansEl ? loansEl.value : '0';
+}
+function triggerNativeInput(el){
+  if(!el) return;
+  el.dispatchEvent(new Event('input', {bubbles:true}));
+  el.dispatchEvent(new Event('change', {bubbles:true}));
+}
+function extractCustomerInfo(allLines){
+  const lines = Array.isArray(allLines) ? allLines.map(l => normalizeText(l || '')).filter(Boolean) : [];
+  const digitMap = {'٠':'0','١':'1','٢':'2','٣':'3','٤':'4','٥':'5','٦':'6','٧':'7','٨':'8','٩':'9'};
+  const normDigits = s => (s || '').replace(/[٠-٩]/g, d => digitMap[d] || d);
+  const norm = s => normalizeText(s || '').replace(/\s+/g, ' ').trim();
+  const ar = s => norm(s)
+      .replace(/[ؐ-ًؚ-ٰٟۖ-ۭ]/g, '')
+      .replace(/[إأآٱا]/g, 'ا').replace(/ى/g, 'ي').replace(/ؤ/g, 'و').replace(/ئ/g, 'ي').replace(/ة/g, 'ه');
+  const clean = s => norm(s).replace(/^[:：\-|\s]+|[:：\-|\s]+$/g, '').trim();
+  const validArabicName = s => {
+    const raw = clean(s);
+    const v = raw.replace(/[^؀-ۿ\s]/g, ' ').replace(/\s+/g, ' ').trim();
+    if (!v || /\d/.test(raw)) return '';
+    const words = v.split(/\s+/).filter(Boolean);
+    if (words.length < 3 || words.length > 7) return '';
+    return v;
+  };
+
+  function extractAfterLabel(line, labelRx){
+    const parts = normDigits(line).split('|').map(clean).filter(Boolean);
+    for (let i = 0; i < parts.length; i++) {
+      if (labelRx.test(ar(parts[i])) || labelRx.test(parts[i])) {
+        for (let j = i + 1; j < parts.length; j++) {
+          const val = clean(parts[j]);
+          if (!val || /^[:：\-]+$/.test(val)) continue;
+          return val;
+        }
+      }
+    }
+    return '';
+  }
+
+  const pages = [];
+  let current = [];
+  for (const line of lines) {
+    current.push(line);
+    if (/^Page\s+\d+\s+of\s+\d+/i.test(line)) {
+      pages.push(current);
+      current = [];
+    }
+  }
+  if (current.length) pages.push(current);
+
+  const page1 = pages[0] || lines.slice(0, 50);
+  const page2 = pages[1] || lines.slice(0, 100);
+
+  let name = '';
+  let nid = '';
+  let phone = '';
+
+  // 1) الاسم والرقم القومي من معايير البحث أولاً
+  let insideSearch = false;
+  for (const line of page1) {
+    const a = ar(line);
+    if (/معاييرالبحث/.test(a)) { insideSearch = true; continue; }
+    if (!insideSearch) continue;
+
+    if (!name && /(^|\|)\s*اسم\s*(\||$)/.test(line)) {
+      const candidate = validArabicName(extractAfterLabel(line, /^(?:ال)?اسم$/));
+      if (candidate) name = candidate;
+    }
+
+    if (!nid && (/كودالتعريف/.test(a) || /نوعالتعريف/.test(a))) {
+      const m = normDigits(line).match(/(2|3)\d{13}/);
+      if (m) nid = m[0];
+    }
+  }
+
+  // 2) fallback مضبوط من الملف الشخصي فقط إذا فشل المصدر الأول
+  if (!name) {
+    for (const line of [...page1, ...page2].slice(0, 40)) {
+      if (/(^|\|)\s*اسم\s*(\||$)/.test(line)) {
+        const candidate = validArabicName(extractAfterLabel(line, /^(?:ال)?اسم$/));
+        if (candidate) { name = candidate; break; }
+      }
+    }
+  }
+
+  if (!nid) {
+    for (const line of [...page1, ...page2].slice(0, 50)) {
+      const a = ar(line);
+      if (/كودالتعريف|معرف/.test(a)) {
+        const m = normDigits(line).match(/(2|3)\d{13}/);
+        if (m) { nid = m[0]; break; }
+      }
+    }
+  }
+
+  // 3) التليفون من الملف الشخصي فقط (اتصال)
+  for (const line of [...page1, ...page2].slice(0, 60)) {
+    if (/اتصال/.test(ar(line))) {
+      const m = normDigits(line).match(/(?:\+?2)?0?1[0125]\d{8}/);
+      if (m) {
+        let ph = m[0].replace(/^\+?2/, '');
+        if (/^1/.test(ph)) ph = '0' + ph;
+        phone = ph;
+        break;
+      }
+    }
+  }
+
+  return { name: name || '', nid: nid || '', phone: phone || '' };
+}
+function applyIscoreToApproval(totalValue, customerInfo){
+  const loansEl = document.getElementById('loans');
+  const customerEl = getCustomerInput();
+  if(loansEl){ loansEl.value = String(Math.round(Number(totalValue || 0))); triggerNativeInput(loansEl); }
+  if(customerEl){
+    const displayValue = [customerInfo?.name, customerInfo?.nid].filter(Boolean).join(' - ');
+    if(displayValue) customerEl.value = displayValue;
+    customerEl.title = [customerInfo?.name, customerInfo?.nid, customerInfo?.phone].filter(Boolean).join(' - ');
+    triggerNativeInput(customerEl);
+  }
+  iscoreState.loaded = true;
+}
+window.resetIscoreIntegration = function(){
+  const customerEl = getCustomerInput();
+  const loansEl = document.getElementById('loans');
+  const pdfEl = document.getElementById('pdfUploadIscore');
+  const loading = document.getElementById('loading');
+  const resultBox = document.getElementById('result-box');
+  const warnings = document.getElementById('warnings-summary');
+  const detailsTable = document.getElementById('detailsTable');
+  const detailsBody = document.getElementById('detailsBody');
+  const totalValue = document.getElementById('totalValue');
+  if(pdfEl) pdfEl.value = '';
+  if(loading) loading.style.display = 'none';
+  if(resultBox) resultBox.style.display = 'none';
+  if(warnings){ warnings.innerHTML=''; warnings.style.display='none'; }
+  if(detailsTable) detailsTable.style.display = 'none';
+  if(detailsBody) detailsBody.innerHTML = '';
+  if(totalValue) totalValue.innerText = '0';
+  if(customerEl){ customerEl.value = iscoreState.before.customer || ''; triggerNativeInput(customerEl); }
+  if(loansEl){ loansEl.value = iscoreState.before.loans || '0'; triggerNativeInput(loansEl); }
+  iscoreState.loaded = false;
+};
+window.saveIscoreTableImage = function(){
+  const area = document.getElementById('iscoreExportArea');
+  const table = document.getElementById('detailsTable');
+  if(!table || table.style.display === 'none' || !document.querySelector('#detailsBody tr')){ alert('لا يوجد جدول I-Score محفوظ حالياً'); return; }
+  if(typeof html2canvas === 'undefined'){ alert('ميزة الحفظ غير متاحة حالياً'); return; }
+  html2canvas(area, {scale:2, useCORS:true, backgroundColor:'#ffffff'}).then(canvas => {
+    const link = document.createElement('a');
+    const d = new Date();
+    const fname = `iscore_table_${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}_${String(d.getHours()).padStart(2,'0')}-${String(d.getMinutes()).padStart(2,'0')}.png`;
+    link.download = fname;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  });
+};
+
+function normalizeForSectionMatch(s) {
+    return normalizeArabic(s || '')
+        .replace(/ـ+/g, '')
+        .replace(/[|]/g, ' ')
+        .replace(/[^؀-ۿ0-9A-Za-z]+/g, '')
+        .trim();
+}
+
+function getActionHeaderState(lines, i) {
+    const cur = normalizeForSectionMatch(lines[i] || '');
+    const next = normalizeForSectionMatch(lines[i + 1] || '');
+    const combined = cur + next;
+    const hasHeaderNow = /ا?جراءات.*المتخذ|ا?جراءاتالمتخذ|إجراءات.*المتخذ|إجراءاتالمتخذ/.test(cur) || /ا?جراءات.*المتخذ|ا?جراءاتالمتخذ|إجراءات.*المتخذ|إجراءاتالمتخذ/.test(combined) || ((cur === 'اجراءات' || cur === 'الاجراءات' || cur === 'جراءات') && /المتخذ/.test(next));
+    const hasColumnsNow = /تاريخالتصنيفاول|كودالاجراءالرئي|كودالاجراءالفرعي|تاريخالاجراء/.test(cur) || /تاريخالتصنيفاول|كودالاجراءالرئي|كودالاجراءالفرعي|تاريخالاجراء/.test(combined);
+    return { cur, next, combined, hasHeaderNow, hasColumnsNow };
+}
+
+function isIscoreBoundaryLine(clean) {
+    return /بياناتالشكوي|بياناتالشكوى|التسهيلالائتماني|التسهيلائتماني|الشهور|البياناتالتاريخيه|شيكاتمرتده|تسهيلاتالديونالمعدومه|التسهيلاتالمغلقه/.test(clean || '');
+}
+
+function extractTakenActionInfo(lines) {
+    const arr = Array.isArray(lines) ? lines.map(l => normalizeText(l || '')) : [];
+    const noDataRx = /توجد\s*بيانات|توجدبيانات|توجددبيانات/;
+    const dateRx = /(\d{1,2}[-\/](?:يناير|فبراير|مارس|أبريل|ابريل|مايو|يونيو|يوليو|أغسطس|اغسطس|سبتمبر|أكتوبر|اكتوبر|نوفمبر|ديسمبر)\-?\d{4})|(\d{4}[-\/]\d{1,2}[-\/]\d{1,2})|(\d{1,2}[-\/]\d{1,2}[-\/]\d{4})/;
+    let sawActionHeader = false;
+    let sawActionColumns = false;
+    let rows = [];
+
+    for (let i = 0; i < arr.length; i++) {
+        const info = getActionHeaderState(arr, i);
+        const raw = arr[i] || '';
+        const clean = info.cur;
+
+        if (!sawActionHeader) {
+            if (info.hasHeaderNow) {
+                sawActionHeader = true;
+                if (info.hasColumnsNow) sawActionColumns = true;
+            }
+            continue;
+        }
+        if (info.hasColumnsNow) { sawActionColumns = true; continue; }
+        if (isIscoreBoundaryLine(clean)) break;
+        if (!raw.trim()) continue;
+        if (noDataRx.test(raw)) continue;
+        const parts = raw.split('|').map(p => normalizeText(p || '')).filter(Boolean);
+        const hasEnoughParts = parts.length >= 3;
+        const hasDate = dateRx.test(raw);
+        const hasActionWord = /(رفع\s*دعاو|رفع\s*دعو|سداد\s*مديونية|مديونية|متوقفون\s*عن\s*السداد|اجراء|إجراء|قضائ|جنحة|نيابة|بالنيابة)/.test(raw);
+        if (/تاريخالتصنيف|كودالاجراء|تاريخالاجراء|المتخذة|المتخذه/.test(clean) && !(hasDate && hasActionWord)) continue;
+        if (sawActionColumns && hasEnoughParts && hasDate && hasActionWord) rows.push(raw);
+    }
+    return { hasAction: rows.length > 0, rows };
+}
+
+
+
+function extractReturnedChecksInfo(lines) {
+    const arr = Array.isArray(lines) ? lines.map(l => normalizeText(l || '')) : [];
+    const noDataRx = /توجد\s*بيانات|توجدبيانات|توجددبيانات/;
+    const dateRx = /(\d{1,2}[-\/](?:يناير|فبراير|مارس|أبريل|ابريل|مايو|يونيو|يوليو|أغسطس|اغسطس|سبتمبر|أكتوبر|اكتوبر|نوفمبر|ديسمبر)\-?\d{4})|(\d{4}[-\/]\d{1,2}[-\/]\d{1,2})|(\d{1,2}[-\/]\d{1,2}[-\/]\d{4})/;
+    let insideChecksSection = false;
+    let rows = [];
+
+    for (let i = 0; i < arr.length; i++) {
+        const raw = arr[i] || '';
+        const cur = normalizeForSectionMatch(raw);
+        const next = normalizeForSectionMatch(arr[i + 1] || '');
+        const hasHeaderNow = /شيكاتمرتده/.test(cur) || ((cur === 'شيكات' || cur === 'شيك') && /مرتده/.test(next));
+
+        if (!insideChecksSection) {
+            if (hasHeaderNow) insideChecksSection = true;
+            continue;
+        }
+        if (isIscoreBoundaryLine(cur)) break;
+        if (!raw.trim()) continue;
+        if (noDataRx.test(raw)) continue;
+        if (/العمله|عددالشيكات|رقمالشيك|اجماليالمبلغ|المبلغ|تاريخاخرشيك|تاريخارتداد|سببارتداد|سبب|حالهالشيك|شيكات|مرتده/.test(cur)) continue;
+
+        const parts = raw.split('|').map(p => normalizeText(p || '')).filter(Boolean);
+        const hasDate = dateRx.test(raw);
+        const hasNumeric = /\d/.test(raw);
+        const hasEnoughParts = parts.length >= 4;
+        if (hasDate && hasNumeric && hasEnoughParts) rows.push(raw);
+    }
+
+    return { hasBouncedChecks: rows.length > 0, rows };
+}
+function getPaymentTypeSourceText(lines) {
+    const arr = Array.isArray(lines) ? lines.map(l => normalizeText(l || '')) : [];
+    let insideActionsSection = false;
+    let kept = [];
+
+    for (let i = 0; i < arr.length; i++) {
+        const info = getActionHeaderState(arr, i);
+        const clean = info.cur;
+
+        if (!insideActionsSection && info.hasHeaderNow) {
+            if (/توجددبيانات/.test(info.cur) || /توجددبيانات/.test(info.next)) {
+                continue;
+            }
+            insideActionsSection = true;
+            continue;
+        }
+
+        if (insideActionsSection) {
+            if (isIscoreBoundaryLine(clean)) {
+                insideActionsSection = false;
+            } else {
+                continue;
+            }
+        }
+
+        kept.push(arr[i]);
+    }
+
+    return kept.join(' | ');
+}
+
+function isFacilityStartLine(line) {
+    const clean = normalizeForSectionMatch(line || '');
+    return /(التسهيلالائتماني|التسهيلائتماني)\d+/.test(clean) || ((/التسهيلالائتماني|التسهيلائتماني/.test(clean)) && /\d+/.test(clean));
+}
+
+function isLoanHeaderLine(line) {
+    const norm = normalizeText(line || '');
+    return /(اخر\s*اقرار|آخر\s*اقرار|اخر\s*إقرار|آخر\s*إقرار)/.test(norm) && /(كود\s*الجهه|كود\s*الجهة|التسهيل)/.test(norm);
+}
+
+function extractLoanTypeFromHeaderParts(parts) {
+    const arr = Array.isArray(parts) ? parts.map(p => normalizeText(p || '')) : [];
+    const facilityIdx = arr.findIndex(p => /(التسهيل\s*الائتماني|التسهيل\s*ائتماني)/.test(p));
+    const eqIdx = arr.findIndex(p => /(اخر\s*اقرار|آخر\s*اقرار|اخر\s*إقرار|آخر\s*إقرار)/.test(p));
+    let candidates = [];
+    if (facilityIdx !== -1) {
+        const endIdx = eqIdx > facilityIdx ? eqIdx : Math.min(arr.length, facilityIdx + 5);
+        candidates = arr.slice(facilityIdx + 1, endIdx);
+    } else if (eqIdx > 0) candidates = [arr[eqIdx - 1]];
+    function cleanCandidate(p) {
+        let s = normalizeText(p || '');
+        s = s.replace(/\|?\s*تاريخ\s*(اخر|آخر|اخر|إقرار|اقرار).*$/i, '').trim();
+        s = s.replace(/\|?\s*كود\s*الجه[هة].*$/i, '').trim();
+        s = s.replace(/^\d+\s*$/, '').trim();
+        return s;
+    }
+    const cleaned = candidates.map(cleanCandidate).filter(p => p && !/(^تاريخ$|^كود\s*الجه[هة]$)/.test(p));
+    const mortgageCandidate = cleaned.find(p => /تمويل\s*عقار|مبادرة\s*البنك\s*المركزي|متوسطي\s*الدخل|محدودي\s*الدخل/.test(p));
+    if (mortgageCandidate) return normalizeLoanTypeLabel(mortgageCandidate);
+    const candidate = cleaned.find(p => p && !/(تاريخ|اخر|آخر|اقرار|كود\s*الجهه|كود\s*الجهة)/.test(p));
+    return normalizeLoanTypeLabel(candidate || 'تسهيل ائتماني');
+}
+
+function shouldOverrideLoanType(currentType, candidateType) {
+    const currentNorm = normalizeForSectionMatch(currentType || '');
+    const candidateNorm = normalizeForSectionMatch(candidateType || '');
+    if (!candidateType || candidateNorm === 'تسهيلائتماني') return false;
+    if (!currentType || currentNorm === 'تسهيلائتماني') return true;
+    if (/كارتمشتريات/.test(currentNorm) && /مبادرةالبنكالمركزي|التمويلالعقاري|محدوديالدخل/.test(candidateNorm)) return true;
+    return false;
+}
+
+function detectFacilitySection(line) {
+    const clean = normalizeForSectionMatch(line || '');
+    if (/التسهيلاتالمغلقه|التسهيتالمغلقه/.test(clean)) return 'closed';
+    if (/تسهيلاتالديونالمعدومه|تسهيتالديونالمعدومه/.test(clean)) return 'badDebt';
+    if (/التسهيتائتمانيهساري|التسهيلاتائتمانيهساري|التسهيلايتمانيهساري/.test(clean)) return 'open';
+    return null;
+}
+
+function buildFacilityBlocksFromLines(lines) {
+    const arr = Array.isArray(lines) ? lines.slice() : [];
+    const blocks = [];
+    let currentBlock = null;
+    let currentSection = 'open';
+
+    for (let i = 0; i < arr.length; i++) {
+        const line = normalizeText(arr[i] || '');
+        if (!line) continue;
+
+        const sectionHit = detectFacilitySection(line);
+        if (sectionHit) {
+            if (currentBlock && currentBlock.lines.length) blocks.push(currentBlock);
+            currentBlock = null;
+            currentSection = sectionHit;
+            continue;
+        }
+
+        if (isFacilityStartLine(line)) {
+            if (currentBlock && currentBlock.lines.length) blocks.push(currentBlock);
+            currentBlock = { lines: [line], section: currentSection };
+            continue;
+        }
+
+        if (currentBlock && currentBlock.lines.length) {
+            currentBlock.lines.push(line);
+        }
+    }
+
+    if (currentBlock && currentBlock.lines.length) blocks.push(currentBlock);
+    return blocks;
+}
+
+function extractExpectedFacilityCount(lines) {
+    const arr = Array.isArray(lines) ? lines : [];
+    for (let i = 0; i < arr.length; i++) {
+        const line = normalizeText(arr[i] || '');
+        if (/\|\s*EGP\s*\|/.test(line)) {
+            const first = line.split('|').map(normalizeText)[0] || '';
+            const num = parseInt((first || '').replace(/[^0-9]/g, ''), 10);
+            if (num > 0 && num <= 200) return num;
+        }
+    }
+    return 0;
+}
+
+function extractExpectedSummaryTotals(lines) {
+    const arr = Array.isArray(lines) ? lines : [];
+    function n(v) {
+        const map = {'٠':'0','١':'1','٢':'2','٣':'3','٤':'4','٥':'5','٦':'6','٧':'7','٨':'8','٩':'9'};
+        const s = (v || '').toString()
+            .replace(/[٠-٩]/g, d => map[d] || d)
+            .replace(/,/g, '')
+            .replace(/[^0-9.\-]/g, '');
+        const x = parseFloat(s);
+        return isNaN(x) ? 0 : x;
+    }
+    for (let i = 0; i < arr.length; i++) {
+        const line = normalizeText(arr[i] || '');
+        if (!/EGP/i.test(line)) continue;
+
+        // الشكل الأكثر شيوعاً في الأشعة: 3 | EGP | 117,000 | 70,535 | 4,323 | 0 | 0
+        const parts = line.split('|').map(normalizeText).filter(Boolean);
+        const egpIndex = parts.findIndex(p => /^EGP$/i.test(p));
+        if (egpIndex >= 0 && parts.length >= egpIndex + 4) {
+            return {
+                facilityCount: n(parts[egpIndex - 1] || '0'),
+                totalLimits: n(parts[egpIndex + 1] || '0'),
+                totalBalances: n(parts[egpIndex + 2] || '0'),
+                totalInstallments: n(parts[egpIndex + 3] || '0'),
+                rawLine: line
+            };
+        }
+
+        // fallback لو المتصفح شاف السطر بدون فواصل كافية
+        const m = line.match(/(\d{1,3})\s*\|?\s*EGP\s*\|?\s*([\d,]+)\s*\|?\s*([\d,]+)\s*\|?\s*([\d,]+)/i);
+        if (m) {
+            return {
+                facilityCount: n(m[1]),
+                totalLimits: n(m[2]),
+                totalBalances: n(m[3]),
+                totalInstallments: n(m[4]),
+                rawLine: line
+            };
+        }
+    }
+    return null;
+}
+
+
+
+
+
+// ESSAM_V49_REMOVE_GUARANTEE_SUMMARY_COMPARISON
+// Fail-Closed reconciliation بدون مقارنة مؤشر الضمانة:
+// - الساري: عدد التسهيلات + إجمالي الحدود + إجمالي الأقساط
+// - الديون المعدومة: عدد التسهيلات + إجمالي الحدود فقط
+// - الشيكات المرتدة: عدد الشيكات فقط
+// - العوائد الهامشية: تنبيه مستقل من الملخص
+function extractExpectedCategorySummaryTotals(lines) {
+    const arr = Array.isArray(lines) ? lines : [];
+    function txt(v){
+        try { return typeof normalizeText === 'function' ? normalizeText(v || '') : String(v || '').replace(/\s+/g,' ').trim(); }
+        catch(_) { return String(v || '').replace(/\s+/g,' ').trim(); }
+    }
+    function ar(v){
+        try { return typeof normalizeArabic === 'function' ? normalizeArabic(v || '') : String(v || '').replace(/[أإآ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه'); }
+        catch(_) { return String(v || '').replace(/[أإآ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه'); }
+    }
+    function squash(v){ return ar(txt(v)).replace(/[|\s]+/g,''); }
+    function n(v){
+        const map={'٠':'0','١':'1','٢':'2','٣':'3','٤':'4','٥':'5','٦':'6','٧':'7','٨':'8','٩':'9'};
+        const s=(v||'').toString().replace(/[٠-٩]/g,d=>map[d]||d).replace(/,/g,'').replace(/٬/g,'').replace(/[^0-9.\-]/g,'');
+        const x=parseFloat(s); return isNaN(x)?0:x;
+    }
+    function parseLine(raw, section){
+        raw = txt(raw);
+        if(!/EGP/i.test(raw)) return null;
+        const parts = raw.split('|').map(txt).filter(Boolean);
+        const i = parts.findIndex(p=>/^EGP$/i.test(p));
+        if(i>=0){
+            if(section === 'bouncedChecks') return { checkCount:n(parts[i+1]||'0'), totalAmount:n(parts[i+2]||'0'), rawLine:raw };
+            if(section === 'marginalReturns') return { facilityCount:n(parts[i+1]||'0'), totalReturns:n(parts[i+2]||'0'), rawLine:raw };
+            return { facilityCount:n(parts[i-1]||'0'), totalLimits:n(parts[i+1]||'0'), totalBalances:n(parts[i+2]||'0'), totalInstallments:n(parts[i+3]||'0'), rawLine:raw };
+        }
+        const m=raw.match(/(\d{1,3})\s*\|?\s*EGP\s*\|?\s*([\d,]+)\s*\|?\s*([\d,]+)\s*\|?\s*([\d,]+)/i);
+        if(m && section !== 'bouncedChecks' && section !== 'marginalReturns') {
+            return {facilityCount:n(m[1]), totalLimits:n(m[2]), totalBalances:n(m[3]), totalInstallments:n(m[4]), rawLine:raw};
+        }
+        return null;
+    }
+    const result = {
+        open:null,
+        badDebt:null,
+        bouncedChecks:null,
+        marginalReturns:null,
+        meta:{
+            open:{seen:false,noData:false,unread:false},
+            badDebt:{seen:false,noData:false,unread:false},
+            bouncedChecks:{seen:false,noData:false,unread:false},
+            marginalReturns:{seen:false,noData:false,unread:false}
+        }
+    };
+    let section = null;
+    for(let i=0;i<arr.length;i++){
+        const raw=txt(arr[i]||'');
+        const c=squash(raw);
+        if(/ملخصمحتويالتقرير|ملخصمحتوىالتقرير/.test(c)){ section='open'; result.meta.open.seen=true; continue; }
+        if(/الديونالمعدوم|ديونمعدوم/.test(c)){ section='badDebt'; result.meta.badDebt.seen=true; continue; }
+        if(/شيكاتمرتد|شيكمرتد/.test(c)){ section='bouncedChecks'; result.meta.bouncedChecks.seen=true; continue; }
+        if(/العوائدالهامشي|عوائدالهامشي/.test(c)){ section='marginalReturns'; result.meta.marginalReturns.seen=true; continue; }
+        if(/مؤالضمان|مؤشرالضمان|مؤضمان|مؤشرالضمانه/.test(c)){ section=null; continue; } // تم إلغاء مقارنة مؤشر الضمانة نهائياً
+        if(/التسهيتمنتظمه|التسهيلاتمنتظمه|البيانالتوضيحي|اسباباستعمات/.test(c)){ section=null; continue; }
+        if(!section) continue;
+        if(/توجدبيانات|توجددبيانات/.test(c) && !/EGP/i.test(raw)) { result.meta[section].noData=true; continue; }
+        const parsed = parseLine(raw, section);
+        if(parsed && section==='open' && !result.open) result.open = parsed;
+        if(parsed && section==='badDebt' && !result.badDebt) result.badDebt = parsed;
+        if(parsed && section==='bouncedChecks' && !result.bouncedChecks) result.bouncedChecks = parsed;
+        if(parsed && section==='marginalReturns' && !result.marginalReturns) result.marginalReturns = parsed;
+    }
+    ['open','badDebt','bouncedChecks','marginalReturns'].forEach(sec => {
+        const m = result.meta[sec];
+        if(!m.seen) m.unread = true;
+        if(m.seen && !m.noData && !result[sec]) m.unread = true;
+    });
+    return result;
+}
+
+function createLoanFromFacilityBlock(block) {
+    const blockLines = Array.isArray(block) ? block : (block && Array.isArray(block.lines) ? block.lines : []);
+    const lines = Array.isArray(blockLines) ? blockLines.slice() : [];
+    const sourceSection = (block && block.section) ? block.section : 'open';
+    let type = 'تسهيل ائتماني';
+    let bankCode = 'UNKNOWN';
+    let reportDate = null;
+
+    for (const line of lines.slice(0, 8)) {
+        const parts = line.split('|').map(normalizeText);
+        const candidateType = extractLoanTypeFromHeaderParts(parts);
+        if (shouldOverrideLoanType(type, candidateType)) type = candidateType;
+        else if (type === 'تسهيل ائتماني' && candidateType !== 'تسهيل ائتماني') type = candidateType;
+        if (bankCode === 'UNKNOWN') {
+            const codeMatch = line.match(/([A-Z]{2}\d{8}|\d{8}[A-Z]{2})/);
+            if (codeMatch) bankCode = normalizeBankCode(codeMatch[0]);
+        }
+        if (!reportDate) {
+            const dt = parseDateObj(line);
+            if (dt) reportDate = dt;
+        }
+    }
+
+    const loan = {
+        type: normalizeLoanTypeLabel(type),
+        lines,
+        bankCode,
+        amount: 0,
+        installment: 0,
+        duration: 1,
+        installmentStr: 'غ م',
+        durationRaw: 'غ م',
+        reportDate,
+        isBadDebt: false,
+        isClosed: false,
+        isLegalAction: false,
+        hasBouncedChecks: false,
+        bouncedByType: false,
+        guaranteeType: null,
+        sourceSection
+    };
+
+    if (sourceSection === 'closed') loan.isClosed = true;
+    if (sourceSection === 'badDebt') loan.isBadDebt = true;
+
+    lines.forEach(line => {
+        const legalScanLine = normalizeText(line || '');
+        if (/رفع\s*دعاوى|رفع\s*دعوى|عملاء\s*متوقفون|عمء\s*متوقفون|اجراءات\s*قضائ|إجراءات\s*قضائ|قضائ|رفع\s*جنحة|جنحة\s*شيك|قيدت\s*بالنيابة|بالنيابة/.test(line) || /رفع\s*دعاوى|رفع\s*دعوى|عملاء\s*متوقفون|عمء\s*متوقفون|اجراءات\s*قضائ|إجراءات\s*قضائ|قضائ|رفع\s*جنحة|جنحة\s*شيك|قيدت\s*بالنيابة|بالنيابة/.test(legalScanLine)) loan.isLegalAction = true;
+        if (/اعدام مديونية|اعدام مديونيه|عملاء اعدمت|يتعذر تحديد موقع/.test(line)) loan.isBadDebt = true;
+        const parts = line.split('|').map(normalizeText);
+        if (parts.includes('مغلق')) loan.isClosed = true;
+        if (loan.bankCode === 'UNKNOWN') {
+            const deferredCodeMatch = line.match(/([A-Z]{2}\d{8}|\d{8}[A-Z]{2})/);
+            if (deferredCodeMatch) loan.bankCode = normalizeBankCode(deferredCodeMatch[0]);
+        }
+        if (!loan.reportDate) {
+            const deferredDate = parseDateObj(line);
+            if (deferredDate) loan.reportDate = deferredDate;
+        }
+        const deferredType = extractLoanTypeFromHeaderParts(parts);
+        if (shouldOverrideLoanType(loan.type, deferredType)) loan.type = deferredType;
+        if ((line.includes('جنيه') || line.includes('EGP')) && !line.includes('بالجنيه') && loan.amount === 0) {
+            const quickSmart = extractSmartIssueCandidateFromParts(parts);
+            if (quickSmart && quickSmart.amount > 0) {
+                loan.amount = quickSmart.amount;
+                loan.installmentStr = quickSmart.installmentStr;
+                loan.durationRaw = quickSmart.durationRaw;
+                loan.installment = quickSmart.installment;
+                loan.duration = quickSmart.duration;
+            }
+        }
+    });
+
+    const earlyText = lines.slice(0, 18).join(' | ');
+    loan.bouncedByType = /شيكات\s*مرتدة|شيكاتمرتدة|شيك\s*مرتد/.test(loan.type + ' | ' + earlyText);
+    if (loan.bouncedByType) loan.hasBouncedChecks = true;
+
+    return loan;
+}
+
+window.processIscoreUpload = async function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    document.getElementById('loading').style.display = 'block';
+    document.getElementById('result-box').style.display = 'none';
+    document.getElementById('detailsTable').style.display = 'none';
+    document.getElementById('detailsBody').innerHTML = '';
+    document.getElementById('warnings-summary').innerHTML = '';
+    document.getElementById('warnings-summary').style.display = 'none';
+
+    try {
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        let allLines = [];
+        for (let p = 1; p <= pdf.numPages; p++) {
+            const page = await pdf.getPage(p);
+            const content = await page.getTextContent();
+            let rows = {};
+            content.items.forEach(item => {
+                let y = Math.round(item.transform[5] / 4) * 4;
+                if (!rows[y]) rows[y] = [];
+                rows[y].push({ text: normalizeText(item.str), x: item.transform[4] });
+            });
+            Object.keys(rows).sort((a, b) => b - a).forEach(y => {
+                allLines.push(rows[y].sort((a, b) => b.x - a.x).map(i => i.text).join(' | '));
+            });
+        }
+
+        let customerInfo = extractCustomerInfo(allLines);
+ let reportDate = null;
+        let inquiryLine = allLines.find(l => l.includes('تاريخ استعم') || l.includes('تاريخ الاستعلام'));
+        if (inquiryLine) reportDate = parseDateObj(inquiryLine);
+
+        const facilityBlocks = buildFacilityBlocksFromLines(allLines);
+        let loans = facilityBlocks.map(block => createLoanFromFacilityBlock(block));
+        const expectedCategorySummaryTotals = extractExpectedCategorySummaryTotals(allLines);
+        const expectedSummaryTotals = expectedCategorySummaryTotals.open;
+        const expectedBadDebtSummaryTotals = expectedCategorySummaryTotals.badDebt;
+        const expectedBouncedChecksSummaryTotals = expectedCategorySummaryTotals.bouncedChecks;
+        const expectedMarginalReturnsSummary = expectedCategorySummaryTotals.marginalReturns;
+        const summaryMeta = expectedCategorySummaryTotals.meta || {};
+        const openSummaryMeta = summaryMeta.open || {seen:false,noData:false,unread:true};
+        const badDebtSummaryMeta = summaryMeta.badDebt || {seen:false,noData:false,unread:true};
+        const bouncedChecksSummaryMeta = summaryMeta.bouncedChecks || {seen:false,noData:false,unread:true};
+        const expectedFacilityCount = expectedSummaryTotals ? expectedSummaryTotals.facilityCount : 0;
+        const extractedOpenFacilityCount = loans.filter(loan => (loan.sourceSection || 'open') === 'open' && !loan.isBadDebt && !loan.isClosed).length;
+
+        loans.forEach(loan => applySmartFacilityFieldFix(loan));
+        loans.forEach(loan => {
+            loan.takenActionInfo = extractTakenActionInfo(loan.lines);
+            loan.returnedChecksInfo = extractReturnedChecksInfo(loan.lines);
+            const detailedChecks = !!(loan.returnedChecksInfo && loan.returnedChecksInfo.hasBouncedChecks);
+            loan.hasBouncedChecks = !!loan.bouncedByType || detailedChecks;
+            if (loan.takenActionInfo.hasAction) loan.isLegalAction = true;
+        });
+
+        let finalTotal = 0, html = "";
+        let summaryAlerts = [];
+        let displayedOpenAmountTotal = 0;
+        let displayedOpenInstallmentTotal = 0;
+        let displayedBadDebtCount = 0;
+        let displayedBadDebtAmountTotal = 0;
+        let displayedBouncedChecksCount = 0;
+
+        const facilityCountMismatchWarning = (expectedFacilityCount > 0 && extractedOpenFacilityCount !== expectedFacilityCount)
+            ? `تنبيه: تم استخراج ${extractedOpenFacilityCount} تسهيل ساري/معلق فقط بينما ملخص التقرير يشير إلى ${expectedFacilityCount} تسهيلات.`
+            : '';
+        let summaryTotalsMismatchWarning = '';
+
+        loans.forEach(loan => {
+            loan.type = normalizeLoanTypeLabel(loan.type || "");
+            let fullText = loan.lines.join(' | ');
+            const loanFullTextNorm = normalizeForSectionMatch(fullText);
+            if (/مبادرةالبنكالمركزي|التمويلالعقاري|محدوديالدخل/.test(loanFullTextNorm)) {
+                loan.type = 'مبادرة البنك المركزي المي للتمويل العقاري - محدودي الدخل';
+            }
+
+            let cleanForGuarantor = fullText.replace(/[\s|]+/g, '');
+            let gType = null;
+            if (/غطاءكلي|غطاءكلى|غطاءنقدي|غطاءكامل/.test(cleanForGuarantor)) gType = 'غطاء كلي';
+            else if (/غطاءجزئي|غطاءجزئى/.test(cleanForGuarantor)) gType = null; // غطاء جزئي لا يُستبعد ويُحسب كأي تسهيل ساري
+            else if (/شريكمتضامن/.test(cleanForGuarantor)) gType = 'شريك متضامن';
+            else if (/كفيل/.test(cleanForGuarantor)) gType = 'كفيل';
+            else if (/ضامن/.test(cleanForGuarantor)) {
+                gType = /شخ/.test(cleanForGuarantor) ? 'ضامن شخصي' : 'ضامن';
+            }
+            loan.guaranteeType = gType;
+
+            // فحص الملخص: مجموع القيم الخام التي تظهر في عمودي إجمالي المبلغ والقسط للتسهيلات المفتوحة فقط.
+            // غ م تُعامل كصفر لأن loan.amount و loan.installment أرقام فعلية بعد القراءة.
+            if ((loan.sourceSection || 'open') === 'open' && !loan.isClosed && !loan.isBadDebt) {
+                displayedOpenAmountTotal += (Number(loan.amount) || 0);
+                displayedOpenInstallmentTotal += (Number(loan.installment) || 0);
+            }
+            if ((loan.sourceSection || '') === 'badDebt' || loan.isBadDebt) {
+                displayedBadDebtCount += 1;
+                displayedBadDebtAmountTotal += (Number(loan.amount) || 0);
+            }
+            if (loan.hasBouncedChecks && loan.returnedChecksInfo) {
+                const rows = Array.isArray(loan.returnedChecksInfo.rows) ? loan.returnedChecksInfo.rows : [];
+                // ESSAM_V58_BOUNCED_CHECKS_EXISTENCE_COUNTER_FIX
+                // المقارنة وجود/عدم وجود. لو التسهيل نفسه شيكات مرتدة ولم تُقرأ صفوف تفصيلية، نحسبه كوجود واحد.
+                displayedBouncedChecksCount += rows.length > 0 ? rows.length : 1;
+            }
+
+            let bankName = companyCodes[loan.bankCode] || loan.bankCode;
+
+            let cleanTextForFreq = getPaymentTypeSourceText(loan.lines).replace(/اقساط السنوية/g, "").replace(/الأقساط السنوية/g, "").replace(/السنوية/g, "");
+            let paymentType = "غ م";
+            let freqDivisor = 1;
+            let freqMultiplier = 1;
+            
+            if ((cleanTextForFreq.includes('جدول') && cleanTextForFreq.includes('سداد')) || cleanTextForFreq.includes('جدولة')) { paymentType = "جدول سداد بحسب الطلب"; freqDivisor = 1; }
+            else if (/(^|\||\s)الطلب(\s|\||$)|بحسب الطلب/.test(cleanTextForFreq)) { paymentType = "الطلب"; freqDivisor = 1; } 
+            else if (cleanTextForFreq.includes('بشكل') && cleanTextForFreq.includes('متعاقب')) { paymentType = "بشكل متعاقب"; freqDivisor = 1; } 
+            else if (/ربع سنوي|ربع سنوى/.test(cleanTextForFreq)) { paymentType = "ربع سنوي"; freqDivisor = 3; } 
+            else if (/نصف سنوي|نصف سنوى|نص سنوي|نص سنوى/.test(cleanTextForFreq)) { paymentType = "نصف سنوي"; freqDivisor = 6; } 
+            else if (/(?<!نصف |نص |ربع )سنوي|(?<!نصف |نص |ربع )سنوى/.test(cleanTextForFreq)) { paymentType = "سنوي"; freqDivisor = 12; } 
+/* ESSAM_V54_WEEKLY_PAYMENT_SAFE_ONLY */
+            else if (/كل\s*ا?سبوعين|كل\s*أسبوعين|ا?سبوعين|أسبوعين/.test(cleanTextForFreq)) { paymentType = "كل اسبوعين"; freqDivisor = 1; freqMultiplier = 2; }
+            else if (/ا?سبوعى|ا?سبوعي|أسبوعى|أسبوعي|اسبوعى|اسبوعي/.test(cleanTextForFreq)) { paymentType = "اسبوعي"; freqDivisor = 1; freqMultiplier = 4; }
+            else if (/شهرى|شهري/.test(cleanTextForFreq)) { paymentType = "شهري"; freqDivisor = 1; } 
+            else if (loan.installment === 0) { paymentType = "غ م"; freqDivisor = 1; }
+
+            let isTargetLoan = /شخصي|سلع|انشط|اقتصاد/.test(loan.type);
+            let isStandardPayment = ['شهري', 'سنوي', 'نصف سنوي', 'ربع سنوي', 'كل اسبوعين', 'اسبوعي'].includes(paymentType);
+            const isPaymentStyleCardOrRevolving = /كارت|كروت|بطاق|فيزا|فيزه|visa|مجدد/i.test(loan.type);
+            const isPaymentStyleEligible = !loan.isClosed && !loan.isBadDebt && !loan.guaranteeType && !isPaymentStyleCardOrRevolving;
+            let paymentStyle = (isPaymentStyleEligible && ['الطلب', 'جدول سداد بحسب الطلب', 'بشكل متعاقب'].includes(paymentType)) ? "background-color: #fef08a; color: #b45309; font-weight: bold; border: 2px solid #fbbf24; border-radius: 4px;" : "";
+
+            // ESSAM_V61_DELAY_EXCEPTION_SPECIAL_TYPES_NO_MARGIN_RETURNS
+            // التأخير فقط في الغطاء الكلي/الوديعة/النفقة/الغاز/العقاري/الإسكان/مبادرة البنك المركزي = تأخير مستثنى أصفر.
+            // لا يتم استخدام العوائد الهامشية هنا لأنها ليست محددة على مستوى كل قرض داخل الصفحة.
+            // يظل الأحمر فقط لو القرض نفسه عليه إجراء قضائي أو دين معدوم.
+            const delayExceptionScanText = (loan.type || '') + ' ' + (bankName || '') + ' ' + (loan.guaranteeType || '') + ' ' + ((loan.lines || []).slice(0, 45).join(' '));
+            const hardRedReasonForDelayException = !!(loan.isBadDebt || loan.isLegalAction);
+            const forceNoDelayException = /بطاق|كارت|مجدد|سلع|انشط|اقتصاد/.test(loan.type);
+            const isSpecialDelayExceptionType = /غطاء\s*كل[يى]|وديعة|وديعه|الوديعة|الوديعه|مصرفية|مصرفيه|نفق[هة]|غاز|اسكان|إسكان|عقار[يى]|تمويل\s*عقار|مبادرة\s*البنك\s*المركز[يى]|البنك\s*المركز[يى]/.test(delayExceptionScanText);
+            let isDelayExcepted = !hardRedReasonForDelayException && (isSpecialDelayExceptionType || (!forceNoDelayException && /زراع[يى]|غاز|اسكان|إسكان|عقار[يى]|نفق[هة]/.test(loan.type + ' ' + bankName)));
+
+            let delays = extractBktHistory(loan.lines);
+            if ((loan.isBadDebt || loan.isClosed || loan.isLegalAction) && reportDate && loan.reportDate) {
+                let diff = (reportDate.year - loan.reportDate.year) * 12 + (reportDate.month - loan.reportDate.month);
+                if (diff > 0 && diff < 100) delays = Array(diff).fill(0).concat(delays);
+            }
+            
+            let bkt = processBktAlerts(delays, isDelayExcepted);
+
+            let rule = "قسط طبيعي", approved = 0;
+            let css = "normal", rowClass = "";
+            let isRule35Warning = false;
+            let ruleStyle = "";
+
+            const isActiveLoanForGuarantee = !loan.isClosed && !loan.isBadDebt;
+            const isCardOrRevolving = /كارت|كروت|بطاق|فيزا|فيزه|visa|مجدد|سحب\s*بدون\s*رصيد|سحببدونرصيد/i.test(loan.type);
+            const isActiveCountableLoan = !loan.isClosed && !loan.isBadDebt && !(isActiveLoanForGuarantee && loan.guaranteeType) && !isCardOrRevolving;
+            const isIrregularPaymentWarning = isActiveCountableLoan && ['الطلب', 'جدول سداد بحسب الطلب', 'بشكل متعاقب'].includes(paymentType);
+            let isLowInstallment35 = false;
+            let isAnyRule35 = false;
+            let manualReviewText = "يرجي حساب القسط يدويا";
+
+            if (loan.isBadDebt) {
+                rule = "مستبعد (دين معدوم)"; approved = 0; css = "ignored"; rowClass = "bad-debt-row";
+            }
+            else if (loan.isClosed) {
+                rule = "مستبعد (مغلق)"; approved = 0; css = "ignored";
+            }
+            else if (isActiveLoanForGuarantee && loan.guaranteeType) {
+                rule = `مستبعد (${loan.guaranteeType})`; approved = 0; css = "ignored";
+            }
+            else if (isCardOrRevolving) {
+                rule = "حساب 5%"; approved = loan.amount * 0.05; css = "calculated";
+                if (bkt.warning) rowClass = bkt.isExcepted ? "payment-excepted-row" : "payment-warning-row";
+            }
+            /* ESSAM_V24: تم حذف قاعدة القسط أقل من 121؛ أي قسط مكتوب يُحسب كقسط طبيعي */
+            // ESSAM_MISSING_INSTALLMENT_TERM_CALC_V34: للقروض غير الكروت/الائتمان المجدد وغير السلع/الأنشطة، لو القسط غير موجود يتم حساب القسط المعتمد = قيمة القرض / مدة القرض.
+            else if (!/سلع|انشط|أنشط|نشاط|اقتصاد/.test(loan.type) && (loan.installment === 0 || smartFieldIsMissingToken(loan.installmentStr)) && loan.amount > 0 && loan.duration > 0 && !smartFieldIsMissingToken(loan.durationRaw)) {
+                rule = `حساب قيمة القرض / مدة القرض (${loan.duration})`;
+                approved = loan.amount / loan.duration;
+                css = "calculated";
+                if (bkt.warning) rowClass = bkt.isExcepted ? "payment-excepted-row" : "payment-warning-row";
+            }
+            // ESSAM_V24: حسبة السلع المعمرة +35% لا تعمل إلا لو القسط غير موجود فعلاً: 0 أو غ م.
+            // ESSAM_V60_ECONOMIC_ACTIVITY_35_PERCENT_RULE: إضافة الأنشطة الاقتصادية لنفس حسبة +35% عند غياب القسط.
+            else if (/سلع|انشط|أنشط|نشاط|اقتصاد/.test(loan.type) && (loan.installment === 0 || smartFieldIsMissingToken(loan.installmentStr))) {
+                isAnyRule35 = true;
+                isRule35Warning = (loan.durationRaw === "غ م");
+                ruleStyle = "background-color: #fef08a; color: #b45309; font-weight: bold; border: 2px solid #fbbf24; border-radius: 4px; padding: 2px 4px; display: inline-block;";
+                rule = isRule35Warning ? "حساب قيمة القرض +35% (مقسوم على 1)" : `حساب قيمة القرض +35% / ${loan.duration}`;
+                approved = (loan.amount * 1.35) / loan.duration;
+                css = "calculated";
+                rowClass = "payment-excepted-row";
+            }
+            else {
+                approved = (loan.installment * freqMultiplier) / freqDivisor;
+                if (freqMultiplier > 1) rule += ` (مضروب في ${freqMultiplier})`;
+                if (freqDivisor > 1) rule += ` (مقسوم على ${freqDivisor})`;
+                css = "normal";
+                if (bkt.warning) rowClass = bkt.isExcepted ? "payment-excepted-row" : "payment-warning-row";
+            }
+
+            // تنبيه نوع السداد غير المنتظم للقروض السارية القابلة للحساب فقط؛ لا يطبق على مغلق/دين معدوم/ضمان/كروت/فيزا/ائتمان مجدد
+            if (isIrregularPaymentWarning && rowClass !== "bad-debt-row") rowClass = "payment-excepted-row";
+            if (bkt.warning && rowClass !== "bad-debt-row") rowClass = bkt.isExcepted ? "payment-excepted-row" : "bad-debt-row";
+            if (bkt.warning && bkt.isExcepted && !hardRedReasonForDelayException) rowClass = "payment-excepted-row";
+            if (loan.hasBouncedChecks && !loan.isBadDebt && !loan.isClosed) rowClass = "bad-debt-row";
+            if (loan.isLegalAction && !loan.isBadDebt && !loan.isClosed) rowClass = "bad-debt-row";
+
+            finalTotal += approved;
+
+            // --- تجميع بيانات لوحة التنبيه الذكية ---
+            let alertLevel = null; 
+            let alertReasons = [];
+
+            if (loan.isBadDebt) { alertLevel = 'red'; alertReasons.push("مستبعد (دين معدوم)"); }
+            if (loan.hasBouncedChecks) { alertLevel = 'red'; alertReasons.push("شيكات مرتدة"); }
+            if (loan.isLegalAction) { alertLevel = 'red'; alertReasons.push(bkt.warning ? "متأخر + اجراء قضائى" : "منتظم + اجراء قضائى"); }
+            if (loan.isClosed) { alertLevel = 'red'; }
+            if (isActiveLoanForGuarantee && loan.guaranteeType) {
+                // في حالة الغطاء/الوديعة المستثناة بسبب التأخير فقط، لا نحول التنبيه إلى أحمر بسبب الضمان وحده.
+                if (!(bkt.warning && bkt.isExcepted && !hardRedReasonForDelayException)) {
+                    alertLevel = 'red';
+                    alertReasons.push(`مستبعد (${loan.guaranteeType})`);
+                }
+            }
+            
+            if (bkt.warning) {
+                let bktText = `BKT1 ${bkt.buckets.bkt1} | BKT2 ${bkt.buckets.bkt2} | BKT3 ${bkt.buckets.bkt3}`;
+                if (bkt.isExcepted) {
+                    if (alertLevel !== 'red') alertLevel = 'yellow';
+                    alertReasons.push(`تأخير مستثنى (${bktText})`);
+                } else {
+                    alertLevel = 'red';
+                    alertReasons.push(`تأخير BKT (${bktText})`);
+                }
+            }
+
+            if (isIrregularPaymentWarning) {
+                if (alertLevel !== 'red') alertLevel = 'yellow';
+                alertReasons.push(`نوع سداد غير منتظم (${paymentType}) - ${manualReviewText}`);
+            }
+
+            if (isAnyRule35) {
+                if (alertLevel !== 'red') alertLevel = 'yellow';
+                if (isLowInstallment35) {
+                    alertReasons.push(`قسط أقل من 121 وتم حساب قيمة القرض +35% بدل قيمة القسط (${loan.installmentStr || loan.installment}) - ${manualReviewText}`);
+                } else if (isRule35Warning) {
+                    alertReasons.push(`المدة غ م (حساب قيمة القرض +35% مقسوم على 1) - ${manualReviewText}`);
+                } else {
+                    alertReasons.push(`تم حساب القسط بطريقة قيمة القرض +35% / ${loan.duration} - ${manualReviewText}`);
+                }
+            }
+
+            if (alertLevel && alertReasons.length > 0) {
+                summaryAlerts.push({
+                    bank: bankName,
+                    type: loan.type,
+                    approvedInst: approved,
+                    level: alertLevel,
+                    reasons: alertReasons.join(' + ')
+                });
+            }
+            // ----------------------------------------
+
+            let bktDisplay = "";
+            if (loan.isBadDebt && loan.isLegalAction) {
+                bktDisplay = `<span class='bkt-warning' style='color: white; background-color: #c53030; padding: 2px 4px; border-radius: 4px;'>دين معدوم + اجراء قضائى</span><br><span style='color:#718096; font-size: 11px;'>BKT1 ${bkt.buckets.bkt1} | BKT2 ${bkt.buckets.bkt2} | BKT3 ${bkt.buckets.bkt3}</span>`;
+            } else if (loan.isBadDebt) {
+                bktDisplay = `<span class='bkt-warning' style='color: white; background-color: #c53030; padding: 2px 4px; border-radius: 4px;'>دين معدوم</span><br><span style='color:#718096; font-size: 11px;'>BKT1 ${bkt.buckets.bkt1} | BKT2 ${bkt.buckets.bkt2} | BKT3 ${bkt.buckets.bkt3}</span>`;
+            } else if (loan.hasBouncedChecks) {
+                bktDisplay = `<span class='bkt-warning' style='color: white; background-color: #c53030; padding: 2px 4px; border-radius: 4px;'>شيكات مرتدة</span><br><span style='color:#718096; font-size: 11px;'>BKT1 ${bkt.buckets.bkt1} | BKT2 ${bkt.buckets.bkt2} | BKT3 ${bkt.buckets.bkt3}</span>`;
+            } else if (loan.isLegalAction) {
+                const legalBktLabel = bkt.warning ? 'متأخر + اجراء قضائى' : 'منتظم + اجراء قضائى';
+                bktDisplay = `<span class='bkt-warning' style='color: white; background-color: #c53030; padding: 2px 4px; border-radius: 4px;'>${legalBktLabel}</span><br><span style='color:#718096; font-size: 11px;'>BKT1 ${bkt.buckets.bkt1} | BKT2 ${bkt.buckets.bkt2} | BKT3 ${bkt.buckets.bkt3}</span>`;
+            } else if (bkt.warning) {
+                bktDisplay = bkt.isExcepted
+                    ? `<span class='bkt-warning-yellow'>استثناء تأخير</span><br><span style='color:#718096; font-size: 11px;'>BKT1 ${bkt.buckets.bkt1} | BKT2 ${bkt.buckets.bkt2} | BKT3 ${bkt.buckets.bkt3}</span>`
+                    : `<span class='bkt-warning'>تأخير</span><br><span style='color:#718096; font-size: 11px;'>BKT1 ${bkt.buckets.bkt1} | BKT2 ${bkt.buckets.bkt2} | BKT3 ${bkt.buckets.bkt3}</span>`;
+            } else {
+                bktDisplay = `<span class='bkt-safe'>منتظم</span><br><span style='color:#718096; font-size: 11px;'>BKT1 ${bkt.buckets.bkt1} | BKT2 ${bkt.buckets.bkt2} | BKT3 ${bkt.buckets.bkt3}</span>`;
+            }
+
+            html += `<tr class="${rowClass}">
+                <td class="bank-name">${bankName}</td>
+                <td class="facility-name">${normalizeLoanTypeLabel(loan.type)}</td>
+                <td>${loan.amount.toLocaleString()}</td>
+                <td>${(loan.installment === 0 && paymentType === 'جدولة سداد بحسب الطلب') ? '0' : (loan.installmentStr || 'غ م')}</td>
+                <td>${loan.durationRaw}</td>
+                <td style="${paymentStyle}">${paymentType}</td>
+                <td class="history-cell">${bktDisplay}</td>
+                <td class="${css}">
+                    <span style="${ruleStyle}">${rule}</span>
+                </td>
+                <td class="${css}">${approved.toLocaleString('en-US',{minimumFractionDigits:2})}</td>
+            </tr>`;
+        });
+
+        document.getElementById('detailsBody').innerHTML = html;
+        document.getElementById('totalValue').innerText = finalTotal.toLocaleString('en-US',{minimumFractionDigits:2});
+ applyIscoreToApproval(finalTotal, customerInfo);
         
-        <tr style="display:none;"><td colspan="3"><datalist id="branchList"></datalist></td></tr>
-        
-        <!-- الصف الثاني -->
-        <tr>
-            <td class="lbl-pro">
-               مجموع الكروت الائتمانية من إسكور<br>
-               <span style="font-size:14px; color:#64748b; font-weight:600;">(كارت المشتريات وبطاقة الائتمان في 5%)</span>
-            </td>
-            <td class="data-cell">
-                <input class="pro-inp green-text" id="cardsTotal" placeholder="مجموع الكروت" type="text" value="0"/>
-            </td>
-            <td class="data-cell">
-                <input class="pro-inp read green-text" id="cardsMonthly" readonly="" type="text" value="0"/>
-            </td>
-        </tr>
+        // رسم لوحة التنبيه بالشكل المطلوب
+        const reconciliationProblems = [];
+        if (openSummaryMeta.unread) {
+            reconciliationProblems.push('open-unread');
+        } else if (expectedSummaryTotals) {
+            const countOk = Math.round(extractedOpenFacilityCount) === Math.round(expectedSummaryTotals.facilityCount || 0);
+            const amountOk = Math.round(displayedOpenAmountTotal) === Math.round(expectedSummaryTotals.totalLimits || 0);
+            const installmentOk = Math.round(displayedOpenInstallmentTotal) === Math.round(expectedSummaryTotals.totalInstallments || 0);
+            if (!countOk || !amountOk || !installmentOk) reconciliationProblems.push('open');
+        } else if (openSummaryMeta.noData) {
+            if (Math.round(extractedOpenFacilityCount) !== 0 || Math.round(displayedOpenAmountTotal) !== 0 || Math.round(displayedOpenInstallmentTotal) !== 0) reconciliationProblems.push('open');
+        }
+        if (badDebtSummaryMeta.unread) {
+            reconciliationProblems.push('badDebt-unread');
+        } else if (expectedBadDebtSummaryTotals) {
+            const countOk = Math.round(displayedBadDebtCount) === Math.round(expectedBadDebtSummaryTotals.facilityCount || 0);
+            const amountOk = Math.round(displayedBadDebtAmountTotal) === Math.round(expectedBadDebtSummaryTotals.totalLimits || 0);
+            if (!countOk || !amountOk) reconciliationProblems.push('badDebt');
+        } else if (badDebtSummaryMeta.noData) {
+            if (Math.round(displayedBadDebtCount) !== 0 || Math.round(displayedBadDebtAmountTotal) !== 0) reconciliationProblems.push('badDebt');
+        }
+        if (bouncedChecksSummaryMeta.unread) {
+            reconciliationProblems.push('bouncedChecks-unread');
+        } else if (expectedBouncedChecksSummaryTotals) {
+            // ESSAM_V53_BOUNCED_CHECKS_EXISTENCE_ONLY
+            // لا نقارن عدد الشيكات المرتدة بالعدد المستخرج من تفاصيل القروض.
+            // بعض البنوك تسجل أكثر من شيك مرتد داخل تسهيل واحد، لذلك المقارنة الصحيحة هنا هي وجود/عدم وجود فقط.
+            const expectedHasBouncedChecks = Math.round(expectedBouncedChecksSummaryTotals.checkCount || 0) > 0;
+            const displayedHasBouncedChecks = Math.round(displayedBouncedChecksCount || 0) > 0;
+            const bouncedChecksOk = expectedHasBouncedChecks === displayedHasBouncedChecks;
+            if (!bouncedChecksOk) reconciliationProblems.push('bouncedChecks');
+        } else if (bouncedChecksSummaryMeta.noData) {
+            if (Math.round(displayedBouncedChecksCount) !== 0) reconciliationProblems.push('bouncedChecks');
+        }
+        if (reconciliationProblems.length > 0) {
+            summaryTotalsMismatchWarning = 'يرجي مراجعة الايسكور';
+        }
 
-        <!-- مسافة بيضاء جمالية -->
-        <tr><td colspan="3" style="height: 15px; background: #fff; padding: 0 !important; border: none !important;"></td></tr>
+        let topWarningsHTML = '';
+        if (summaryTotalsMismatchWarning) {
+            topWarningsHTML += `
+                <div style="background:#fff5f5;padding:16px;border-radius:8px;border:2px solid #e53e3e;box-shadow:0 4px 6px rgba(0,0,0,0.05);margin-bottom:20px;">
+                    <div style="padding:12px;border-right:6px solid #e53e3e;background-color:#fff5f5;border-radius:4px;color:#c53030;font-weight:900;font-size:18px;line-height:1.9;">⚠️ تنبيه<br><span style="font-weight:900;">${summaryTotalsMismatchWarning}</span></div>
+                </div>`;
+        }
+        if (facilityCountMismatchWarning) {
+            topWarningsHTML += `
+                <div style="background:#fff7ed;padding:16px;border-radius:8px;border:1px solid #fdba74;box-shadow:0 4px 6px rgba(0,0,0,0.05);margin-bottom:20px;">
+                    <div style="padding:12px;border-right:5px solid #f97316;background-color:#fff7ed;border-radius:4px;color:#9a3412;font-weight:bold;">${facilityCountMismatchWarning}</div>
+                </div>`;
+        }
+        if (expectedMarginalReturnsSummary && ((expectedMarginalReturnsSummary.facilityCount || 0) > 0 || (expectedMarginalReturnsSummary.totalReturns || 0) > 0)) {
+            topWarningsHTML += `
+                <div style="background:#fff7ed;padding:16px;border-radius:8px;border:2px solid #f97316;box-shadow:0 4px 6px rgba(0,0,0,0.05);margin-bottom:20px;">
+                    <div style="padding:12px;border-right:6px solid #f97316;background-color:#fff7ed;border-radius:4px;color:#9a3412;font-weight:900;font-size:18px;line-height:1.9;">⚠️ تنبيه عوائد هامشية<br><span style="font-weight:900;">يوجد عوائد هامشيه عدد ${expectedMarginalReturnsSummary.facilityCount || 0} قرض و اجمالي العوائد الهامشية ${(expectedMarginalReturnsSummary.totalReturns || 0).toLocaleString('en-US')}</span></div>
+                </div>`;
+        }
+        if (topWarningsHTML) {
+            const warnWrap = document.getElementById('warnings-summary');
+            warnWrap.style.display = 'block';
+            warnWrap.innerHTML = topWarningsHTML;
+        }
+        if (summaryAlerts.length > 0) {
+            let summaryHTML = topWarningsHTML + `<div style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px;">
+                <h3 style="color: #2d3748; margin-top: 0; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; text-align: center;">⚠️ تنبيه</h3>
+                <div style="display: flex; flex-direction: column; gap: 10px;">`;
+            
+            summaryAlerts.forEach(al => {
+                let borderColor = al.level === 'red' ? '#e53e3e' : '#d69e2e';
+                let bgColor = al.level === 'red' ? '#fff5f5' : '#fffff0';
+                let textColor = al.level === 'red' ? '#c53030' : '#b45309';
+                
+                summaryHTML += `
+                <div style="padding: 12px; border-right: 5px solid ${borderColor}; background-color: ${bgColor}; border-radius: 4px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <strong style="color: #2d3748; font-size: 15px;">${al.bank} - ${al.type}</strong>
+                    </div>
+                    <div style="color: ${textColor}; font-size: 14px; display: flex; align-items: center; gap: 15px;">
+                        <span>السبب: ${al.reasons}</span>
+                        <span style="font-weight: bold; color: #22543d; background: #c6f6d5; padding: 2px 8px; border-radius: 4px; border: 1px solid #9ae6b4; font-size: 13px;">القسط المعتمد: ${al.approvedInst.toLocaleString('en-US', {minimumFractionDigits:2})}</span>
+                    </div>
+                </div>`;
+            });
+            summaryHTML += `</div></div>`;
+            document.getElementById('warnings-summary').innerHTML = summaryHTML;
+            document.getElementById('warnings-summary').style.display = 'block';
+        }
 
-        <!-- التوقيع -->
-        <tr>
-            <td colspan="3" class="pro-footer-cell">create by Taswya</td>
-        </tr>
-    </table>
+        document.getElementById('result-box').style.display = 'block';
+        document.getElementById('detailsTable').style.display = 'table';
+    } catch (err) { alert("حدث خطأ أثناء قراءة ملف الـ I-Score. تأكد أن الملف PDF صالح، ولو ظهر نفس التنبيه ابعتهولي وأنا أصلحه فوراً."); console.error(err); }
+    finally { document.getElementById('loading').style.display = 'none'; }
+};
+try{ document.getElementById('pdfUploadIscore').addEventListener('change', window.processIscoreUpload); }catch(e){ console.error(e); }
+</script>
+<script>
+(function(){
+  if (window.__essamPatchV17Applied) return;
+  window.__essamPatchV17Applied = true;
 
-    <!-- أزرار التحكم -->
-    <div class="pro-actions">
-        <button id="saveBtn" class="pro-btn btn-success">حفظ الصورة</button>
-        <button id="copyImgBtn" class="pro-btn btn-primary">نسخ الصورة</button>
-        <button id="uploadBtn" class="pro-btn btn-warning">رفع شيت الفروع</button>
-        <button id="uploadIscoreBtn" class="pro-btn btn-primary" onclick="document.getElementById('pdfUploadIscore').click();" type="button">رفع I-Score</button>
-        <button id="clearIscoreBtn" class="pro-btn btn-danger" onclick="if(window.resetIscoreIntegration){window.resetIscoreIntegration();}" type="button">مسح الـ I-Score</button>
-        <button id="saveIscoreBtn" class="pro-btn btn-success" onclick="if(window.saveIscoreTableImage){window.saveIscoreTableImage();}" type="button">حفظ الـ I-Score</button>
-        
-        <input accept="application/pdf" id="pdfUploadIscore" onchange="if(window.processIscoreUpload){window.processIscoreUpload(event);}" style="position:fixed;left:-9999px;top:-9999px;opacity:0;pointer-events:none;width:1px;height:1px;" type="file"/>
-        <input accept=".xlsx,.xls" id="excelFile" style="display:none;" type="file"/>
-    </div>
+  const __digitMap = {'٠':'0','١':'1','٢':'2','٣':'3','٤':'4','٥':'5','٦':'6','٧':'7','٨':'8','٩':'9'};
+  const __monthRx = '(?:يناير|فبراير|مارس|أبريل|ابريل|مايو|يونيو|يوليو|أغسطس|اغسطس|سبتمبر|أكتوبر|اكتوبر|نوفمبر|ديسمبر)';
+  const __dateRx = new RegExp('(\\d{1,2}[-/]' + __monthRx + '\\-?\\d{4})|(\\d{4}[-/]\\d{1,2}[-/]\\d{1,2})|(\\d{1,2}[-/]\\d{1,2}[-/]\\d{4})');
 
-    <!-- ملاحظات I-Score -->
-    <div class="pro-notes">
-        <strong>قراءات الايسكور :</strong>
-        • جمع إجمالى كل الكروت (المشتريات، البطاقات الائتمانية، الائتمان المجدد، السحب بدون رصيد) في <span style="color:#ef4444;font-weight:bold;">5%</span>.<br/>
-        • جمع كل الأقساط مع تفادي الحالات الآتية: (مؤشر الضمانة غطاء كلى، العميل ضامن، شريك متضامن، كفيل شركة، كروت مشتريات، بطاقات الائتمان).<br/>
-        • القروض التى ليس بها أقساط (السلع المعمرة، أنشطه اقتصادية) يتم احتسابها كالتالى: يضرب إجمالى المبلغ فى <span style="color:#ef4444;font-weight:bold;">35%</span> ويقسم على مدة القرض.<br/>
-        • فى حالة وجود إجراء قضائى، شيكات مرتده، أو ديون معدومه يتم الغاء الحالة.
-    </div>
-</div>
+  function __safeNormalizeText(v){
+    if (typeof normalizeText === 'function') return normalizeText(v || '');
+    return String(v || '').replace(/\s+/g, ' ').trim();
+  }
+  function __normDigits(v){ return String(v || '').replace(/[٠-٩]/g, d => __digitMap[d] || d); }
+  function __sectionNormalize(v){
+    const s = __safeNormalizeText(v || '');
+    if (typeof normalizeForSectionMatch === 'function') return normalizeForSectionMatch(s);
+    return s
+      .replace(/[ؐ-ًؚ-ٰٟۖ-ۭ]/g, '')
+      .replace(/[إأآٱا]/g, 'ا').replace(/ى/g, 'ي').replace(/ؤ/g, 'و').replace(/ئ/g, 'ي').replace(/ة/g, 'ه')
+      .replace(/[\s|]+/g, '');
+  }
+  function __clean(v){ return __safeNormalizeText(v || '').replace(/^[:：\-|\s]+|[:：\-|\s]+$/g, '').trim(); }
+  function __arabicFold(v){
+    return __safeNormalizeText(v || '')
+      .replace(/[ؐ-ًؚ-ٰٟۖ-ۭ]/g, '')
+      .replace(/[إأآٱا]/g, 'ا').replace(/ى/g, 'ي').replace(/ؤ/g, 'و').replace(/ئ/g, 'ي').replace(/ة/g, 'ه')
+      .replace(/\s+/g, ' ').trim();
+  }
+  function __validArabicName(v){
+    const raw = __clean(v);
+    const name = raw.replace(/[^؀-ۿ\s]/g, ' ').replace(/\s+/g, ' ').trim();
+    if (!name || /\d/.test(raw)) return '';
+    const words = name.split(/\s+/).filter(Boolean);
+    if (words.length < 3 || words.length > 7) return '';
+    return name;
+  }
+  function __extractAfterLabel(line, labelRx){
+    const parts = __normDigits(line).split('|').map(__clean).filter(Boolean);
+    for (let i = 0; i < parts.length; i++) {
+      if (labelRx.test(__arabicFold(parts[i])) || labelRx.test(parts[i])) {
+        for (let j = i + 1; j < parts.length; j++) {
+          const val = __clean(parts[j]);
+          if (!val || /^[:：\-]+$/.test(val)) continue;
+          return val;
+        }
+      }
+    }
+    return '';
+  }
+  function __getActionHeaderState(arr, i){
+    if (typeof getActionHeaderState === 'function') return getActionHeaderState(arr, i);
+    const rawCur = arr[i] || '';
+    const rawNext = arr[i + 1] || '';
+    const cur = __sectionNormalize(rawCur);
+    const next = __sectionNormalize(rawNext);
+    const combined = cur + next;
+    const hasHeaderNow = /اجراءاتالمتخذه|اجراءاتالمتخذة|الاجراءاتالمتخذه|الاجراءاتالمتخذة/.test(cur) ||
+      ((/اجراءات|الاجراءات/.test(cur)) && (/المتخذه|المتخذة/.test(next)));
+    const hasColumnsNow = /تاريخالتصنيفاول|كودالاجراءالرئي|كودالاجراءالفرعي|تاريخالاجراء/.test(cur) ||
+      /تاريخالتصنيفاول|كودالاجراءالرئي|كودالاجراءالفرعي|تاريخالاجراء/.test(combined);
+    return { cur, next, combined, hasHeaderNow, hasColumnsNow };
+  }
+  function __isBoundaryLine(clean){
+    if (typeof isIscoreBoundaryLine === 'function') return isIscoreBoundaryLine(clean || '');
+    return /بياناتالشكوي|بياناتالشكوى|التسهيلالائتماني|التسهيلائتماني|الشهور|البياناتالتاريخيه|شيكاتمرتده|تسهيلاتالديونالمعدومه|التسهيلاتالمغلقه/.test(clean || '');
+  }
+  function __extractFacilityTypeFromLines(lines){
+    const arr = Array.isArray(lines) ? lines.map(v => __safeNormalizeText(v || '')).filter(Boolean) : [];
+    for (const raw of arr.slice(0, 6)) {
+      const parts = raw.split('|').map(__clean).filter(Boolean);
+      for (let i = 0; i < parts.length; i++) {
+        const p = __sectionNormalize(parts[i]);
+        if (/التسهيلالائتماني|التسهيلائتماني/.test(p)) {
+          for (let j = i + 1; j < parts.length; j++) {
+            const candidate = __clean(parts[j]);
+            const n = __sectionNormalize(candidate);
+            if (!candidate) continue;
+            if (/^\d+$/.test(__normDigits(candidate))) continue;
+            if (/تاريخاخر|تاريخالموافقه|كودالجهه|بياناتاصدار|الحدالائتماني|المبلغالممنوح|العمله|قيمهالقسط|مدهالقرض|عدداقساط|page\d+/i.test(n)) continue;
+            return candidate;
+          }
+        }
+      }
+    }
+    return '';
+  }
+  function __isReturnedByFacilityType(linesOrType){
+    const t = Array.isArray(linesOrType) ? __extractFacilityTypeFromLines(linesOrType) : String(linesOrType || '');
+    return /شيكاتمرتده|شيكمرتد/.test(__sectionNormalize(t));
+  }
+
+  window.extractCustomerInfo = function(allLines){
+    const lines = Array.isArray(allLines) ? allLines.map(l => __safeNormalizeText(l || '')).filter(Boolean) : [];
+    const wholeText = lines.join(' || ');
+    const pages = [];
+    let current = [];
+    for (const line of lines) {
+      current.push(line);
+      if (/^Page\s+\d+\s+of\s+\d+/i.test(line)) {
+        pages.push(current);
+        current = [];
+      }
+    }
+    if (current.length) pages.push(current);
+
+    const page1 = pages[0] || lines.slice(0, 80);
+    const page2 = pages[1] || lines.slice(0, 120);
+    const page1Text = page1.join(' || ');
+    const page1Fold = __arabicFold(page1Text);
+    const page2Text = page2.join(' || ');
+
+    let name = '';
+    let nid = '';
+    let phone = '';
+
+    function pickBestName(candidate){
+      const v = __validArabicName(candidate);
+      if (!v) return '';
+      return v.replace(/\bعبد\s+ال/g, 'عبدال').replace(/\s+/g, ' ').trim();
+    }
+    function setName(candidate){
+      const v = pickBestName(candidate);
+      if (!v) return false;
+      if (!name || v.split(/\s+/).length > name.split(/\s+/).length) {
+        name = v;
+        return true;
+      }
+      return false;
+    }
+    function trySetPhone(raw){
+      const t = __normDigits(raw || '');
+      const mobile = t.match(/(?:\+?2)?0?1[0125]\d{8}/);
+      if (mobile) {
+        let ph = mobile[0].replace(/^\+?2/, '');
+        if (/^1/.test(ph)) ph = '0' + ph;
+        phone = ph;
+        return true;
+      }
+      if (/\(\s*0?2\s*\)|(^|\D)0?2(\D|$)/.test(t)) {
+        phone = '02';
+        return true;
+      }
+      return false;
+    }
+
+    // الرقم القومي من النص الكامل أولاً
+    for (const blob of [page1Text, page2Text, wholeText].map(__normDigits)) {
+      const m = blob.match(/\b(2|3)\d{13}\b/);
+      if (m) { nid = m[0]; break; }
+    }
+
+    // نافذة ذكية حول معايير البحث حتى لو الصفحة الأولى كلها مدموجة
+    const searchWindow = (() => {
+      const idx = page1Fold.indexOf('معايير البحث');
+      if (idx === -1) return page1Text;
+      return page1Text.slice(Math.max(0, idx), Math.min(page1Text.length, idx + 1400));
+    })();
+    const searchWindowNorm = __safeNormalizeText(searchWindow);
+
+    const regexes = [
+      /معايير\s*البحث[\s\S]{0,900}?اسم\s*[|:：]?\s*([^|:：\n]+?)\s*(?:\|\s*نوع\s*التعريف|نوع\s*التعريف|\|\s*كود\s*التعريف|كود\s*التعريف|\|\s*تاريخ|تاريخ\s*الميلاد)/,
+      /اسم\s*[|:：]\s*([^|:：\n]+?)\s*(?:\|\s*نوع\s*التعريف|نوع\s*التعريف|\|\s*كود\s*التعريف|كود\s*التعريف)/,
+      /الملف\s*الشخص[ىي][\s\S]{0,500}?اسم\s*[|:：]?\s*([^|:：\n]+?)\s*(?:\|\s*تاريخ\s*الميلاد|تاريخ\s*الميلاد|AMR\s+|معرف\s*[|:：]?)/i,
+      /اسم\s*[|:：]?\s*([^|:：\n]+?)\s*(?:AMR\s+|[A-Z]{2,}\s+[A-Z]{2,}|التقييم\s*الائتماني|تاريخ\s*الميلاد)/i,
+    ];
+    for (const rx of regexes) {
+      const m = searchWindowNorm.match(rx) || page1Text.match(rx) || wholeText.match(rx);
+      if (m && setName(m[1])) break;
+    }
+
+    // fallback line-by-line
+    if (!name) {
+      let insideSearch = false;
+      for (const line of page1) {
+        const folded = __arabicFold(line);
+        if (/معايير البحث|معاييرالبحث/.test(folded)) { insideSearch = true; }
+        if (insideSearch && /(^|\|)\s*اسم\s*(\||$)/.test(line)) {
+          if (setName(__extractAfterLabel(line, /^(?:ال)?اسم$/))) break;
+        }
+      }
+    }
+    if (!name) {
+      for (const line of [...page1, ...page2].slice(0, 80)) {
+        if (/(^|\|)\s*اسم\s*(\||$)/.test(line)) {
+          if (setName(__extractAfterLabel(line, /^(?:ال)?اسم$/))) break;
+        }
+      }
+    }
+
+    // fallback أذكى: أفضل سلسلة عربية قريبة من معايير البحث
+    if (!name) {
+      const candidateBlobs = [searchWindowNorm, page1Text, wholeText];
+      for (const blob of candidateBlobs) {
+        const matches = blob.match(/[؀-ۿ]{2,}(?:\s+[؀-ۿ]{2,}){2,6}/g) || [];
+        const cleaned = matches
+          .map(pickBestName)
+          .filter(Boolean)
+          .filter(v => !/تقرير|ائتماني|افراد|البحث|التقييم|الرقمي|القاهره|الجنسية|النوع|العنوان|موظف|اتصال/.test(__arabicFold(v)));
+        if (cleaned.length) {
+          cleaned.sort((a, b) => b.split(/\s+/).length - a.split(/\s+/).length);
+          name = cleaned[0];
+          break;
+        }
+      }
+    }
+
+    // التليفون من قسم اتصال فقط سواء موبايل أو 02
+    for (const blob of [page1Text, page2Text, wholeText]) {
+      const folded = __arabicFold(blob);
+      const idx = folded.indexOf('اتصال');
+      if (idx !== -1) {
+        const slice = blob.slice(Math.max(0, idx), Math.min(blob.length, idx + 180));
+        if (trySetPhone(slice)) break;
+      }
+    }
+    if (!phone) {
+      for (const line of [...page1, ...page2].slice(0, 80)) {
+        if (/اتصال/.test(__arabicFold(line)) && trySetPhone(line)) break;
+      }
+    }
+
+    name = pickBestName(name);
+    return { name: name || '', nid: nid || '', phone: phone || '' };
+  };
+
+  window.applyIscoreToApproval = function(totalValue, customerInfo){
+    const loansEl = document.getElementById('loans');
+    const customerEl = (typeof getCustomerInput === 'function')
+      ? getCustomerInput()
+      : (document.getElementById('customerInfo') || document.querySelector('input[placeholder*="الاسم"]') || document.querySelector('input.green-text'));
+    if (loansEl) {
+      loansEl.value = String(Math.round(Number(totalValue || 0)));
+      if (typeof triggerNativeInput === 'function') triggerNativeInput(loansEl);
+    }
+    if (customerEl) {
+      const displayValue = [customerInfo && customerInfo.name, customerInfo && customerInfo.nid].filter(Boolean).join(' - ');
+      customerEl.value = displayValue || '';
+      customerEl.title = [customerInfo && customerInfo.name, customerInfo && customerInfo.nid, customerInfo && customerInfo.phone].filter(Boolean).join(' - ');
+      if (typeof triggerNativeInput === 'function') triggerNativeInput(customerEl);
+    }
+    if (window.iscoreState) window.iscoreState.loaded = true;
+  };
+
+  window.extractTakenActionInfo = function(lines){
+    const arr = Array.isArray(lines) ? lines.map(l => __safeNormalizeText(l || '')) : [];
+    const noDataRx = /توجد\s*بيانات|توجدبيانات|توجددبيانات/;
+    let sawActionHeader = false;
+    let sawActionColumns = false;
+    let rows = [];
+    for (let i = 0; i < arr.length; i++) {
+      const info = __getActionHeaderState(arr, i);
+      const raw = arr[i] || '';
+      const clean = info.cur;
+      if (!sawActionHeader) {
+        if (info.hasHeaderNow) {
+          sawActionHeader = true;
+          if (info.hasColumnsNow) sawActionColumns = true;
+        }
+        continue;
+      }
+      if (info.hasColumnsNow) { sawActionColumns = true; continue; }
+      if (__isBoundaryLine(clean)) break;
+      if (!raw.trim()) continue;
+      if (noDataRx.test(raw)) continue;
+      if (/تاريخالتصنيف|كودالاجراء|تاريخالاجراء|اجراءات|المتخذة|المتخذه/.test(clean)) continue;
+      const parts = raw.split('|').map(p => __safeNormalizeText(p || '')).filter(Boolean);
+      const hasEnoughParts = parts.length >= 3;
+      const hasDate = __dateRx.test(raw);
+      const hasActionWord = /(رفع\s*دعاو|رفع\s*دعو|سداد\s*مديونية|مديونية|متوقفون\s*عن\s*السداد|اجراء|جدول|جدول[هة]?|جدولة|تسوية|اتفاقية\s*سداد|اعادة\s*هيكلة|اعاده\s*هيكله)/.test(raw);
+      if (sawActionColumns && hasEnoughParts && hasDate && hasActionWord) rows.push(raw);
+    }
+    return { hasAction: rows.length > 0, rows };
+  };
+
+  window.extractReturnedChecksInfo = function(lines){
+    const arr = Array.isArray(lines) ? lines.map(l => __safeNormalizeText(l || '')) : [];
+    const noDataRx = /توجد\s*بيانات|توجدبيانات|توجددبيانات/;
+    let insideChecksSection = false;
+    let rows = [];
+    for (let i = 0; i < arr.length; i++) {
+      const raw = arr[i] || '';
+      const cur = __sectionNormalize(raw);
+      const next = __sectionNormalize(arr[i + 1] || '');
+      const hasHeaderNow = /شيكاتمرتده/.test(cur) || ((cur === 'شيكات' || cur === 'شيك') && /مرتده/.test(next));
+      if (!insideChecksSection) {
+        if (hasHeaderNow) insideChecksSection = true;
+        continue;
+      }
+      if (__isBoundaryLine(cur)) break;
+      if (!raw.trim()) continue;
+      if (noDataRx.test(raw)) continue;
+      if (/العمله|عددالشيكات|رقمالشيك|اجماليالمبلغ|المبلغ|تاريخاخرشيك|تاريخارتداد|سببارتداد|سبب|حالهالشيك|شيكات|مرتده/.test(cur)) continue;
+      const parts = raw.split('|').map(p => __safeNormalizeText(p || '')).filter(Boolean);
+      const hasDate = __dateRx.test(raw);
+      const hasNumeric = /\d/.test(__normDigits(raw));
+      const hasEnoughParts = parts.length >= 4;
+      if (hasDate && hasNumeric && hasEnoughParts) rows.push(raw);
+    }
+    const facilityType = __extractFacilityTypeFromLines(arr);
+    const byTypeOnly = __isReturnedByFacilityType(facilityType);
+    return { hasBouncedChecks: !!byTypeOnly, rows, facilityType, byType: !!byTypeOnly };
+  };
+})();
+</script>
+
+<script>
+(function(){
+  if (window.__essamPatchV19Applied) return;
+  window.__essamPatchV19Applied = true;
+
+  const __digitMap = {'٠':'0','١':'1','٢':'2','٣':'3','٤':'4','٥':'5','٦':'6','٧':'7','٨':'8','٩':'9'};
+  function __safeNormalizeText(v){ if (typeof normalizeText === 'function') return normalizeText(v || ''); return String(v || '').replace(/\s+/g, ' ').trim(); }
+  function __normDigits(v){ return String(v || '').replace(/[٠-٩]/g, d => __digitMap[d] || d); }
+  function __arabicFold(v){ return __safeNormalizeText(v || '').replace(/[ؐ-ًؚ-ٰٟۖ-ۭ]/g, '').replace(/[إأآٱا]/g, 'ا').replace(/ى/g, 'ي').replace(/ؤ/g, 'و').replace(/ئ/g, 'ي').replace(/ة/g, 'ه').replace(/\s+/g, ' ').trim(); }
+  function __clean(v){ return __safeNormalizeText(v || '').replace(/^[:：\-|\s]+|[:：\-|\s]+$/g, '').trim(); }
+  function __validArabicName(v){ const raw = __clean(v); const name = raw.replace(/[^؀-ۿ\s]/g, ' ').replace(/\s+/g, ' ').trim(); if (!name || /\d/.test(raw)) return ''; const words = name.split(/\s+/).filter(Boolean); if (words.length < 3 || words.length > 8) return ''; return name.replace(/\bعبد\s+ال/g, 'عبدال').replace(/\s+/g, ' ').trim(); }
+  function __extractAfterLabel(line, labelRx){ const parts = __normDigits(line).split('|').map(__clean).filter(Boolean); for (let i=0;i<parts.length;i++){ if (labelRx.test(__arabicFold(parts[i])) || labelRx.test(parts[i])) { for (let j=i+1;j<parts.length;j++){ const val=__clean(parts[j]); if (!val || /^[:：\-]+$/.test(val)) continue; return val; } } } return ''; }
+  function __normalizePhone(raw){ const t = __normDigits(raw || ''); const mobile = t.match(/(?:\+?2)?0?1[0125]\d{8}/); if (mobile){ let ph = mobile[0].replace(/^\+?2/, ''); if (/^1/.test(ph)) ph = '0' + ph; return ph; } if (/\(\s*0?2\s*\)|(^|\D)0?2(\D|$)/.test(t)) return '02'; return ''; }
+  function __extractFacilityTypeFromLines(lines){ const arr=(Array.isArray(lines)?lines:[]).map(v=>__safeNormalizeText(v||'')).filter(Boolean); for (const raw of arr.slice(0,6)){ const parts=raw.split('|').map(__clean).filter(Boolean); for (let i=0;i<parts.length;i++){ const p=__arabicFold(parts[i]).replace(/\s+/g,''); if (/التسهيلالائتماني|التسهيلائتماني/.test(p)){ for (let j=i+1;j<parts.length;j++){ const candidate=__clean(parts[j]); const n=__arabicFold(candidate).replace(/\s+/g,''); if (!candidate) continue; if (/^\d+$/.test(__normDigits(candidate))) continue; if (/تاريخاخر|تاريخالموافقه|كودالجهه|بياناتاصدار|الحدالائتماني|المبلغالممنوح|العمله|قيمهالقسط|مدهالقرض|عدداقساط|page\d+/i.test(n)) continue; return candidate; } } } } return ''; }
+  function __parseNumToken(token){ const s=__normDigits(token||'').replace(/,/g,'').replace(/٬/g,'').trim(); if (!s || /^[-–—]$/.test(s) || !/\d/.test(s)) return NaN; const n=parseFloat(s.replace(/[^0-9.\-]/g,'')); return isNaN(n)?NaN:n; }
+  function __isMissingToken(token){ const s=__arabicFold(token||'').replace(/\s+/g,''); return !s || /^(غم|غ-?م|غيرمتاح|لايوجد|na|n\/a|-+)$/.test(s); }
+  function __tokenLooksNumericOrMissing(token){ return __isMissingToken(token) || !isNaN(__parseNumToken(token)); }
+  function __extractIssueFieldsFromLines(lines){ const arr=(Array.isArray(lines)?lines:[]).map(v=>__safeNormalizeText(v||'')).filter(Boolean); let best=null; arr.slice(0,12).forEach((line,idx)=>{ const variants=[line]; if (idx>0) variants.push(arr[idx-1]+' | '+line); if (idx<arr.length-1) variants.push(line+' | '+arr[idx+1]); if (idx>0 && idx<arr.length-1) variants.push(arr[idx-1]+' | '+line+' | '+arr[idx+1]); variants.forEach(variant=>{ if (!(variant.includes('جنيه') || variant.includes('EGP'))) return; const parts=variant.split('|').map(__clean).filter(Boolean); const cIdx=parts.findIndex(p=>/جنيه|EGP/i.test(p)); if (cIdx===-1) return; const tail=parts.slice(cIdx+1).filter(__tokenLooksNumericOrMissing); if (!tail.length) return; const amountToken=tail.find(t=>!isNaN(__parseNumToken(t)) && __parseNumToken(t)>0); if (!amountToken) return; const amount=__parseNumToken(amountToken); const amountPos=tail.indexOf(amountToken); let installment=0, installmentStr='غ م', duration=1, durationRaw='غ م'; let seenAmount=false; const nums=[]; tail.forEach((tok,i)=>{ if (i<amountPos) return; if (!seenAmount){ if (tok===amountToken) seenAmount=true; return; } if (__isMissingToken(tok)) return; const n=__parseNumToken(tok); if (isNaN(n)||n<=0) return; nums.push({tok,n}); }); if (nums.length && nums[0].n < amount){ installment=nums[0].n; installmentStr=nums[0].tok; } if (nums.length>=2){ const d=nums[1].n; if (d>0 && d<=360){ duration=d; durationRaw=nums[1].tok; } } else if (nums.length===1 && installment===0){ const d=nums[0].n; if (d>0 && d<=360){ duration=d; durationRaw=nums[0].tok; } } const candidate={amount,installment,installmentStr,duration,durationRaw,score:0}; candidate.score += amount>0 ? 20 : 0; candidate.score += installment>0 ? 10 : 0; candidate.score += duration>1 ? 5 : 0; if (/بيانات اصدار|بياناتاصدار/.test(__arabicFold(variant))) candidate.score += 3; if (/مده القرض|مدة القرض|عدد اقساط|عدداقساط/.test(__arabicFold(variant))) candidate.score += 3; if (!best || candidate.score > best.score) best = candidate; }); }); return best; }
+
+  extractCustomerInfo = function(allLines){ const lines=(Array.isArray(allLines)?allLines:[]).map(l=>__safeNormalizeText(l||'')).filter(Boolean); const wholeText=lines.join(' || '); const pages=[]; let current=[]; for (const line of lines){ current.push(line); if (/^Page\s+\d+\s+of\s+\d+/i.test(line)){ pages.push(current); current=[]; } } if (current.length) pages.push(current); const page1=pages[0]||lines.slice(0,80); const page2=pages[1]||lines.slice(0,120); const page1Text=page1.join(' || '); const page2Text=page2.join(' || '); const page1Fold=__arabicFold(page1Text); let name='', nid='', phone=''; const setName=(candidate)=>{ const v=__validArabicName(candidate); if (!v) return false; if (!name || v.split(/\s+/).length > name.split(/\s+/).length){ name=v; return true; } return false; }; [page1Text,page2Text,wholeText].map(__normDigits).some(blob=>{ const m=blob.match(/\b(2|3)\d{13}\b/); if (m){ nid=m[0]; return true; } return false; }); const searchWindow=(()=>{ const idx=page1Fold.indexOf('معايير البحث'); if (idx===-1) return page1Text; return page1Text.slice(Math.max(0,idx), Math.min(page1Text.length, idx+1500));})(); const regexes=[/معايير\s*البحث[\s\S]{0,1000}?اسم\s*[|:：]?\s*([^|:：\n]+?)\s*(?:\|\s*نوع\s*التعريف|نوع\s*التعريف|\|\s*كود\s*التعريف|كود\s*التعريف|\|\s*تاريخ|تاريخ\s*الميلاد)/,/اسم\s*[|:：]\s*([^|:：\n]+?)\s*(?:\|\s*نوع\s*التعريف|نوع\s*التعريف|\|\s*كود\s*التعريف|كود\s*التعريف)/,/الملف\s*الشخص[ىي][\s\S]{0,600}?اسم\s*[|:：]?\s*([^|:：\n]+?)\s*(?:\|\s*تاريخ\s*الميلاد|تاريخ\s*الميلاد|معرف\s*[|:：]?)/]; for (const rx of regexes){ const m=searchWindow.match(rx)||page1Text.match(rx)||wholeText.match(rx); if (m && setName(m[1])) break; } if (!name){ let insideSearch=false; for (const line of page1){ const folded=__arabicFold(line); if (/معايير البحث|معاييرالبحث/.test(folded)) insideSearch=true; if (insideSearch && /(^|\|)\s*اسم\s*(\||$)/.test(line)){ if (setName(__extractAfterLabel(line,/^(?:ال)?اسم$/))) break; } } } if (!name){ for (const line of [...page1,...page2].slice(0,80)){ if (/(^|\|)\s*اسم\s*(\||$)/.test(line)){ if (setName(__extractAfterLabel(line,/^(?:ال)?اسم$/))) break; } } } [page1Text,page2Text,wholeText].some(blob=>{ const folded=__arabicFold(blob); const idx=folded.indexOf('اتصال'); if (idx!==-1){ const maybe=__normalizePhone(blob.slice(Math.max(0,idx), Math.min(blob.length, idx+220))); if (maybe){ phone=maybe; return true; } } return false; }); return {name:name||'', nid:nid||'', phone:phone||''}; };
+
+  const __oldApply = (typeof applyIscoreToApproval === 'function') ? applyIscoreToApproval : null;
+  applyIscoreToApproval = function(totalValue, customerInfo){ const loansEl=document.getElementById('loans'); const customerEl=(typeof getCustomerInput === 'function')?getCustomerInput():(document.getElementById('customerInfo') || document.querySelector('input[placeholder*="الاسم"]') || document.querySelector('input.green-text')); if (loansEl){ loansEl.value=String(Math.round(Number(totalValue||0))); if (typeof triggerNativeInput === 'function') triggerNativeInput(loansEl);} if (customerEl){ const displayValue=[customerInfo&&customerInfo.name, customerInfo&&customerInfo.nid].filter(Boolean).join(' - '); customerEl.value=displayValue||''; customerEl.title=[customerInfo&&customerInfo.name, customerInfo&&customerInfo.nid, customerInfo&&customerInfo.phone].filter(Boolean).join(' - '); if (typeof triggerNativeInput === 'function') triggerNativeInput(customerEl);} else if (__oldApply){ __oldApply(totalValue, customerInfo); } if (window.iscoreState) window.iscoreState.loaded = true; };
+
+  const __oldFix = (typeof applySmartFacilityFieldFix === 'function') ? applySmartFacilityFieldFix : null;
+  applySmartFacilityFieldFix = function(loan){ if (!loan || !Array.isArray(loan.lines) || !loan.lines.length) return loan; const parsed=__extractIssueFieldsFromLines(loan.lines); if (parsed && parsed.amount>0){ loan.amount=parsed.amount; loan.installment=parsed.installment||0; loan.installmentStr=parsed.installment>0 ? String(parsed.installmentStr || parsed.installment) : 'غ م'; loan.duration=parsed.duration && parsed.duration>0 ? parsed.duration : 1; loan.durationRaw=parsed.duration && parsed.duration>0 ? String(parsed.durationRaw || parsed.duration) : 'غ م'; return loan; } return __oldFix ? __oldFix(loan) : loan; };
+
+  const __oldChecks = (typeof extractReturnedChecksInfo === 'function') ? extractReturnedChecksInfo : null;
+  extractReturnedChecksInfo = function(lines){ const base = __oldChecks ? __oldChecks(lines) : {hasBouncedChecks:false, rows:[]}; const facilityType = __extractFacilityTypeFromLines(lines || []); const byTypeOnly=/شيكات\s*مرتده|شيكاتمرتده|شيك\s*مرتد/.test((facilityType || '') + ' | ' + (Array.isArray(lines)?lines.slice(0,3).join(' | '):'')); return Object.assign({}, base, {facilityType, byType:!!byTypeOnly, hasBouncedChecks:!!byTypeOnly}); };
+})();
+</script>
+
+<!-- ESSAM_ISCORE_CUSTOMERINFO_PATCH_V25 -->
+<script>
+(function(){
+  function nfkc(s){ try { return (s || '').normalize('NFKC'); } catch(_) { return (s || ''); } }
+  const DIGIT_MAP = {'٠':'0','١':'1','٢':'2','٣':'3','٤':'4','٥':'5','٦':'6','٧':'7','٨':'8','٩':'9'};
+  function normalizeArabicText(s){
+    return nfkc(s || '')
+      .replace(/[\u0000-\u001f]/g, ' ')
+      .replace(/[\u200e\u200f\u202a-\u202e]/g, ' ')
+      .replace(/[٠-٩]/g, d => DIGIT_MAP[d] || d)
+      .replace(/[إأآٱ]/g, 'ا')
+      .replace(/ى/g, 'ي')
+      .replace(/ؤ/g, 'و')
+      .replace(/ئ/g, 'ي')
+      .replace(/ة/g, 'ه')
+      .replace(/[ؐ-ًؚ-ٰٟۖ-ۭ]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+  function clean(s){
+    return normalizeArabicText(s || '')
+      .replace(/^[:|،,؛;\-\s]+|[:|،,؛;\-\s]+$/g, '')
+      .trim();
+  }
+  function squash(s){ return normalizeArabicText(s || '').replace(/\s+/g, ''); }
+  function splitPages(lines){
+    const pages = [];
+    let current = [];
+    (lines || []).forEach(line => {
+      current.push(line);
+      if (/^Page\s+\d+\s+of\s+\d+/i.test(line)) {
+        pages.push(current);
+        current = [];
+      }
+    });
+    if (current.length) pages.push(current);
+    return pages;
+  }
+  function getPages(lines){
+    const arr = Array.isArray(lines) ? lines.map(l => nfkc(l || '')).filter(Boolean) : [];
+    const pages = splitPages(arr);
+    return pages.length ? pages : [arr.slice(0, 120)];
+  }
+  function validArabicName(s){
+    const raw = clean(s);
+    if (!raw) return '';
+    const stripped = raw
+      .replace(/[0-9]/g, ' ')
+      .replace(/[^\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF\s]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+    if (!stripped) return '';
+    const words = stripped.split(/\s+/).filter(Boolean);
+    if (words.length < 3 || words.length > 7) return '';
+    const bad = ['تاريخ','الميلاد','الميد','العنوان','معايير','البحث','التقرير','النوع','الجنسيه','الحاله','اجتماعيه','اتصال','معرف','كود','التعريف','الملف','الشخصي','التقييم','الرقمي'];
+    if (words.some(w => bad.includes(normalizeArabicText(w)))) return '';
+    return stripped;
+  }
+  function extractNameCandidateFromLine(line){
+    const src = clean(line);
+    if (!src) return '';
+    const parts = src.split('|').map(clean).filter(Boolean);
+    if (parts.length > 1) {
+      for (let i = 0; i < parts.length; i++) {
+        const sq = squash(parts[i]);
+        if (sq === 'اسم' || sq.endsWith('اسم')) {
+          const next = validArabicName(parts[i+1] || '');
+          if (next) return next;
+          const prev = validArabicName(parts[i-1] || '');
+          if (prev) return prev;
+        }
+      }
+    }
+    let idx = src.indexOf('اسم');
+    if (idx >= 0) {
+      const v = validArabicName(src.slice(idx + 3));
+      if (v) return v;
+    }
+    const sq = squash(src);
+    idx = sq.indexOf('اسم');
+    if (idx >= 0) {
+      const v = validArabicName(sq.slice(idx + 3));
+      if (v) return v;
+    }
+    return '';
+  }
+  function normalizePhoneCandidate(raw){
+    let d = String(raw || '').replace(/\D+/g, '');
+    if (!d) return '';
+    if (d === '02' || d === '2' || d === '202' || d === '16262') return '';
+    if (/^01[0125]\d{8}$/.test(d)) return d;
+    if (/^1[0125]\d{8}$/.test(d)) return '0' + d;
+    if (/^20?1[0125]\d{8}$/.test(d)) return '0' + d.replace(/^20?/, '');
+    let m = d.match(/(?:20)?(1[0125]\d{8})/);
+    if (m) return '0' + m[1];
+    m = d.match(/0(1[0125]\d{8})/);
+    if (m) return '0' + m[1];
+    return '';
+  }
+  function extractNameFromPages(allLines){
+    const pages = getPages(allLines);
+    const page1 = (pages[0] || []).map(l => clean(l));
+    const searchIdx = page1.findIndex(l => squash(l).includes('معاييرالبحث'));
+    if (searchIdx >= 0) {
+      for (let i = searchIdx + 1; i < Math.min(page1.length, searchIdx + 12); i++) {
+        const sq = squash(page1[i]);
+        if (sq.includes('نوعالتعريف') || sq.includes('كودالتعريف') || sq.includes('بطاقهالرقمالقومي')) break;
+        const cand = extractNameCandidateFromLine(page1[i]);
+        if (cand) return cand;
+      }
+    }
+    for (let i = 0; i < Math.min(page1.length, 40); i++) {
+      const cand = extractNameCandidateFromLine(page1[i]);
+      if (cand) return cand;
+    }
+    return '';
+  }
+  function extractPhoneFromPages(allLines){
+    const pages = getPages(allLines).slice(0, 2);
+    let best = '', bestScore = -999;
+    pages.forEach((page, pageIdx) => {
+      page.slice(0, 80).forEach((line, idx) => {
+        const src = clean(line);
+        const sq = squash(src);
+        let rawCandidates = [];
+        if (sq.includes('اتصال') || sq.includes('موبايل') || sq.includes('تليفون') || sq.includes('هاتف')) {
+          rawCandidates.push(...(src.match(/\d{2,}/g) || []));
+          rawCandidates.push(...src.split('|').map(p => p.replace(/\D+/g, '')));
+        } else {
+          rawCandidates.push(...(src.match(/\d{10,14}/g) || []));
+        }
+        rawCandidates.forEach(raw => {
+          const ph = normalizePhoneCandidate(raw);
+          if (!ph) return;
+          let score = 0;
+          if (sq.includes('اتصال') || sq.includes('موبايل') || sq.includes('تليفون') || sq.includes('هاتف')) score += 25;
+          if (pageIdx === 1) score += 6;
+          if (idx < 45) score += 2;
+          if (sq.includes('العنوان') || sq.includes('فاكس') || sq.includes('الخطالساخن')) score -= 30;
+          if (score > bestScore) { bestScore = score; best = ph; }
+        });
+      });
+    });
+    return best;
+  }
+  function extractNidFromPages(allLines){
+    const page1 = (getPages(allLines)[0] || []).map(l => clean(l));
+    let best = '', bestScore = -999;
+    page1.slice(0, 50).forEach((line, idx) => {
+      const sq = squash(line);
+      (line.match(/\b[23]\d{13}\b/g) || []).forEach(nid => {
+        let score = 0;
+        if (sq.includes('كودالتعريف') || sq.includes('بطاقهالرقمالقومي') || sq.includes('معرف') || sq.includes('الرقمالقومي')) score += 10;
+        if (idx < 30) score += 2;
+        if (score > bestScore) { bestScore = score; best = nid; }
+      });
+    });
+    return best;
+  }
+  function robustExtractCustomerInfo(allLines){
+    return {
+      name: extractNameFromPages(allLines) || '',
+      nid: extractNidFromPages(allLines) || '',
+      phone: extractPhoneFromPages(allLines) || ''
+    };
+  }
+  function getCustomerInput(){
+    return document.getElementById('customerInfo') || document.querySelector('input[placeholder*="الاسم"]');
+  }
+  function setCustomerDisplay(info){
+    const input = getCustomerInput();
+    if (!input) return;
+    const parts = [];
+    if (info.name) parts.push(info.name);
+    if (info.nid) parts.push(info.nid);
+    if (info.phone) parts.push(info.phone);
+    const display = parts.join(' - ');
+    if (!display) return;
+    input.value = display;
+    input.title = display;
+    input.dataset.customerName = info.name || '';
+    input.dataset.customerNid = info.nid || '';
+    input.dataset.customerPhone = info.phone || '';
+    try {
+      input.dispatchEvent(new Event('input', {bubbles:true}));
+      input.dispatchEvent(new Event('change', {bubbles:true}));
+    } catch(_) {}
+  }
+  async function extractPdfLinesFromFile(file){
+    if (!file || !window.pdfjsLib) return [];
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    let allLines = [];
+    for (let p = 1; p <= pdf.numPages; p++) {
+      const page = await pdf.getPage(p);
+      const content = await page.getTextContent();
+      let rows = {};
+      (content.items || []).forEach(item => {
+        let y = Math.round(((item.transform && item.transform[5]) || 0) / 4) * 4;
+        if (!rows[y]) rows[y] = [];
+        rows[y].push({ text: nfkc(item.str || ''), x: ((item.transform && item.transform[4]) || 0) });
+      });
+      Object.keys(rows).sort((a,b) => b - a).forEach(y => {
+        allLines.push(rows[y].sort((a,b) => b.x - a.x).map(i => i.text).join(' | '));
+      });
+      allLines.push('Page ' + p + ' of ' + pdf.numPages);
+    }
+    return allLines;
+  }
+  const oldExtract = typeof window.extractCustomerInfo === 'function' ? window.extractCustomerInfo : null;
+  window.extractCustomerInfo = function(allLines){
+    let prev = {name:'', nid:'', phone:''};
+    try { if (oldExtract) prev = oldExtract(allLines) || prev; } catch(_) {}
+    const fresh = robustExtractCustomerInfo(allLines);
+    const prevPhone = normalizePhoneCandidate(prev.phone || '');
+    return {
+      name: fresh.name || prev.name || '',
+      nid: fresh.nid || prev.nid || '',
+      phone: fresh.phone || prevPhone || ''
+    };
+  };
+  const oldProcess = typeof window.processIscoreUpload === 'function' ? window.processIscoreUpload : null;
+  if (oldProcess) {
+    window.processIscoreUpload = async function(e){
+      const file = e && e.target && e.target.files && e.target.files[0] ? e.target.files[0] : null;
+      const result = await oldProcess.apply(this, arguments);
+      if (file) {
+        try {
+          const lines = await extractPdfLinesFromFile(file);
+          const info = window.extractCustomerInfo(lines);
+          setCustomerDisplay(info);
+        } catch (err) {
+          console.error('V25 customer patch failed', err);
+        }
+      }
+      return result;
+    };
+  }
+  const oldReset = typeof window.resetIscoreIntegration === 'function' ? window.resetIscoreIntegration : null;
+  if (oldReset) {
+    window.resetIscoreIntegration = function(){
+      const result = oldReset.apply(this, arguments);
+      const input = getCustomerInput();
+      if (input) {
+        delete input.dataset.customerName;
+        delete input.dataset.customerNid;
+        delete input.dataset.customerPhone;
+      }
+      return result;
+    };
+  }
+})();
+</script>
+
+
+<!-- ESSAM_ISCORE_INSTALLMENT_ARTIFACT_PATCH_V26 -->
+<script>
+(function(){
+  function nt(s){
+    try { return typeof normalizeText === 'function' ? normalizeText(s || '') : (s || '').replace(/\s+/g, ' ').trim(); }
+    catch(_) { return (s || '').replace(/\s+/g, ' ').trim(); }
+  }
+  function na(s){
+    try { return typeof normalizeArabic === 'function' ? normalizeArabic(s || '') : nt(s || ''); }
+    catch(_) { return nt(s || ''); }
+  }
+  function isMissing(v){
+    const t = nt(v || '');
+    return !t || /غ\s*م/.test(t);
+  }
+  function isNumeric(v){
+    return /^\d+(?:\.\d+)?$/.test(nt(v || '').replace(/,/g, ''));
+  }
+  function looksLikePageArtifact(v){
+    const t = nt(v || '');
+    const a = na(v || '');
+    if (!t) return false;
+    if (/^page\s*\d+\s*of\s*\d+$/i.test(t)) return true;
+    if (/report\s*number/i.test(t)) return true;
+    if (/^w-\d+/i.test(t)) return true;
+    if (/page\s*\d+/i.test(t)) return true;
+    if (/رقم\s*التقرير|معايير\s*البحث|الملف\s*الشخ|بيانات\s*اصدار|بيانات\s*السداد/.test(a)) return true;
+    if (/يناير|فبراير|مارس|ابريل|أبريل|مايو|يونيو|يوليو|اغسطس|أغسطس|سبتمبر|اكتوبر|أكتوبر|نوفمبر|ديسمبر|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec/i.test(t) && /\d/.test(t)) return true;
+    return false;
+  }
+  function cleanInstallmentRaw(v){
+    const t = nt(v || '');
+    if (!t) return 'غ م';
+    if (looksLikePageArtifact(t)) return 'غ م';
+    if (isNumeric(t) || isMissing(t)) return t;
+    return 'غ م';
+  }
+  function cleanDurationRaw(v){
+    const t = nt(v || '');
+    if (!t) return 'غ م';
+    if (looksLikePageArtifact(t)) return 'غ م';
+    if (isNumeric(t) || isMissing(t)) return t;
+    return 'غ م';
+  }
+  function cleanCountRaw(v){
+    const t = nt(v || '');
+    if (!t) return '';
+    if (looksLikePageArtifact(t)) return '';
+    if (isNumeric(t) || isMissing(t)) return t;
+    return '';
+  }
+  function sanitizeLoanFieldArtifacts(loan){
+    if (!loan) return loan;
+    loan.installmentStr = cleanInstallmentRaw(loan.installmentStr);
+    if (isMissing(loan.installmentStr)) loan.installment = 0;
+    loan.durationRaw = cleanDurationRaw(loan.durationRaw);
+    if (!isNumeric(loan.durationRaw)) loan.duration = 1;
+    return loan;
+  }
+
+  const oldBuildStructured = typeof window.buildStructuredIssueCandidate === 'function' ? window.buildStructuredIssueCandidate : null;
+  if (oldBuildStructured) {
+    window.buildStructuredIssueCandidate = function(amountRaw, instRaw, durRaw, countRaw, bonusScore){
+      return oldBuildStructured.call(this, amountRaw, cleanInstallmentRaw(instRaw), cleanDurationRaw(durRaw), cleanCountRaw(countRaw), bonusScore);
+    };
+  }
+  const oldBuildSmart = typeof window.buildSmartIssueCandidate === 'function' ? window.buildSmartIssueCandidate : null;
+  if (oldBuildSmart) {
+    window.buildSmartIssueCandidate = function(amountRaw, instRaw, durRaw, countRaw, bonusScore){
+      return oldBuildSmart.call(this, amountRaw, cleanInstallmentRaw(instRaw), cleanDurationRaw(durRaw), cleanCountRaw(countRaw), bonusScore);
+    };
+  }
+  const oldApply = typeof window.applySmartFacilityFieldFix === 'function' ? window.applySmartFacilityFieldFix : null;
+  if (oldApply) {
+    window.applySmartFacilityFieldFix = function(loan){
+      const result = oldApply.apply(this, arguments) || loan;
+      return sanitizeLoanFieldArtifacts(result);
+    };
+  }
+})();
+</script>
+
+
+<script>
+(function(){
+  if (window.__essamPatchV27Loan6InstallmentApplied) return;
+  window.__essamPatchV27Loan6InstallmentApplied = true;
+
+  function __v27Norm(v){
+    if (typeof normalizeText === 'function') return normalizeText(v || '');
+    return String(v || '').replace(/\s+/g, ' ').trim();
+  }
+
+  function __v27IsMissing(v){
+    const t = __v27Norm(v || '');
+    return /غ\s*م/.test(t) || t === '';
+  }
+
+  function __v27ToNumber(v){
+    const t = __v27Norm(v || '').replace(/[٠-٩]/g, d => ({'٠':'0','١':'1','٢':'2','٣':'3','٤':'4','٥':'5','٦':'6','٧':'7','٨':'8','٩':'9'}[d] || d)).replace(/,/g, '');
+    const n = parseFloat(t);
+    return isNaN(n) ? 0 : n;
+  }
+
+  function __v27LooksLikeLoan6Artifact(line){
+    const parts = String(line || '').split('|').map(__v27Norm).filter(Boolean);
+    const cIdx = parts.findIndex(p => /جنيه|EGP/i.test(p));
+    if (cIdx === -1) return null;
+
+    const after = parts.slice(cIdx + 1).filter(v => /^\d+(?:\.\d+)?$/.test(v.replace(/,/g,'')) || __v27IsMissing(v));
+    if (after.length < 4) return null;
+
+    const amount = __v27ToNumber(after[0]);
+    const a = after[1] || '';
+    const b = after[2] || '';
+    const c = after[3] || '';
+
+    // النمط المطلوب إصلاحه مثل: 135,000 | غ م | غ م | 16 | غ م
+    if (amount >= 100 && __v27IsMissing(a) && __v27IsMissing(b) && !__v27IsMissing(c)) {
+      const durationNum = __v27ToNumber(c);
+      if (durationNum > 0 && durationNum <= 600) {
+        return { amount: amount, installment: 0, installmentStr: 'غ م', duration: durationNum, durationRaw: String(c) };
+      }
+    }
+    return null;
+  }
+
+  const __oldApplySmartFacilityFieldFixV27 = window.applySmartFacilityFieldFix;
+  window.applySmartFacilityFieldFix = function(loan){
+    if (typeof __oldApplySmartFacilityFieldFixV27 === 'function') {
+      loan = __oldApplySmartFacilityFieldFixV27(loan) || loan;
+    }
+    if (!loan || !Array.isArray(loan.lines) || !loan.lines.length) return loan;
+
+    for (const line of loan.lines.slice(0, 8)) {
+      const fix = __v27LooksLikeLoan6Artifact(line);
+      if (fix) {
+        loan.amount = fix.amount;
+        loan.installment = fix.installment;
+        loan.installmentStr = fix.installmentStr;
+        loan.duration = fix.duration;
+        loan.durationRaw = fix.durationRaw;
+        break;
+      }
+    }
+    return loan;
+  };
+})();
+</script>
+
+
+<!-- ESSAM_ISCORE_BOUNCED_NO_FACILITY_ZERO_PATCH_V28 -->
+<script>
+(function(){
+  function nt(s){
+    try { return typeof normalizeText === 'function' ? normalizeText(s || '') : String(s || '').replace(/\s+/g, ' ').trim(); }
+    catch(_) { return String(s || '').replace(/\s+/g, ' ').trim(); }
+  }
+  function na(s){
+    try { return typeof normalizeArabic === 'function' ? normalizeArabic(s || '') : nt(s || ''); }
+    catch(_) { return nt(s || ''); }
+  }
+  function isBouncedNoFacilityLoan(loan){
+    if (!loan) return false;
+    const type = na(loan.type || '');
+    const allText = na([loan.type || '', ...(Array.isArray(loan.lines) ? loan.lines : [])].join(' | '));
+    const hasBounced = /شيكات\s*مرتده|شيكاتمرتده|شيك\s*مرتد/.test(type + ' | ' + allText);
+    const noFacility = /بدون\s*تسهيل|بدونتسهيل/.test(type + ' | ' + allText);
+    return hasBounced && noFacility;
+  }
+  function forceZeroFacilityFields(loan){
+    if (!loan) return loan;
+    loan.amount = 0;
+    loan.installment = 0;
+    loan.installmentStr = '0';
+    loan.durationRaw = 'غ م';
+    loan.duration = 1;
+    loan.hasBouncedChecks = true;
+    loan.bouncedByType = true;
+    loan.isClosed = false;
+    loan.isBadDebt = false;
+    return loan;
+  }
+
+  const oldCreateLoanFromFacilityBlock = typeof window.createLoanFromFacilityBlock === 'function' ? window.createLoanFromFacilityBlock : null;
+  if (oldCreateLoanFromFacilityBlock) {
+    window.createLoanFromFacilityBlock = function(block){
+      const loan = oldCreateLoanFromFacilityBlock.apply(this, arguments);
+      if (isBouncedNoFacilityLoan(loan)) return forceZeroFacilityFields(loan);
+      return loan;
+    };
+  }
+
+  const oldApplySmartFacilityFieldFix = typeof window.applySmartFacilityFieldFix === 'function' ? window.applySmartFacilityFieldFix : null;
+  if (oldApplySmartFacilityFieldFix) {
+    window.applySmartFacilityFieldFix = function(loan){
+      const result = oldApplySmartFacilityFieldFix.apply(this, arguments) || loan;
+      if (isBouncedNoFacilityLoan(result)) return forceZeroFacilityFields(result);
+      return result;
+    };
+  }
+})();
+</script>
+
+
+<script>
+(function(){
+  if (window.__essamDurableGoodsPatchV31Applied) return;
+  window.__essamDurableGoodsPatchV31Applied = true;
+
+  function __txt(v){ try { return typeof normalizeText==='function' ? normalizeText(v||'') : String(v||'').trim(); } catch(e){ return String(v||'').trim(); } }
+  function __num(v){ try { return typeof smartFieldToNumber==='function' ? smartFieldToNumber(v) : (parseFloat(String(v||'').replace(/,/g,'')) || 0); } catch(e){ return parseFloat(String(v||'').replace(/,/g,'')) || 0; } }
+  function __isNum(v){
+    const t = String(v || '').replace(/,/g,'').trim();
+    return /^\d+(?:\.\d+)?$/.test(t);
+  }
+  function __isMissing(v){ return !__txt(v) || /غ\s*م/.test(__txt(v)); }
+  function __isDurableType(type){ return /شراء\s*بالتقسيط|سلع\s*معمرة|سلع\s*معمره|اء\s*بالتقسيط/.test(String(type||'')); }
+
+  function __extractDurableGoodsFields(loanLines){
+    const lines = (typeof getFacilityIssuanceLines === 'function' ? getFacilityIssuanceLines(loanLines) : (loanLines || [])).map(__txt).filter(Boolean);
+    if (!lines.length) return null;
+
+    const variants = [];
+    for (let i=0; i<lines.length; i++) {
+      variants.push(lines[i]);
+      if (i < lines.length - 1) variants.push(lines[i] + ' | ' + lines[i+1]);
+      if (i < lines.length - 2) variants.push(lines[i] + ' | ' + lines[i+1] + ' | ' + lines[i+2]);
+    }
+    variants.push(lines.join(' | '));
+
+    let best = null;
+    variants.forEach(variant => {
+      const parts = String(variant || '').split('|').map(__txt).filter(Boolean);
+      const cIdx = parts.findIndex(p => /جنيه|EGP/.test(p));
+      if (cIdx === -1) return;
+
+      const after = parts.slice(cIdx + 1).filter(p => __isNum(p) || __isMissing(p));
+      if (!after.length) return;
+
+      const amountRaw = after.find(__isNum) || '';
+      if (!amountRaw) return;
+      const amount = __num(amountRaw);
+      const amountPos = after.indexOf(amountRaw);
+      const tail = after.slice(amountPos + 1);
+      if (!tail.length) return;
+
+      let installmentRaw = 'غ م';
+      let durationRaw = 'غ م';
+      let score = 0;
+
+      if (tail.length >= 3 && __isNum(tail[0]) && __num(tail[0]) === amount && __isNum(tail[1])) {
+        installmentRaw = tail[1];
+        if (__isNum(tail[2])) durationRaw = tail[2];
+        else if (tail.length >= 4 && __isNum(tail[3])) durationRaw = tail[3];
+        score += 100;
+      } else if (__isNum(tail[0]) && __num(tail[0]) < amount) {
+        installmentRaw = tail[0];
+        if (tail.length >= 2 && __isNum(tail[1])) durationRaw = tail[1];
+        else if (tail.length >= 3 && __isNum(tail[2])) durationRaw = tail[2];
+        score += 60;
+      }
+
+      if (!__isNum(installmentRaw)) return;
+      const inst = __num(installmentRaw);
+      if (!(inst > 0)) return;
+      const dur = __num(durationRaw);
+      if (dur > 0 && dur <= 600) score += 20;
+      if (amount > 0) score += 5;
+      if (inst < amount) score += 15;
+
+      const cand = {
+        amount: amount,
+        installment: inst,
+        installmentStr: installmentRaw,
+        durationRaw: (dur > 0 && dur <= 600) ? durationRaw : 'غ م',
+        duration: (dur > 0 && dur <= 600) ? dur : 1,
+        score: score
+      };
+      if (!best || cand.score > best.score) best = cand;
+    });
+
+    return best;
+  }
+
+  const __oldApply = (typeof applySmartFacilityFieldFix === 'function') ? applySmartFacilityFieldFix : null;
+  const __newApply = function(loan){
+    if (!loan || !Array.isArray(loan.lines) || !loan.lines.length) return loan;
+
+    if (__isDurableType(loan.type)) {
+      const forced = __extractDurableGoodsFields(loan.lines);
+      if (forced) {
+        loan.amount = forced.amount || loan.amount || 0;
+        loan.installment = forced.installment;
+        loan.installmentStr = forced.installmentStr;
+        loan.durationRaw = forced.durationRaw;
+        loan.duration = forced.duration;
+        return loan;
+      }
+    }
+
+    if (__oldApply) return __oldApply(loan);
+    return loan;
+  };
+
+  try { applySmartFacilityFieldFix = __newApply; } catch(e) {}
+  try { window.applySmartFacilityFieldFix = __newApply; } catch(e) {}
+
+  const __oldCreate = (typeof createLoanFromFacilityBlock === 'function') ? createLoanFromFacilityBlock : null;
+  if (__oldCreate) {
+    const __newCreate = function(block){
+      const loan = __oldCreate(block);
+      try { __newApply(loan); } catch(e) {}
+      return loan;
+    };
+    try { createLoanFromFacilityBlock = __newCreate; } catch(e) {}
+    try { window.createLoanFromFacilityBlock = __newCreate; } catch(e) {}
+  }
+})();
+</script>
+
+
+
+<!-- ESSAM_FINAL_GUARD_PATCH_V3 -->
+<script>
+(function(){
+  if (window.__essamFinalGuardPatchV3Applied) return;
+  window.__essamFinalGuardPatchV3Applied = true;
+
+  function nt(v){
+    try { return typeof normalizeText === 'function' ? normalizeText(v || '') : String(v || '').replace(/\s+/g,' ').trim(); }
+    catch(_) { return String(v || '').replace(/\s+/g,' ').trim(); }
+  }
+  function na(v){
+    try { return typeof normalizeArabic === 'function' ? normalizeArabic(v || '') : nt(v || ''); }
+    catch(_) { return nt(v || ''); }
+  }
+  function toNum(v){
+    const s = nt(v).replace(/[٠-٩]/g, d => ({'٠':'0','١':'1','٢':'2','٣':'3','٤':'4','٥':'5','٦':'6','٧':'7','٨':'8','٩':'9'}[d] || d)).replace(/,/g,'');
+    const n = parseFloat(s);
+    return isNaN(n) ? 0 : n;
+  }
+  function isMissing(v){
+    const s = nt(v);
+    return !s || /غ\s*م/.test(s);
+  }
+  function isSmallCount(v){
+    const n = toNum(v);
+    return n > 0 && n <= 120 && Math.round(n) === n;
+  }
+  function facilityIssuanceLines(loan){
+    try {
+      if (typeof getFacilityIssuanceLines === 'function') return getFacilityIssuanceLines((loan && loan.lines) || []).map(nt).filter(Boolean);
+    } catch(_) {}
+    return ((loan && loan.lines) || []).map(nt).filter(Boolean);
+  }
+  function extractIssueOnlyFix(loan){
+    const lines = facilityIssuanceLines(loan);
+    if (!lines.length) return null;
+    const variants = [];
+    for (let i = 0; i < lines.length; i++) {
+      variants.push(lines[i]);
+      if (i < lines.length - 1) variants.push(lines[i] + ' | ' + lines[i+1]);
+      if (i < lines.length - 2) variants.push(lines[i] + ' | ' + lines[i+1] + ' | ' + lines[i+2]);
+    }
+    for (const variant of variants) {
+      const parts = String(variant || '').split('|').map(nt).filter(Boolean);
+      const cIdx = parts.findIndex(p => /جنيه|EGP/i.test(p));
+      if (cIdx === -1) continue;
+
+      // ابحث عن المبلغ أولاً بعد العملة أو قبلها مباشرة
+      let amountIdx = -1;
+      for (let i = cIdx + 1; i < parts.length; i++) {
+        if (/^\d[\d,]*$/.test(parts[i]) && toNum(parts[i]) >= 100) { amountIdx = i; break; }
+      }
+      if (amountIdx === -1) {
+        for (let i = Math.max(0, cIdx - 2); i < cIdx; i++) {
+          if (/^\d[\d,]*$/.test(parts[i]) && toNum(parts[i]) >= 100) amountIdx = i;
+        }
+      }
+      if (amountIdx === -1) continue;
+
+      const amountRaw = parts[amountIdx];
+      const tail = parts.slice(amountIdx + 1, amountIdx + 5).map(nt);
+      if (tail.length < 4) continue;
+
+      // النمط: amount | غ م | غ م | غ م | small-count  ==> العدد الأخير ليس قسطاً
+      if (isMissing(tail[0]) && isMissing(tail[1]) && isMissing(tail[2]) && isSmallCount(tail[3])) {
+        return {
+          amount: toNum(amountRaw),
+          installment: 0,
+          installmentStr: 'غ م',
+          duration: 1,
+          durationRaw: 'غ م',
+          installmentCountRaw: tail[3]
+        };
+      }
+    }
+    return null;
+  }
+
+  function hasExplicitDemandPayment(loan){
+    const arr = ((loan && loan.lines) || []).map(nt);
+    let inPay = false;
+    for (const line of arr) {
+      const clean = na(line);
+      if (!inPay) {
+        if (/بياناتالسداد/.test(clean)) inPay = true;
+        continue;
+      }
+      if (/البياناتالتاريخيه|شيكاتمرتده|اجراءاتالمتخذه|اجراءاتالمتخذة|بياناتالشكوي|بياناتالشكوى|بياناتموقفالتسهيل|بياناتموقف|نوعالدخل/.test(clean)) break;
+      if (/\bالطلب\b/.test(line)) return true;
+    }
+    return false;
+  }
+
+  function forceFinalFix(loan){
+    if (!loan) return loan;
+    const fix = extractIssueOnlyFix(loan);
+    if (fix) {
+      loan.amount = fix.amount || loan.amount || 0;
+      loan.installment = 0;
+      loan.installmentStr = 'غ م';
+      loan.duration = 1;
+      loan.durationRaw = 'غ م';
+      loan.installmentCountRaw = fix.installmentCountRaw || loan.installmentCountRaw || '';
+    }
+    if (hasExplicitDemandPayment(loan)) {
+      loan.__forcePaymentType = 'الطلب';
+    }
+    return loan;
+  }
+
+  const oldApply = (typeof window.applySmartFacilityFieldFix === 'function') ? window.applySmartFacilityFieldFix : (typeof applySmartFacilityFieldFix === 'function' ? applySmartFacilityFieldFix : null);
+  const newApply = function(loan){
+    const result = oldApply ? (oldApply.apply(this, arguments) || loan) : loan;
+    return forceFinalFix(result);
+  };
+  try { window.applySmartFacilityFieldFix = newApply; } catch(_) {}
+  try { applySmartFacilityFieldFix = newApply; } catch(_) {}
+
+  const oldCreate = (typeof window.createLoanFromFacilityBlock === 'function') ? window.createLoanFromFacilityBlock : (typeof createLoanFromFacilityBlock === 'function' ? createLoanFromFacilityBlock : null);
+  if (oldCreate) {
+    const newCreate = function(block){
+      const loan = oldCreate.apply(this, arguments);
+      return forceFinalFix(loan);
+    };
+    try { window.createLoanFromFacilityBlock = newCreate; } catch(_) {}
+    try { createLoanFromFacilityBlock = newCreate; } catch(_) {}
+  }
+
+  const oldGetPaymentSource = (typeof window.getPaymentTypeSourceText === 'function') ? window.getPaymentTypeSourceText : (typeof getPaymentTypeSourceText === 'function' ? getPaymentTypeSourceText : null);
+  if (oldGetPaymentSource) {
+    const newGetPaymentSource = function(lines){
+      const txt = oldGetPaymentSource.apply(this, arguments) || '';
+      const pseudoLoan = { lines: Array.isArray(lines) ? lines : [] };
+      if (hasExplicitDemandPayment(pseudoLoan) && !/\bالطلب\b/.test(txt)) return txt + ' | الطلب';
+      return txt;
+    };
+    try { window.getPaymentTypeSourceText = newGetPaymentSource; } catch(_) {}
+    try { getPaymentTypeSourceText = newGetPaymentSource; } catch(_) {}
+  }
+})();
+</script>
+
+
+
+<!-- ESSAM_PAYMENT_TYPE_DEMAND_PATCH_V4 -->
+<script>
+(function(){
+  if (window.__essamPaymentTypeDemandPatchV4Applied) return;
+  window.__essamPaymentTypeDemandPatchV4Applied = true;
+
+  function nt(v){
+    try { return typeof normalizeText === 'function' ? normalizeText(v || '') : String(v || '').replace(/\s+/g,' ').trim(); }
+    catch(_) { return String(v || '').replace(/\s+/g,' ').trim(); }
+  }
+  function na(v){
+    try { return typeof normalizeArabic === 'function' ? normalizeArabic(v || '') : nt(v || ''); }
+    catch(_) { return nt(v || ''); }
+  }
+
+  function hasDemandInPaymentSection(lines){
+    const arr = Array.isArray(lines) ? lines.map(nt) : [];
+    let inside = false;
+    for (const line of arr) {
+      const clean = na(line);
+      if (!inside) {
+        if (/بياناتالسداد/.test(clean)) { inside = true; }
+        continue;
+      }
+      if (/البياناتالتاريخيه|شيكاتمرتده|اجراءاتالمتخذه|اجراءاتالمتخذة|بياناتالشكوي|بياناتالشكوى|بياناتموقفالتسهيل|بياناتموقف|نوعالدخل/.test(clean)) break;
+      if (/(^|\|)\s*الطلب\s*(\||$)/.test(line)) return true;
+    }
+    return false;
+  }
+
+  const oldGetPaymentTypeSourceText = (typeof window.getPaymentTypeSourceText === 'function')
+    ? window.getPaymentTypeSourceText
+    : (typeof getPaymentTypeSourceText === 'function' ? getPaymentTypeSourceText : null);
+
+  if (oldGetPaymentTypeSourceText) {
+    const newGetPaymentTypeSourceText = function(lines){
+      let txt = oldGetPaymentTypeSourceText.apply(this, arguments) || '';
+      if (hasDemandInPaymentSection(lines) && !/(^|\|)\s*الطلب\s*(\||$)/.test(txt)) {
+        txt += ' | الطلب';
+      }
+      return txt;
+    };
+    try { window.getPaymentTypeSourceText = newGetPaymentTypeSourceText; } catch(_) {}
+    try { getPaymentTypeSourceText = newGetPaymentTypeSourceText; } catch(_) {}
+  }
+})();
+</script>
+
+
+<!-- ESSAM_ISSUE_ROW_FIELD_ORDER_PATCH_V32 -->
+<script>
+(function(){
+  if (window.__essamIssueRowFieldOrderPatchV32Applied) return;
+  window.__essamIssueRowFieldOrderPatchV32Applied = true;
+
+  function __e32Text(v){
+    try { return typeof normalizeText === 'function' ? normalizeText(v || '') : String(v || '').replace(/\s+/g,' ').trim(); }
+    catch(_) { return String(v || '').replace(/\s+/g,' ').trim(); }
+  }
+  function __e32Num(v){
+    const s = __e32Text(v).replace(/[٠-٩]/g, d => ({'٠':'0','١':'1','٢':'2','٣':'3','٤':'4','٥':'5','٦':'6','٧':'7','٨':'8','٩':'9'}[d] || d)).replace(/,/g,'');
+    const n = parseFloat(s);
+    return isNaN(n) ? 0 : n;
+  }
+  function __e32IsNum(v){ return /^\d+(?:\.\d+)?$/.test(__e32Text(v).replace(/,/g,'')); }
+  function __e32IsMissing(v){ const t = __e32Text(v); return !t || /غ\s*م/.test(t); }
+  function __e32IsValue(v){ return __e32IsNum(v) || __e32IsMissing(v); }
+  function __e32ReasonableCount(v){ const n = __e32Num(v); return n > 0 && n <= 600 && Math.round(n) === n; }
+  function __e32IsIssueHeaderContext(txt){
+    const t = String(txt || '');
+    return /قيمة\s*القسط|مده\s*القرض|مدة\s*القرض|عدد\s*اقساط|عدد\s*أقساط/.test(t);
+  }
+
+  function __e32MakeCandidate(amountRaw, instRaw, durRaw, countRaw, score){
+    const amount = __e32Num(amountRaw);
+    const instText = __e32Text(instRaw || 'غ م') || 'غ م';
+    const durText = __e32Text(durRaw || 'غ م') || 'غ م';
+    const countText = __e32Text(countRaw || '');
+    const dur = __e32ReasonableCount(durText) ? __e32Num(durText) : (__e32ReasonableCount(countText) ? __e32Num(countText) : 1);
+    return {
+      amount: amount,
+      installment: __e32IsMissing(instText) ? 0 : __e32Num(instText),
+      installmentStr: __e32IsMissing(instText) ? 'غ م' : instText,
+      durationRaw: __e32ReasonableCount(durText) ? durText : (__e32ReasonableCount(countText) ? countText : 'غ م'),
+      duration: dur,
+      countRaw: countText,
+      score: score || 0
+    };
+  }
+
+  function __e32ExtractFromIssueRows(lines){
+    const arr = Array.isArray(lines) ? lines.map(__e32Text).filter(Boolean) : [];
+    if (!arr.length) return null;
+    const issueLines = (typeof getFacilityIssuanceLines === 'function') ? getFacilityIssuanceLines(arr).map(__e32Text).filter(Boolean) : arr;
+
+    let best = null;
+    for (let i=0; i<issueLines.length; i++) {
+      const variants = [issueLines[i]];
+      if (i > 0) variants.push(issueLines[i-1] + ' | ' + issueLines[i]);
+      if (i < issueLines.length-1) variants.push(issueLines[i] + ' | ' + issueLines[i+1]);
+      if (i > 0 && i < issueLines.length-1) variants.push(issueLines[i-1] + ' | ' + issueLines[i] + ' | ' + issueLines[i+1]);
+
+      for (const variant of variants) {
+        if (!/جنيه|EGP/i.test(variant)) continue;
+        const parts = variant.split('|').map(__e32Text).filter(Boolean);
+        const cIdx = parts.findIndex(p => /جنيه|EGP/i.test(p));
+        if (cIdx === -1) continue;
+
+        let amountIdx = -1;
+        for (let j=cIdx+1; j<parts.length; j++) {
+          if (__e32IsNum(parts[j]) && __e32Num(parts[j]) >= 100) { amountIdx = j; break; }
+        }
+        if (amountIdx === -1) {
+          for (let j=Math.max(0,cIdx-2); j<cIdx; j++) {
+            if (__e32IsNum(parts[j]) && __e32Num(parts[j]) >= 100) amountIdx = j;
+          }
+        }
+        if (amountIdx === -1) continue;
+
+        const tail = parts.slice(amountIdx + 1).filter(__e32IsValue);
+        if (!tail.length) continue;
+
+        // ترتيب I-Score الحقيقي بعد المبلغ: الحد الائتماني/غ م ثم قيمة القسط ثم مدة القرض ثم عدد الأقساط
+        let cand = __e32MakeCandidate(parts[amountIdx], tail[1] || 'غ م', tail[2] || 'غ م', tail[3] || '', 200);
+
+        // لو القسط = 0 أو غ م والمدة/العدد بعده موجودين، لا نسمح أبداً باعتبار مدة/عدد الأقساط قسطاً.
+        if ((__e32IsMissing(tail[1]) || __e32Num(tail[1]) === 0) && __e32ReasonableCount(tail[2])) {
+          cand.installment = 0;
+          cand.installmentStr = __e32IsMissing(tail[1]) ? 'غ م' : '0';
+          cand.durationRaw = tail[2];
+          cand.duration = __e32Num(tail[2]);
+          cand.countRaw = tail[3] || cand.countRaw || '';
+          cand.score += 60;
+        }
+
+        // حالة انفصال التاريخ عن سطر البيانات: -04 | جنيه | 50,000 | غ م | 0 | 5 | 5
+        if (__e32IsNum(tail[1]) && __e32Num(tail[1]) < __e32Num(tail[2] || 0) && __e32ReasonableCount(tail[2])) {
+          // لا نبدل هنا؛ فقط حماية من اختيار الرقم الأكبر كقسط.
+          cand.score += 20;
+        }
+
+        if (__e32IsIssueHeaderContext(variant)) cand.score += 50;
+        if (cand.amount > 0) cand.score += 10;
+        if (__e32ReasonableCount(cand.durationRaw)) cand.score += 10;
+
+        if (!best || cand.score > best.score) best = cand;
+      }
+    }
+    return best;
+  }
+
+  function __e32NeedsCorrectOrderFix(loan, fix){
+    if (!loan || !fix) return false;
+    const curInst = __e32Num(loan.installment);
+    const curInstStr = __e32Text(loan.installmentStr || '');
+    const fixInst = __e32Num(fix.installment);
+    const fixInstMissing = __e32IsMissing(fix.installmentStr);
+    const fixDuration = __e32Num(fix.durationRaw);
+
+    if (fix.amount > 0 && loan.amount !== fix.amount) return true;
+    if ((fixInst === 0 || fixInstMissing) && curInst > 0 && fixDuration > 0 && curInst === fixDuration) return true;
+    if ((fixInst === 0 || fixInstMissing) && curInstStr && curInstStr !== '0' && curInstStr !== 'غ م') return true;
+    if (fixInst !== curInst && (fix.score || 0) >= 200) return true;
+    return false;
+  }
+
+  function __e32Apply(loan){
+    if (!loan || !Array.isArray(loan.lines) || !loan.lines.length) return loan;
+    const fix = __e32ExtractFromIssueRows(loan.lines);
+    if (__e32NeedsCorrectOrderFix(loan, fix)) {
+      loan.amount = fix.amount;
+      loan.installment = fix.installment;
+      loan.installmentStr = fix.installmentStr;
+      loan.durationRaw = fix.durationRaw;
+      loan.duration = fix.duration;
+      loan.installmentCountRaw = fix.countRaw || loan.installmentCountRaw || '';
+      loan.__essamIssueRowOrderFixed = true;
+    }
+    return loan;
+  }
+
+  const oldApply = (typeof window.applySmartFacilityFieldFix === 'function') ? window.applySmartFacilityFieldFix : (typeof applySmartFacilityFieldFix === 'function' ? applySmartFacilityFieldFix : null);
+  const newApply = function(loan){
+    const result = oldApply ? (oldApply.apply(this, arguments) || loan) : loan;
+    return __e32Apply(result);
+  };
+  try { window.applySmartFacilityFieldFix = newApply; } catch(_) {}
+  try { applySmartFacilityFieldFix = newApply; } catch(_) {}
+
+  const oldCreate = (typeof window.createLoanFromFacilityBlock === 'function') ? window.createLoanFromFacilityBlock : (typeof createLoanFromFacilityBlock === 'function' ? createLoanFromFacilityBlock : null);
+  if (oldCreate) {
+    const newCreate = function(block){
+      const loan = oldCreate.apply(this, arguments);
+      return __e32Apply(loan);
+    };
+    try { window.createLoanFromFacilityBlock = newCreate; } catch(_) {}
+    try { createLoanFromFacilityBlock = newCreate; } catch(_) {}
+  }
+})();
+</script>
+
+
+<!-- ESSAM_ISCORE_ANCHORED_ISSUE_SECTION_PATCH_V14 -->
+<script>
+(function(){
+  if (window.__essamAnchoredIssueSectionPatchV14Applied) return;
+  window.__essamAnchoredIssueSectionPatchV14Applied = true;
+
+  function tx(v){
+    try { return typeof normalizeText === 'function' ? normalizeText(v || '') : String(v || '').replace(/\s+/g,' ').trim(); }
+    catch(_) { return String(v || '').replace(/\s+/g,' ').trim(); }
+  }
+  function compact(v){
+    return tx(v).replace(/[إأآا]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي').replace(/\s+/g,'').replace(/ـ+/g,'');
+  }
+  function digits(v){
+    return tx(v).replace(/[٠-٩]/g, function(d){ return {'٠':'0','١':'1','٢':'2','٣':'3','٤':'4','٥':'5','٦':'6','٧':'7','٨':'8','٩':'9'}[d] || d; });
+  }
+  function toNum(v){
+    const s = digits(v).replace(/,/g,'').replace(/[^0-9.\-]/g,'');
+    const n = parseFloat(s);
+    return isNaN(n) ? 0 : n;
+  }
+  function isNum(v){ return /^\s*[٠-٩0-9][٠-٩0-9,]*(?:\.\d+)?\s*$/.test(tx(v)); }
+  function isMissing(v){ return !tx(v) || /غ\s*م/.test(tx(v)); }
+  function isValue(v){ return isNum(v) || isMissing(v); }
+  function isDuration(v){
+    if (isMissing(v)) return false;
+    const n = toNum(v);
+    return n > 0 && n <= 360 && Math.round(n) === n;
+  }
+  function hasCurrency(v){ return /جنيه|EGP/i.test(tx(v)); }
+  function hasFullDate(v){
+    const t = tx(v);
+    return /\d{1,2}[-\/](?:يناير|فبراير|مارس|أبريل|ابريل|مايو|يونيو|يوليو|أغسطس|اغسطس|سبتمبر|أكتوبر|اكتوبر|نوفمبر|ديسمبر)[-\/]\d{4}/.test(t)
+        || /\d{4}[-\/](?:يناير|فبراير|مارس|أبريل|ابريل|مايو|يونيو|يوليو|أغسطس|اغسطس|سبتمبر|أكتوبر|اكتوبر|نوفمبر|ديسمبر)[-\/]\d{1,2}/.test(t)
+        || /\d{4}[-\/]\d{1,2}[-\/]\d{1,2}/.test(t)
+        || /\d{1,2}[-\/]\d{1,2}[-\/]\d{4}/.test(t)
+        || /(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-\d{4}-\d{1,2}/i.test(t);
+  }
+  function hasDateFragment(v){
+    const t = tx(v);
+    return hasFullDate(t) || /(?:يناير|فبراير|مارس|أبريل|ابريل|مايو|يونيو|يوليو|أغسطس|اغسطس|سبتمبر|أكتوبر|اكتوبر|نوفمبر|ديسمبر)-\d{4}/.test(t) || /^-?\d{1,2}$/.test(t);
+  }
+  function isIssueHeader(v){
+    const c = compact(v);
+    return /بياناتاصدار/.test(c)
+        || (/تاريخالموافقه/.test(c) && /قيمهالقسط/.test(c))
+        || (/المبلغالممنوح/.test(c) && (/مدهالقرض/.test(c) || /عدداقساط/.test(c)));
+  }
+  function isBoundaryAfterIssue(v){
+    const c = compact(v);
+    return /بياناتالسداد|عقهالعميل|علاقهالعميل|مؤطبيعه|جههاصدار|الكودالتعريفي|مقترض|حامل|البطاقهالاساسيه|تاريختعديل|محظات|بياناتموقف|الشهور|البياناتالتاريخيه|شيكاتمرتده|اجراءاتالمتخذه|بياناتالشكوي|بياناتالشكوى/.test(c);
+  }
+  function isSummaryOrSearch(v){
+    const c = compact(v);
+    return /ملخصمحتوي|اجماليالحدود|اجماليالديون|عددالتسهيلات|التسهيلاتالساريه|اسباباستعلام|اسباباستعم|مبلغالتسهيلائتماني|تاريختقديمطلب/.test(c);
+  }
+  function isPaymentLine(v){
+    const c = compact(v);
+    return /بياناتالسداد|نوعالسداد|بشكلمتعاقب|الطلب|شهري|شهري|سنوي|ربعسنوي|نصفسنوي|الرصيد|اخرمبلغتمسداده|اخرسداد|منتظم|المبلغالمتاخر|العوائدالهامشيه|تصنيفالتسهيل/.test(c);
+  }
+  function pipeParts(v){ return tx(v).replace(/\*+/g,' ').split('|').map(tx).filter(Boolean); }
+  function tokenParts(v){
+    const clean = tx(v).replace(/\*+/g,' ').replace(/\s+/g,' ').trim();
+    const tokens = [];
+    const rx = /(غ\s*م|[٠-٩0-9][٠-٩0-9,]*(?:\.\d+)?|جنيه\s*م?ي?|جنيه|EGP|\d{1,2}[-\/](?:يناير|فبراير|مارس|أبريل|ابريل|مايو|يونيو|يوليو|أغسطس|اغسطس|سبتمبر|أكتوبر|اكتوبر|نوفمبر|ديسمبر)[-\/]\d{4}|\d{4}[-\/](?:يناير|فبراير|مارس|أبريل|ابريل|مايو|يونيو|يوليو|أغسطس|اغسطس|سبتمبر|أكتوبر|اكتوبر|نوفمبر|ديسمبر)[-\/]\d{1,2}|(?:يناير|فبراير|مارس|أبريل|ابريل|مايو|يونيو|يوليو|أغسطس|اغسطس|سبتمبر|أكتوبر|اكتوبر|نوفمبر|ديسمبر)-\d{4}|-?\d{1,2})/gi;
+    let m;
+    while ((m = rx.exec(clean)) !== null) tokens.push(tx(m[0]));
+    return tokens;
+  }
+  function getParts(v){
+    const p = pipeParts(v);
+    return p.length >= 5 ? p : tokenParts(v);
+  }
+  function parseIssueRow(line, anchored){
+    const raw = tx(line).replace(/\*+/g,' ').replace(/\s+/g,' ').trim();
+    if (!raw || !hasCurrency(raw)) return null;
+    // Outside an anchored issue section, require a full date. Inside it, accept split dates because many I-Score PDFs split day and month-year across lines.
+    if (!anchored && !hasFullDate(raw)) return null;
+    if (isSummaryOrSearch(raw) || isPaymentLine(raw)) return null;
+
+    const p = getParts(raw);
+    if (p.length < 4) return null;
+    const cIdx = p.findIndex(hasCurrency);
+    if (cIdx < 0) return null;
+
+    let amountIdx = -1;
+    for (let i = cIdx + 1; i <= Math.min(cIdx + 3, p.length - 1); i++) {
+      if (isNum(p[i]) && toNum(p[i]) >= 100) { amountIdx = i; break; }
+    }
+    if (amountIdx < 0) return null;
+
+    const amount = toNum(p[amountIdx]);
+    const tail = p.slice(amountIdx + 1).filter(isValue);
+    if (tail.length < 3) return null;
+
+    // Fixed I-Score issue order after amount:
+    // credit limit/amount | installment | loan duration | installment count
+    const creditLimitRaw = tail[0] || 'غ م';
+    const installmentRaw = tail[1] || 'غ م';
+    const durationRaw = tail[2] || 'غ م';
+    const countRaw = tail[3] || 'غ م';
+
+    let installmentStr = isMissing(installmentRaw) ? 'غ م' : tx(installmentRaw);
+    let installment = isMissing(installmentRaw) ? 0 : toNum(installmentRaw);
+    let durationRawOut = isDuration(durationRaw) ? tx(durationRaw) : (isDuration(countRaw) ? tx(countRaw) : 'غ م');
+    let duration = isDuration(durationRawOut) ? toNum(durationRawOut) : 1;
+
+    // If installment is missing/zero, never shift duration/count into installment.
+    if ((isMissing(installmentRaw) || toNum(installmentRaw) === 0) && isDuration(durationRaw)) {
+      installmentStr = isMissing(installmentRaw) ? 'غ م' : '0';
+      installment = 0;
+      durationRawOut = tx(durationRaw);
+      duration = toNum(durationRaw);
+    }
+
+    return { amount, installment, installmentStr, durationRaw: durationRawOut, duration: duration || 1, installmentCountRaw: tx(countRaw), rawLine: raw, creditLimitRaw: tx(creditLimitRaw) };
+  }
+  function extractAnchoredIssueFields(lines){
+    const arr = Array.isArray(lines) ? lines.map(tx).filter(Boolean) : [];
+    let insideIssue = false;
+    let headerSeenAt = -1;
+    let recent = [];
+
+    for (let i = 0; i < arr.length; i++) {
+      const line = arr[i];
+      if (isIssueHeader(line)) { insideIssue = true; headerSeenAt = i; recent = []; continue; }
+      if (!insideIssue) continue;
+      if (isBoundaryAfterIssue(line)) {
+        if (!isIssueHeader(line)) { insideIssue = false; recent = []; }
+        continue;
+      }
+      recent.push(line);
+      if (recent.length > 4) recent.shift();
+
+      // Try current line alone first, then short windows inside the anchored issue section only.
+      const variants = [line];
+      if (recent.length >= 2) variants.push(recent.slice(-2).join(' | '));
+      if (recent.length >= 3) variants.push(recent.slice(-3).join(' | '));
+      if (recent.length >= 4) variants.push(recent.slice(-4).join(' | '));
+
+      for (const v of variants) {
+        const cand = parseIssueRow(v, true);
+        if (cand) { cand.headerDistance = i - headerSeenAt; return cand; }
+      }
+
+      if (headerSeenAt >= 0 && i - headerSeenAt > 10) { insideIssue = false; recent = []; }
+    }
+    return null;
+  }
+  function applyAnchoredIssueFields(loan){
+    if (!loan || !Array.isArray(loan.lines)) return loan;
+    const fix = extractAnchoredIssueFields(loan.lines);
+    if (!fix || !(fix.amount > 0)) return loan;
+    loan.amount = fix.amount;
+    loan.installment = fix.installment;
+    loan.installmentStr = fix.installmentStr;
+    loan.durationRaw = fix.durationRaw;
+    loan.duration = fix.duration || 1;
+    loan.installmentCountRaw = fix.installmentCountRaw || loan.installmentCountRaw || '';
+    loan.__essamAnchoredIssuePatchV14 = true;
+    loan.__essamAnchoredIssueRawLineV14 = fix.rawLine;
+    return loan;
+  }
+
+  const oldApply = (typeof window.applySmartFacilityFieldFix === 'function') ? window.applySmartFacilityFieldFix : (typeof applySmartFacilityFieldFix === 'function' ? applySmartFacilityFieldFix : null);
+  const patchedApply = function(loan){ const result = oldApply ? (oldApply.apply(this, arguments) || loan) : loan; return applyAnchoredIssueFields(result); };
+  try { window.applySmartFacilityFieldFix = patchedApply; } catch(_) {}
+  try { applySmartFacilityFieldFix = patchedApply; } catch(_) {}
+
+  const oldCreate = (typeof window.createLoanFromFacilityBlock === 'function') ? window.createLoanFromFacilityBlock : (typeof createLoanFromFacilityBlock === 'function' ? createLoanFromFacilityBlock : null);
+  if (oldCreate) {
+    const patchedCreate = function(block){ const loan = oldCreate.apply(this, arguments); return applyAnchoredIssueFields(loan); };
+    try { window.createLoanFromFacilityBlock = patchedCreate; } catch(_) {}
+    try { createLoanFromFacilityBlock = patchedCreate; } catch(_) {}
+  }
+})();
+</script>
+
+
+
+<!-- ESSAM_DURATION_FROM_INSTALLMENT_COUNT_PATCH_V32 -->
+<script>
+(function(){
+  if (window.__essamDurationFromInstallmentCountPatchV32Applied) return;
+  window.__essamDurationFromInstallmentCountPatchV32Applied = true;
+
+  function __durTxt(v){
+    try { return typeof normalizeText === 'function' ? normalizeText(v || '') : String(v || '').replace(/\s+/g, ' ').trim(); }
+    catch(_) { return String(v || '').replace(/\s+/g, ' ').trim(); }
+  }
+  function __durNum(v){
+    const t = __durTxt(v || '').replace(/[٠-٩]/g, d => ({'٠':'0','١':'1','٢':'2','٣':'3','٤':'4','٥':'5','٦':'6','٧':'7','٨':'8','٩':'9'}[d] || d)).replace(/,/g, '').replace(/٬/g, '');
+    const n = parseFloat(t);
+    return isNaN(n) ? 0 : n;
+  }
+  function __durIsMissing(v){
+    const t = __durTxt(v || '');
+    return !t || /غ\s*م/.test(t);
+  }
+  function __durIsZeroOrMissing(v){
+    const t = __durTxt(v || '');
+    return __durIsMissing(t) || /^0+(?:\.0+)?$/.test(t.replace(/,/g, '').replace(/٬/g, '')) || __durNum(t) === 0;
+  }
+  function __durIsNum(v){
+    return /^\d+(?:\.\d+)?$/.test(__durTxt(v || '').replace(/,/g, '').replace(/٬/g, ''));
+  }
+  function __durIsValidCount(v){
+    const n = __durNum(v);
+    return __durIsNum(v) && n > 0 && n <= 10000;
+  }
+  function __durSameNumber(a, b){
+    return Math.round(__durNum(a)) === Math.round(Number(b || 0));
+  }
+  function __durValueTokensAfterCurrency(line){
+    const parts = String(line || '').split('|').map(__durTxt).filter(Boolean);
+    const cIdx = parts.findIndex(p => /جنيه|EGP/i.test(p));
+    if (cIdx === -1) return [];
+    return parts.slice(cIdx + 1).filter(p => __durIsNum(p) || __durIsMissing(p));
+  }
+  function __durFindCountFromIssueLines(loan){
+    if (!loan || !Array.isArray(loan.lines)) return '';
+    const amount = Number(loan.amount || 0);
+    const installment = Number(loan.installment || 0);
+    const lines = (typeof getFacilityIssuanceLines === 'function' ? getFacilityIssuanceLines(loan.lines) : loan.lines).map(__durTxt).filter(Boolean);
+
+    for (const line of lines) {
+      const values = __durValueTokensAfterCurrency(line);
+      if (!values.length) continue;
+
+      let amountIdx = values.findIndex(v => __durIsNum(v) && amount > 0 && __durSameNumber(v, amount));
+      if (amountIdx === -1) {
+        amountIdx = values.findIndex(v => __durIsNum(v) && __durNum(v) >= 100);
+      }
+      if (amountIdx === -1) continue;
+
+      const tail = values.slice(amountIdx + 1);
+
+      // نمط الايسكور المطلوب: المبلغ | غ م | القسط | غ م | عدد الأقساط
+      // مثال: 32,000 | غ م | 7,051 | غ م | 552
+      if (tail.length >= 4 && __durIsZeroOrMissing(tail[0]) && installment > 0 && __durSameNumber(tail[1], installment) && __durIsZeroOrMissing(tail[2]) && __durIsValidCount(tail[3])) {
+        return __durTxt(tail[3]);
+      }
+
+      // النمط العادي: المبلغ | القسط | غ م | عدد الأقساط
+      if (tail.length >= 3 && installment > 0 && __durSameNumber(tail[0], installment) && __durIsZeroOrMissing(tail[1]) && __durIsValidCount(tail[2])) {
+        return __durTxt(tail[2]);
+      }
+
+      // نمط بدون قسط: المبلغ | غ م | غ م | عدد الأقساط
+      if (tail.length >= 3 && __durIsZeroOrMissing(tail[0]) && __durIsZeroOrMissing(tail[1]) && __durIsValidCount(tail[2])) {
+        return __durTxt(tail[2]);
+      }
+
+      // احتياطي آمن: بعد القسط مباشرة لو المدة غ م/0 وبعدها رقم عدد الأقساط
+      if (installment > 0) {
+        for (let i = 0; i < tail.length - 2; i++) {
+          if (__durSameNumber(tail[i], installment) && __durIsZeroOrMissing(tail[i + 1]) && __durIsValidCount(tail[i + 2])) {
+            return __durTxt(tail[i + 2]);
+          }
+        }
+      }
+    }
+    return '';
+  }
+  function __durApplyCountFallback(loan){
+    if (!loan) return loan;
+    if (!__durIsZeroOrMissing(loan.durationRaw)) return loan;
+
+    let fallback = '';
+    if (__durIsValidCount(loan.countRaw)) fallback = __durTxt(loan.countRaw);
+    if (!fallback) fallback = __durFindCountFromIssueLines(loan);
+
+    if (__durIsValidCount(fallback)) {
+      loan.durationRaw = fallback;
+      loan.duration = __durNum(fallback);
+    }
+    return loan;
+  }
+
+  const __oldApplySmartFacilityFieldFixV32 = typeof window.applySmartFacilityFieldFix === 'function' ? window.applySmartFacilityFieldFix : null;
+  if (__oldApplySmartFacilityFieldFixV32) {
+    window.applySmartFacilityFieldFix = function(loan){
+      const result = __oldApplySmartFacilityFieldFixV32.apply(this, arguments) || loan;
+      return __durApplyCountFallback(result);
+    };
+  }
+})();
+</script>
+
+
+
+<!-- ESSAM_DURATION_FROM_INSTALLMENT_COUNT_PATCH_V33_CLOSED_LOANS -->
+<script>
+(function(){
+  if (window.__essamDurationFromInstallmentCountPatchV33ClosedLoansApplied) return;
+  window.__essamDurationFromInstallmentCountPatchV33ClosedLoansApplied = true;
+  function __v33Txt(v){ try { return typeof normalizeText === 'function' ? normalizeText(v || '') : String(v || '').replace(/\s+/g, ' ').trim(); } catch(_) { return String(v || '').replace(/\s+/g, ' ').trim(); } }
+  function __v33Num(v){ const t = __v33Txt(v || '').replace(/[٠-٩]/g, d => ({'٠':'0','١':'1','٢':'2','٣':'3','٤':'4','٥':'5','٦':'6','٧':'7','٨':'8','٩':'9'}[d] || d)).replace(/,/g, '').replace(/٬/g, ''); const n = parseFloat(t); return isNaN(n) ? 0 : n; }
+  function __v33IsMissing(v){ const t = __v33Txt(v || ''); return !t || /غ\s*م/.test(t); }
+  function __v33IsZeroOrMissing(v){ const t = __v33Txt(v || '').replace(/,/g, '').replace(/٬/g, ''); return __v33IsMissing(t) || /^0+(?:\.0+)?$/.test(t) || __v33Num(t) === 0; }
+  function __v33IsNumeric(v){ return /^\d+(?:\.\d+)?$/.test(__v33Txt(v || '').replace(/,/g, '').replace(/٬/g, '')); }
+  function __v33ValidCount(v){ const n = __v33Num(v); return __v33IsNumeric(v) && n > 0 && n <= 10000; }
+  function __v33SameNumber(a, b){ return Math.round(__v33Num(a)) === Math.round(Number(b || 0)); }
+  function __v33TokensAfterCurrency(line){ const parts = String(line || '').split('|').map(__v33Txt).filter(Boolean); const cIdx = parts.findIndex(p => /جنيه|EGP/i.test(p)); if (cIdx === -1) return []; return parts.slice(cIdx + 1).filter(p => __v33IsNumeric(p) || __v33IsMissing(p)); }
+  function __v33FindInstallmentCountFromIssuanceLines(loan){
+    if (!loan || !Array.isArray(loan.lines)) return '';
+    const amount = Number(loan.amount || 0), installment = Number(loan.installment || 0);
+    const sourceLines = (typeof getFacilityIssuanceLines === 'function' ? getFacilityIssuanceLines(loan.lines) : loan.lines).map(__v33Txt).filter(Boolean);
+    for (const line of sourceLines) {
+      const values = __v33TokensAfterCurrency(line); if (!values.length) continue;
+      let amountIdx = values.findIndex(v => __v33IsNumeric(v) && amount > 0 && __v33SameNumber(v, amount));
+      if (amountIdx === -1) amountIdx = values.findIndex(v => __v33IsNumeric(v) && __v33Num(v) >= 100);
+      if (amountIdx === -1) continue;
+      const tail = values.slice(amountIdx + 1);
+      if (tail.length >= 4 && __v33IsZeroOrMissing(tail[0]) && __v33IsZeroOrMissing(tail[1]) && __v33IsZeroOrMissing(tail[2]) && __v33ValidCount(tail[3])) return __v33Txt(tail[3]);
+      if (tail.length >= 4 && __v33IsZeroOrMissing(tail[0]) && installment > 0 && __v33SameNumber(tail[1], installment) && __v33IsZeroOrMissing(tail[2]) && __v33ValidCount(tail[3])) return __v33Txt(tail[3]);
+      if (tail.length >= 3 && installment > 0 && __v33SameNumber(tail[0], installment) && __v33IsZeroOrMissing(tail[1]) && __v33ValidCount(tail[2])) return __v33Txt(tail[2]);
+      if (tail.length >= 3 && __v33IsZeroOrMissing(tail[0]) && __v33IsZeroOrMissing(tail[1]) && __v33ValidCount(tail[2])) return __v33Txt(tail[2]);
+    }
+    return '';
+  }
+  function __v33ApplyDurationCountFallback(loan){
+    if (!loan) return loan;
+    if (!__v33IsZeroOrMissing(loan.durationRaw)) return loan;
+    let fallbackCount = '';
+    if (__v33ValidCount(loan.countRaw)) fallbackCount = __v33Txt(loan.countRaw);
+    if (!fallbackCount) fallbackCount = __v33FindInstallmentCountFromIssuanceLines(loan);
+    if (__v33ValidCount(fallbackCount)) { loan.durationRaw = fallbackCount; loan.duration = __v33Num(fallbackCount); }
+    return loan;
+  }
+  const __oldApplySmartFacilityFieldFixV33 = typeof window.applySmartFacilityFieldFix === 'function' ? window.applySmartFacilityFieldFix : null;
+  if (__oldApplySmartFacilityFieldFixV33) {
+    window.applySmartFacilityFieldFix = function(loan){ const result = __oldApplySmartFacilityFieldFixV33.apply(this, arguments) || loan; return __v33ApplyDurationCountFallback(result); };
+  }
+})();
+</script>
+
+
+<script>
+/* ESSAM_V57_LEGAL_ACTION_SECTION_ROWS_FIXED */
+(function(){
+  function clean(v){ try { return (typeof normalizeText === 'function' ? normalizeText(v || '') : String(v || '')).replace(/\s+/g,' ').trim(); } catch(e){ return String(v || '').replace(/\s+/g,' ').trim(); } }
+  function fold(v){ try { return (typeof normalizeArabic === 'function' ? normalizeArabic(v || '') : String(v || '')).replace(/[أإآ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه'); } catch(e){ return String(v || '').replace(/[أإآ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه'); } }
+  function compact(v){ return fold(clean(v)).replace(/ـ+/g,'').replace(/[|\s]+/g,'').replace(/[^؀-ۿ0-9A-Za-z]+/g,''); }
+  const noDataRx = /توجد\s*بيانات|توجدبيانات|توجددبيانات/;
+  const dateRx = /(\d{1,2}\s*[-\/]\s*(?:يناير|فبراير|مارس|أبريل|ابريل|مايو|يونيو|يوليو|أغسطس|اغسطس|سبتمبر|أكتوبر|اكتوبر|نوفمبر|ديسمبر)\s*[-\/]?\s*\d{4})|(\d{4}\s*[-\/]\s*\d{1,2}\s*[-\/]\s*\d{1,2})|(\d{1,2}\s*[-\/]\s*\d{1,2}\s*[-\/]\s*\d{4})/;
+  const actionWordsRx = /سداد\s*مديونية|مديونية|المتأخرات|المتاخرات|الدعاوى|الدعاوي|دعوى|دعوي|شطب|التنازل|رفع|قضائ|جنحة|نيابة|بالنيابة|اجراء|إجراء|تصنيف|كود\s*اجراء/;
+  function isActionTitle(c){ return /ا?جراءات?المتخذ|إجراءات?المتخذ|جراءات?المتخذ|اجراءات|المتخذه|المتخذة/.test(c); }
+  function isActionColumns(c){ return /تاريخالتصنيفاول|كودالاجراءالرئي|كوداجراءالرئي|كودالاجراءالفرعي|كوداجراءالفرعي|تاريخالاجراء|تاريخاجراء/.test(c); }
+  function isBoundary(c){ return /بياناتالشكوي|بياناتالشكوى|التسهيلالائتماني|التسهيلائتماني|الشهور|البياناتالتاريخيه|شيكاتمرتده|تسهيلاتالديونالمعدومه|التسهيلاتالمغلقه|اخءالمسئوليه|اخلا?ءالمسئوليه/.test(c || ''); }
+  function looksLikeActionRow(raw){
+    const line = clean(raw); if(!line || noDataRx.test(line)) return false;
+    const c = compact(line); if(isActionTitle(c) || isActionColumns(c) || isBoundary(c)) return false;
+    const parts = line.split('|').map(clean).filter(Boolean);
+    const dateCount = (line.match(dateRx) || []).length;
+    const hasDate = dateRx.test(line);
+    const hasActionWord = actionWordsRx.test(line);
+    return (parts.length >= 3 && hasDate && hasActionWord) || (parts.length >= 4 && hasDate) || (dateCount >= 2 && parts.length >= 3);
+  }
+  window.extractTakenActionInfo = extractTakenActionInfo = function(lines){
+    const arr = Array.isArray(lines) ? lines.map(clean).filter(Boolean) : [];
+    let titleIdx = -1, columnsIdx = -1;
+    for(let i=0;i<arr.length;i++){
+      const c = compact(arr[i]); const cNext = compact((arr[i+1] || '')); const cCombined = c + cNext;
+      if(titleIdx < 0 && (isActionTitle(c) || isActionTitle(cCombined))) titleIdx = i;
+      if(columnsIdx < 0 && (isActionColumns(c) || isActionColumns(cCombined))) columnsIdx = i;
+    }
+    if(titleIdx < 0 && columnsIdx < 0) return { hasAction:false, rows:[] };
+    if(titleIdx >= 0 && columnsIdx >= 0 && Math.abs(titleIdx - columnsIdx) > 6) return { hasAction:false, rows:[] };
+    const start = Math.min(titleIdx >= 0 ? titleIdx : columnsIdx, columnsIdx >= 0 ? columnsIdx : titleIdx);
+    const rows = [];
+    for(let i=start+1;i<arr.length;i++){
+      const raw = arr[i]; const c = compact(raw);
+      if(isBoundary(c)) break;
+      if(isActionTitle(c) || isActionColumns(c)) continue;
+      if(looksLikeActionRow(raw)) rows.push(raw);
+    }
+    return { hasAction: rows.length > 0, rows };
+  };
+})();
+</script>
+
+
+<script>
+/* ESSAM_V58_ISSUE_ONLY_DURATION_COUNT_FIRST_FIX */
+(function(){
+  function clean(v){ try { return (typeof normalizeText === 'function' ? normalizeText(v || '') : String(v || '')).replace(/\s+/g,' ').trim(); } catch(e){ return String(v || '').replace(/\s+/g,' ').trim(); } }
+  function fold(v){ try { return (typeof normalizeArabic === 'function' ? normalizeArabic(v || '') : String(v || '')).replace(/[أإآ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه'); } catch(e){ return String(v || '').replace(/[أإآ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه'); } }
+  function compact(v){ return fold(clean(v)).replace(/ـ+/g,'').replace(/[|\s]+/g,'').replace(/[^؀-ۿ0-9A-Za-z]+/g,''); }
+  function num(v){ const map={'٠':'0','١':'1','٢':'2','٣':'3','٤':'4','٥':'5','٦':'6','٧':'7','٨':'8','٩':'9'}; const s=String(v||'').replace(/[٠-٩]/g,d=>map[d]||d).replace(/,/g,'').replace(/٬/g,'').replace(/[^0-9.\-]/g,''); const x=parseFloat(s); return isNaN(x) ? NaN : x; }
+  function isMissing(v){ const s=compact(v); return !s || /^(غم|غ-?م|غيرمتاح|لايوجد|na|n\/a|-+|0|0\.0+)$/.test(s); }
+  function isNumericOrMissing(v){ return isMissing(v) || !isNaN(num(v)); }
+  function isTerm(v){ const x=num(v); return !isNaN(x) && x > 0 && x <= 600 && !isMissing(v); }
+  function isAmount(v){ const x=num(v); return !isNaN(x) && x >= 0 && !isMissing(v); }
+  function issueLines(lines){
+    const arr=(Array.isArray(lines)?lines:[]).map(clean).filter(Boolean); const out=[]; let started=false;
+    for(const line of arr){
+      const c=compact(line);
+      if(!started){ if(/بياناتاصدار|تاريخالموافقه|تاريخالموافقة|المبلغالممنوح|قيمهالقسط|قيمةالقسط|مدهالقرض|مدةالقرض|عدداقساط/.test(c) || /جنيه|EGP/i.test(line)) started=true; if(started) out.push(line); continue; }
+      if(/عقهالعميل|علاقةالعميل|مؤالضمان|تاريخاولف|تاريخأولف|بياناتالسداد|شيكاتمرتده|اجراءاتالمتخذه|اجراءاتالمتخذة|بياناتالشكوي|بياناتالشكوى|بياناتموقف|نوعالدخل/.test(c)) break;
+      out.push(line);
+    }
+    return out;
+  }
+  function chooseTerm(durationToken, countToken){ const countRaw=clean(countToken || ''); const durationRaw=clean(durationToken || ''); if(isTerm(countRaw)) return {raw:countRaw, value:num(countRaw)}; if(isTerm(durationRaw)) return {raw:durationRaw, value:num(durationRaw)}; return {raw:countRaw || 'غ م', value:1}; }
+  function parseVariant(variant){
+    const parts=variant.split('|').map(clean).filter(Boolean); const cIdx=parts.findIndex(p=>/جنيه|EGP/i.test(p)); if(cIdx < 0) return null;
+    const before=parts.slice(Math.max(0,cIdx-4), cIdx).filter(isNumericOrMissing);
+    const after=parts.slice(cIdx+1).filter(isNumericOrMissing); const candidates=[];
+    if(after.length >= 5 && isAmount(after[0])) { const picked=chooseTerm(after[3], after[4]); candidates.push({raw:picked.raw, value:picked.value, score:30}); }
+    const prevAmount=[...before].reverse().find(t=>isAmount(t) && num(t) >= 100);
+    if(prevAmount && after.length >= 3) { const picked=chooseTerm(after[1], after[2]); candidates.push({raw:picked.raw, value:picked.value, score:28}); }
+    candidates.sort((a,b)=>(b.score||0)-(a.score||0)); return candidates[0] || null;
+  }
+  function preferredDuration(lines){
+    const arr=issueLines(lines); let best=null;
+    for(let i=0;i<arr.length;i++){
+      if(!/جنيه|EGP/i.test(arr[i])) continue;
+      const variants=[arr[i]]; if(i>0) variants.push(arr[i-1]+' | '+arr[i]); if(i<arr.length-1) variants.push(arr[i]+' | '+arr[i+1]); if(i>0 && i<arr.length-1) variants.push(arr[i-1]+' | '+arr[i]+' | '+arr[i+1]);
+      for(const v of variants){ const c=parseVariant(v); if(c && (!best || c.score > best.score)) best=c; }
+    }
+    return best;
+  }
+  const oldFix=(typeof applySmartFacilityFieldFix==='function') ? applySmartFacilityFieldFix : null;
+  window.applySmartFacilityFieldFix = applySmartFacilityFieldFix = function(loan){ if(oldFix) oldFix(loan); const picked=preferredDuration(loan && loan.lines); if(picked){ loan.durationRaw=picked.raw || 'غ م'; loan.duration=picked.value && picked.value>0 ? picked.value : 1; } return loan; };
+})();
+</script>
+
+
+<script>
+/* ESSAM_V59_CLOSED_BOUNCED_NO_FACILITY_FIXED */
+(function(){
+  function clean(v){ try { return (typeof normalizeText === 'function' ? normalizeText(v || '') : String(v || '')).replace(/\s+/g,' ').trim(); } catch(e){ return String(v || '').replace(/\s+/g,' ').trim(); } }
+  function fold(v){ try { return (typeof normalizeArabic === 'function' ? normalizeArabic(v || '') : String(v || '')).replace(/[أإآ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه'); } catch(e){ return String(v || '').replace(/[أإآ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه'); } }
+  function compact(v){ return fold(clean(v)).replace(/ـ+/g,'').replace(/[|\s]+/g,'').replace(/[^؀-ۿ0-9A-Za-z]+/g,''); }
+  function isClosedFromLines(lines){
+    return (Array.isArray(lines)?lines:[]).some(line => {
+      const parts=String(line||'').split('|').map(clean);
+      const c=compact(line);
+      return parts.some(p=>compact(p)==='مغلق') || /بياناتموقف.*مغلق|موقفالتسهيل.*مغلق|تاريخغلقالتسهيل.*مغلق/.test(c);
+    });
+  }
+  function isBouncedWithoutFacility(loan){
+    const t=compact((loan && loan.type) || '') + compact((loan && Array.isArray(loan.lines)) ? loan.lines.slice(0,30).join(' | ') : '');
+    return /شيكاتمرتدهبدونتسهيل|شيكاتمرتدةبدونتسهيل|شيكمرتد|صاحبالحساب/.test(t);
+  }
+  function fixLoan(loan){
+    if(!loan || !Array.isArray(loan.lines)) return loan;
+    if(isClosedFromLines(loan.lines)) loan.isClosed = true;
+    if(isBouncedWithoutFacility(loan)){
+      loan.hasBouncedChecks = true;
+      loan.bouncedByType = true;
+      loan.amount = 0;
+      loan.installment = 0;
+      loan.installmentStr = 'غ م';
+      loan.durationRaw = 'غ م';
+      loan.duration = 1;
+      loan.guaranteeType = null;
+    }
+    return loan;
+  }
+  const oldCreate = (typeof createLoanFromFacilityBlock === 'function') ? createLoanFromFacilityBlock : null;
+  if(oldCreate){ window.createLoanFromFacilityBlock = createLoanFromFacilityBlock = function(block){ return fixLoan(oldCreate(block)); }; }
+  const oldSmart = (typeof applySmartFacilityFieldFix === 'function') ? applySmartFacilityFieldFix : null;
+  if(oldSmart){ window.applySmartFacilityFieldFix = applySmartFacilityFieldFix = function(loan){ return fixLoan(oldSmart(loan)); }; }
+})();
+</script>
+
+
+<script>document.getElementById('customerInfo').addEventListener('input',function(){document.getElementById('customerCard').style.display=this.value?'block':'none'});</script>
+</main></body></html>
